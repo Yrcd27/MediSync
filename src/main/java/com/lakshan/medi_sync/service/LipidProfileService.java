@@ -1,7 +1,10 @@
 package com.lakshan.medi_sync.service;
 
 import com.lakshan.medi_sync.entity.LipidProfile;
+import com.lakshan.medi_sync.entity.Report;
 import com.lakshan.medi_sync.repository.LipidProfileRepository;
+import com.lakshan.medi_sync.repository.ReportRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,14 +14,23 @@ import java.util.List;
 public class LipidProfileService {
 
     private final LipidProfileRepository lipidRepository;
+    private final ReportRepository reportRepository;
 
     @Autowired
-    public LipidProfileService(LipidProfileRepository lipidRepository) {
+    public LipidProfileService(LipidProfileRepository lipidRepository, ReportRepository reportRepository) {
         this.lipidRepository = lipidRepository;
+        this.reportRepository = reportRepository;
     }
 
+    @Transactional
     public void addNewLipidProfile(LipidProfile lipidProfile) {
         lipidRepository.save(lipidProfile);
+
+        Report report = new Report();
+        report.setUser(lipidProfile.getUser());
+        report.setLipidProfile(lipidProfile);
+        report.setReportDate(lipidProfile.getTestDate());
+        reportRepository.save(report);
     }
 
     public List<LipidProfile> getAllLipidProfileRecords() {
@@ -37,10 +49,17 @@ public class LipidProfileService {
         return lipidRepository.findByUserId(userId);
     }
 
+    @Transactional
     public void updateLipidProfileRecord(LipidProfile lipidProfile) {
-        if (lipidRepository.existsById(lipidProfile.getId()))
+        if (lipidRepository.existsById(lipidProfile.getId())) {
             lipidRepository.save(lipidProfile);
-        else
+
+            Report report = reportRepository.findByLipidProfileId(lipidProfile.getId());
+            report.setUser(lipidProfile.getUser());
+            report.setLipidProfile(lipidProfile);
+            report.setReportDate(lipidProfile.getTestDate());
+            reportRepository.save(report);
+        } else
             throw new IllegalArgumentException("Record not found");
     }
 
