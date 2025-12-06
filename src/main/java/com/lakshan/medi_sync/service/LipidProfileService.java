@@ -1,4 +1,3 @@
-// filepath: d:\medi_sync\src\main\java\com\lakshan\medi_sync\service\LipidProfileService.java
 package com.lakshan.medi_sync.service;
 
 import com.lakshan.medi_sync.entity.LipidProfile;
