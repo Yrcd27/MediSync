@@ -31,15 +31,15 @@ public class UserService {
         );
     }
 
-    public void updateUser(User user){
-        if(userRepository.existsById(user.getId()))
+    public void updateUser(User user) {
+        if (userRepository.existsById(user.getId()))
             userRepository.save(user);
         else
             throw new IllegalArgumentException("User not found with id: " + user.getId());
     }
 
-    public void deleteUser(int id){
-        if(userRepository.existsById(id))
+    public void deleteUser(int id) {
+        if (userRepository.existsById(id))
             userRepository.deleteById(id);
         else
             throw new IllegalArgumentException("User not found with id: " + id);

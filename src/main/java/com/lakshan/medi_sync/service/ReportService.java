@@ -25,14 +25,14 @@ public class ReportService {
     }
 
     public void updateReport(Report report) {
-        if(reportRepository.existsById(report.getId()))
+        if (reportRepository.existsById(report.getId()))
             reportRepository.save(report);
         else
             throw new IllegalArgumentException("Record not found");
     }
 
     public void deleteReport(int id) {
-        if(reportRepository.existsById(id))
+        if (reportRepository.existsById(id))
             reportRepository.deleteById(id);
         else
             throw new IllegalArgumentException("Record not found");
