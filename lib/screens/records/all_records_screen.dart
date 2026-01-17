@@ -132,7 +132,9 @@ class AllRecordsScreen extends StatelessWidget {
     }
 
     // Sort by date (most recent first)
-    allRecords.sort((a, b) => (b['date'] as DateTime).compareTo(a['date'] as DateTime));
+    allRecords.sort(
+      (a, b) => (b['date'] as DateTime).compareTo(a['date'] as DateTime),
+    );
 
     if (allRecords.isEmpty) {
       return Center(
@@ -194,7 +196,9 @@ class AllRecordsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
-                      DateFormat('MMM d, yyyy').format(record['date'] as DateTime),
+                      DateFormat(
+                        'MMM d, yyyy',
+                      ).format(record['date'] as DateTime),
                       style: AppTypography.caption.copyWith(
                         color: isDark
                             ? AppColors.darkTextSecondary
