@@ -45,7 +45,9 @@ class RecordTypeSelector extends StatelessWidget {
                 Text(
                   'Select Record Type',
                   style: AppTypography.title1.copyWith(
-                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary,
                   ),
                 ),
                 const Spacer(),
@@ -53,7 +55,9 @@ class RecordTypeSelector extends StatelessWidget {
                   onPressed: () => Navigator.pop(context),
                   icon: Icon(
                     Icons.close_rounded,
-                    color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary,
                   ),
                 ),
               ],
@@ -74,102 +78,114 @@ class RecordTypeSelector extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
-              crossAxisSpacing: AppSpacing.md,
-              mainAxisSpacing: AppSpacing.md,
-              childAspectRatio: 1.4,
-              children: [
-                _buildTypeCard(
-                  context,
-                  title: 'Blood Pressure',
-                  subtitle: 'Systolic & Diastolic',
-                  icon: Icons.favorite_rounded,
-                  color: AppColors.bloodPressure,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
+                  crossAxisSpacing: AppSpacing.md,
+                  mainAxisSpacing: AppSpacing.md,
+                  childAspectRatio: 1.4,
+                  children: [
+                    _buildTypeCard(
                       context,
-                      MaterialPageRoute(builder: (_) => const AddBloodPressureScreen()),
-                    );
-                  },
-                  isDark: isDark,
-                ),
-                _buildTypeCard(
-                  context,
-                  title: 'Blood Sugar',
-                  subtitle: 'Fasting glucose',
-                  icon: Icons.water_drop_rounded,
-                  color: AppColors.bloodSugar,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
+                      title: 'Blood Pressure',
+                      subtitle: 'Systolic & Diastolic',
+                      icon: Icons.favorite_rounded,
+                      color: AppColors.bloodPressure,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddBloodPressureScreen(),
+                          ),
+                        );
+                      },
+                      isDark: isDark,
+                    ),
+                    _buildTypeCard(
                       context,
-                      MaterialPageRoute(builder: (_) => const AddBloodSugarScreen()),
-                    );
-                  },
-                  isDark: isDark,
-                ),
-                _buildTypeCard(
-                  context,
-                  title: 'Blood Count',
-                  subtitle: 'CBC / FBC',
-                  icon: Icons.science_rounded,
-                  color: AppColors.bloodCount,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
+                      title: 'Blood Sugar',
+                      subtitle: 'Fasting glucose',
+                      icon: Icons.water_drop_rounded,
+                      color: AppColors.bloodSugar,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddBloodSugarScreen(),
+                          ),
+                        );
+                      },
+                      isDark: isDark,
+                    ),
+                    _buildTypeCard(
                       context,
-                      MaterialPageRoute(builder: (_) => const AddBloodCountScreen()),
-                    );
-                  },
-                  isDark: isDark,
-                ),
-                _buildTypeCard(
-                  context,
-                  title: 'Lipid Profile',
-                  subtitle: 'Cholesterol levels',
-                  icon: Icons.monitor_heart_rounded,
-                  color: AppColors.lipidProfile,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
+                      title: 'Blood Count',
+                      subtitle: 'CBC / FBC',
+                      icon: Icons.science_rounded,
+                      color: AppColors.bloodCount,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddBloodCountScreen(),
+                          ),
+                        );
+                      },
+                      isDark: isDark,
+                    ),
+                    _buildTypeCard(
                       context,
-                      MaterialPageRoute(builder: (_) => const AddLipidProfileScreen()),
-                    );
-                  },
-                  isDark: isDark,
-                ),
-                _buildTypeCard(
-                  context,
-                  title: 'Liver Profile',
-                  subtitle: 'LFT results',
-                  icon: Icons.local_hospital_rounded,
-                  color: AppColors.liverProfile,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
+                      title: 'Lipid Profile',
+                      subtitle: 'Cholesterol levels',
+                      icon: Icons.monitor_heart_rounded,
+                      color: AppColors.lipidProfile,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddLipidProfileScreen(),
+                          ),
+                        );
+                      },
+                      isDark: isDark,
+                    ),
+                    _buildTypeCard(
                       context,
-                      MaterialPageRoute(builder: (_) => const AddLiverProfileScreen()),
-                    );
-                  },
-                  isDark: isDark,
-                ),
-                _buildTypeCard(
-                  context,
-                  title: 'Urine Report',
-                  subtitle: 'Urinalysis',
-                  icon: Icons.opacity_rounded,
-                  color: AppColors.urineReport,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
+                      title: 'Liver Profile',
+                      subtitle: 'LFT results',
+                      icon: Icons.local_hospital_rounded,
+                      color: AppColors.liverProfile,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddLiverProfileScreen(),
+                          ),
+                        );
+                      },
+                      isDark: isDark,
+                    ),
+                    _buildTypeCard(
                       context,
-                      MaterialPageRoute(builder: (_) => const AddUrineReportScreen()),
-                    );
-                  },
-                  isDark: isDark,
+                      title: 'Urine Report',
+                      subtitle: 'Urinalysis',
+                      icon: Icons.opacity_rounded,
+                      color: AppColors.urineReport,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddUrineReportScreen(),
+                          ),
+                        );
+                      },
+                      isDark: isDark,
+                    ),
+                  ],
                 ),
-              ],
-            ),
               ),
             ),
           ),
@@ -197,10 +213,7 @@ class RecordTypeSelector extends StatelessWidget {
         decoration: BoxDecoration(
           color: color.withOpacity(0.1),
           borderRadius: AppSpacing.borderRadiusMd,
-          border: Border.all(
-            color: color.withOpacity(0.3),
-            width: 1,
-          ),
+          border: Border.all(color: color.withOpacity(0.3), width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,7 +224,9 @@ class RecordTypeSelector extends StatelessWidget {
             Text(
               title,
               style: AppTypography.title3.copyWith(
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
               maxLines: 1,
@@ -220,7 +235,9 @@ class RecordTypeSelector extends StatelessWidget {
             Text(
               subtitle,
               style: AppTypography.caption.copyWith(
-                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.textSecondary,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
