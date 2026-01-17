@@ -1,9 +1,11 @@
+/// User model matching backend User entity exactly
+/// Backend fields: id, name, email, pwd, dob, gender, height, weight, blood_group
 class User {
   final int id;
   final String name;
   final String email;
-  final String? password;
-  final String dateOfBirth;
+  final String? password; // Only used for registration/login, not returned by backend
+  final String dateOfBirth; // Backend uses LocalDate, sent as ISO string
   final String gender;
   final double height;
   final double weight;
@@ -24,19 +26,19 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'] as int,
-      name: json['name'] as String,
-      email: json['email'] as String,
-      password: json['password'] as String?,
-      dateOfBirth: json['dateOfBirth'] as String,
-      gender: json['gender'] as String,
-      height: (json['height'] as num).toDouble(),
-      weight: (json['weight'] as num).toDouble(),
-      bloodGroup: json['bloodGroup'] as String,
+      name: json['name'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      password: json['password'] as String?, // Usually null from backend due to @JsonProperty(WRITE_ONLY)
+      dateOfBirth: json['dateOfBirth'] as String? ?? '',
+      gender: json['gender'] as String? ?? '',
+      height: (json['height'] as num?)?.toDouble() ?? 0.0,
+      weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
+      bloodGroup: json['bloodGroup'] as String? ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
-    final json = {
+    return {
       'id': id,
       'name': name,
       'email': email,
@@ -46,11 +48,35 @@ class User {
       'weight': weight,
       'bloodGroup': bloodGroup,
     };
-    // Only include password if it's not null (will be added separately in updateUser)
-    if (password != null) {
-      json['password'] = password!;
-    }
-    return json;
+  }
+
+  /// For registration - includes password
+  Map<String, dynamic> toRegistrationJson() {
+    return {
+      'name': name,
+      'email': email,
+      'password': password,
+      'dateOfBirth': dateOfBirth,
+      'gender': gender,
+      'height': height,
+      'weight': weight,
+      'bloodGroup': bloodGroup,
+    };
+  }
+
+  /// For update - includes id and password
+  Map<String, dynamic> toUpdateJson(String currentPassword) {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'password': currentPassword,
+      'dateOfBirth': dateOfBirth,
+      'gender': gender,
+      'height': height,
+      'weight': weight,
+      'bloodGroup': bloodGroup,
+    };
   }
 
   User copyWith({
@@ -75,5 +101,10 @@ class User {
       weight: weight ?? this.weight,
       bloodGroup: bloodGroup ?? this.bloodGroup,
     );
+  }
+
+  @override
+  String toString() {
+    return 'User(id: $id, name: $name, email: $email, gender: $gender)';
   }
 }

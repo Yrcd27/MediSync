@@ -6,6 +6,7 @@ import '../../providers/health_records_provider.dart';
 import '../../models/fasting_blood_sugar.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/custom_button.dart';
+import '../../utils/health_analysis.dart';
 
 class FBSRecordsScreen extends StatefulWidget {
   const FBSRecordsScreen({super.key});
@@ -19,6 +20,7 @@ class _FBSRecordsScreenState extends State<FBSRecordsScreen> {
   final _fbsLevelController = TextEditingController();
   final _testDateController = TextEditingController();
   final _imageUrlController = TextEditingController();
+  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -48,25 +50,41 @@ class _FBSRecordsScreenState extends State<FBSRecordsScreen> {
   }
 
   void _addRecord() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && !_isSubmitting) {
+      setState(() {
+        _isSubmitting = true;
+      });
+
       final authProvider = context.read<AuthProvider>();
       final healthProvider = context.read<HealthRecordsProvider>();
 
-      if (authProvider.currentUser == null) return;
+      if (authProvider.currentUser == null) {
+        setState(() {
+          _isSubmitting = false;
+        });
+        return;
+      }
 
       final record = FastingBloodSugar(
-        id: 0, // Will be assigned by backend
+        id: 0,
         testDate: _testDateController.text,
         fbsLevel: double.parse(_fbsLevelController.text),
-        imageUrl:
-            _imageUrlController.text.isEmpty ? null : _imageUrlController.text,
-        user: authProvider.currentUser!,
+        imageUrl: _imageUrlController.text.isEmpty
+            ? null
+            : _imageUrlController.text,
       );
 
-      try {
-        await healthProvider.addFBSRecord(record, authProvider.currentUser!.id);
+      final success = await healthProvider.addFBSRecord(
+        record,
+        authProvider.currentUser!.id,
+      );
 
-        if (mounted) {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+
+        if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('FBS record added successfully!'),
@@ -74,17 +92,17 @@ class _FBSRecordsScreenState extends State<FBSRecordsScreen> {
             ),
           );
 
-          // Clear form
           _fbsLevelController.clear();
           _imageUrlController.clear();
-          _testDateController.text =
-              DateFormat('yyyy-MM-dd').format(DateTime.now());
-        }
-      } catch (e) {
-        if (mounted) {
+          _testDateController.text = DateFormat(
+            'yyyy-MM-dd',
+          ).format(DateTime.now());
+        } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error: $e'),
+              content: Text(
+                healthProvider.errorMessage ?? 'Error adding record',
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -99,7 +117,6 @@ class _FBSRecordsScreenState extends State<FBSRecordsScreen> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          // Add Record Form
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -109,11 +126,11 @@ class _FBSRecordsScreenState extends State<FBSRecordsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const Text(
-                      'Add FBS Record',
+                      'Add Fasting Blood Sugar Record',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+                        color: Colors.orange,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -138,17 +155,15 @@ class _FBSRecordsScreenState extends State<FBSRecordsScreen> {
                     CustomTextField(
                       controller: _fbsLevelController,
                       label: 'FBS Level (mg/dL)',
-                      hint: 'Enter FBS level',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      hint: 'e.g., 95',
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter FBS level';
-                        }
-                        final level = double.tryParse(value);
-                        if (level == null || level <= 0 || level > 1000) {
-                          return 'Please enter a valid FBS level (0-1000)';
-                        }
+                        if (value == null || value.isEmpty) return 'Required';
+                        final val = double.tryParse(value);
+                        if (val == null || val < 20 || val > 600)
+                          return 'Invalid (20-600)';
                         return null;
                       },
                     ),
@@ -157,15 +172,12 @@ class _FBSRecordsScreenState extends State<FBSRecordsScreen> {
                       controller: _imageUrlController,
                       label: 'Report Image URL (Optional)',
                       hint: 'Enter image URL or file path',
-                      validator: (value) {
-                        // Optional field, no validation needed
-                        return null;
-                      },
                     ),
                     const SizedBox(height: 16),
                     CustomButton(
                       text: 'Add Record',
                       onPressed: _addRecord,
+                      isLoading: _isSubmitting,
                     ),
                   ],
                 ),
@@ -175,7 +187,6 @@ class _FBSRecordsScreenState extends State<FBSRecordsScreen> {
 
           const SizedBox(height: 16),
 
-          // Records List
           Expanded(
             child: Consumer<HealthRecordsProvider>(
               builder: (context, healthProvider, child) {
@@ -193,17 +204,7 @@ class _FBSRecordsScreenState extends State<FBSRecordsScreen> {
                           SizedBox(height: 16),
                           Text(
                             'No FBS records yet',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Add your first blood sugar reading above',
-                            style: TextStyle(
-                              color: Colors.grey,
-                            ),
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
                           ),
                         ],
                       ),
@@ -214,13 +215,19 @@ class _FBSRecordsScreenState extends State<FBSRecordsScreen> {
                 return ListView.builder(
                   itemCount: healthProvider.fbsRecords.length,
                   itemBuilder: (context, index) {
-                    final record = healthProvider.fbsRecords[
-                        healthProvider.fbsRecords.length - 1 - index];
+                    final record =
+                        healthProvider.fbsRecords[healthProvider
+                                .fbsRecords
+                                .length -
+                            1 -
+                            index];
+                    final analysis = HealthAnalysis.analyzeFBS(record.fbsLevel);
+
                     return Card(
                       margin: const EdgeInsets.only(bottom: 8),
-                      child: ListTile(
+                      child: ExpansionTile(
                         leading: CircleAvatar(
-                          backgroundColor: _getFBSColor(record.fbsLevel),
+                          backgroundColor: analysis.color,
                           child: const Icon(
                             Icons.bloodtype,
                             color: Colors.white,
@@ -228,80 +235,82 @@ class _FBSRecordsScreenState extends State<FBSRecordsScreen> {
                         ),
                         title: Text(
                           '${record.fbsLevel.toStringAsFixed(1)} mg/dL',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Date: ${record.testDate}'),
-                            Text(
-                              _getFBSStatus(record.fbsLevel),
+                        subtitle: Text('Date: ${record.testDate}'),
+                        children: [
+                          ListTile(
+                            title: const Text('Status'),
+                            trailing: Text(
+                              analysis.statusText,
                               style: TextStyle(
-                                color: _getFBSColor(record.fbsLevel),
-                                fontWeight: FontWeight.w500,
+                                color: analysis.color,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ],
-                        ),
-                        trailing: PopupMenuButton(
-                          itemBuilder: (context) => [
-                            const PopupMenuItem(
-                              value: 'edit',
-                              child: Row(
-                                children: [
-                                  Icon(Icons.edit),
-                                  SizedBox(width: 8),
-                                  Text('Edit'),
-                                ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                            ),
+                            child: Text(
+                              analysis.recommendation,
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 13,
                               ),
                             ),
-                          ],
-                          onSelected: (value) {
-                            if (value == 'edit') {
-                              _editRecord(record);
-                            }
-                          },
-                        ),
+                          ),
+                          ButtonBar(
+                            children: [
+                              TextButton.icon(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                label: const Text(
+                                  'Delete',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                onPressed: () async {
+                                  final confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: const Text('Delete Record'),
+                                      content: const Text('Are you sure?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(ctx, false),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(ctx, true),
+                                          child: const Text(
+                                            'Delete',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                  if (confirm == true) {
+                                    await healthProvider.deleteFBSRecord(
+                                      record.id,
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     );
                   },
                 );
               },
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _getFBSColor(double level) {
-    if (level < 70) return Colors.blue; // Low
-    if (level <= 100) return Colors.green; // Normal
-    if (level <= 125) return Colors.orange; // Prediabetes
-    return Colors.red; // Diabetes
-  }
-
-  String _getFBSStatus(double level) {
-    if (level < 70) return 'Low';
-    if (level <= 100) return 'Normal';
-    if (level <= 125) return 'Prediabetes';
-    return 'High';
-  }
-
-  void _editRecord(FastingBloodSugar record) {
-    // Implement edit functionality
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Record'),
-        content: const Text('Edit functionality will be implemented here'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
           ),
         ],
       ),

@@ -2,36 +2,37 @@ import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../services/auth_service.dart';
 
+/// Authentication Provider for managing user state
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
 
   User? _currentUser;
-  String? _currentPassword; // Store current password for updates
+  String? _currentPassword; // Store for profile updates
   bool _isLoading = false;
   String? _errorMessage;
 
+  // Getters
   User? get currentUser => _currentUser;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get isAuthenticated => _currentUser != null;
 
+  /// Check authentication status and restore session
   Future<void> checkAuthStatus() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final isLoggedIn = await _authService.isLoggedIn();
-      if (!isLoggedIn) {
-        _currentUser = null;
-      }
+      _currentUser = await _authService.restoreSession();
     } catch (e) {
-      _errorMessage = e.toString();
+      _currentUser = null;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
+  /// Login with email and password
   Future<bool> login(String email, String password) async {
     _isLoading = true;
     _errorMessage = null;
@@ -39,18 +40,19 @@ class AuthProvider with ChangeNotifier {
 
     try {
       _currentUser = await _authService.login(email, password);
-      _currentPassword = password; // Store password for updates
+      _currentPassword = password; // Store for profile updates
       _isLoading = false;
       notifyListeners();
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = e.toString().replaceAll('Exception: ', '');
       _isLoading = false;
       notifyListeners();
       return false;
     }
   }
 
+  /// Register a new user
   Future<bool> register(Map<String, dynamic> userData) async {
     _isLoading = true;
     _errorMessage = null;
@@ -62,16 +64,17 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = e.toString().replaceAll('Exception: ', '');
       _isLoading = false;
       notifyListeners();
       return false;
     }
   }
 
+  /// Update user profile
   Future<bool> updateUser(User user) async {
     if (_currentPassword == null) {
-      _errorMessage = 'No password available for update. Please login again.';
+      _errorMessage = 'Please login again to update your profile.';
       notifyListeners();
       return false;
     }
@@ -81,18 +84,12 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      print('AuthProvider: Starting user update...');
-      final updatedUser = await _authService.updateUser(
-        user,
-        _currentPassword!,
-      );
+      final updatedUser = await _authService.updateUser(user, _currentPassword!);
       _currentUser = updatedUser;
       _isLoading = false;
       notifyListeners();
-      print('AuthProvider: User update successful');
       return true;
     } catch (e) {
-      print('AuthProvider: Update error: $e');
       _errorMessage = e.toString().replaceAll('Exception: ', '');
       _isLoading = false;
       notifyListeners();
@@ -100,13 +97,20 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  /// Update password (requires re-login)
+  void setPassword(String password) {
+    _currentPassword = password;
+  }
+
+  /// Logout
   Future<void> logout() async {
     await _authService.logout();
     _currentUser = null;
-    _currentPassword = null; // Clear stored password
+    _currentPassword = null;
     notifyListeners();
   }
 
+  /// Clear error message
   void clearError() {
     _errorMessage = null;
     notifyListeners();

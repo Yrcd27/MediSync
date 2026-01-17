@@ -1,81 +1,102 @@
 import 'user.dart';
 
+/// Full Blood Count model matching backend FullBloodCount entity exactly
+/// Backend fields: id, test_date, haemoglobin, total_leucocyte_count, platelet_count, image_url, user_id
 class FullBloodCount {
   final int id;
-  final String testDate;
-  final double hemoglobin;
-  final double wbcCount;
-  final double rbcCount;
-  final double plateletCount;
-  final double hematocrit;
-  final double mcv;
-  final double mch;
-  final double mchc;
+  final String testDate; // Backend uses LocalDate, sent as ISO string (YYYY-MM-DD)
+  final double haemoglobin; // Hemoglobin in g/dL (British spelling to match backend)
+  final double totalLeucocyteCount; // WBC count in cells/mcL
+  final double plateletCount; // Platelet count in cells/mcL
   final String? imageUrl;
-  final User user;
+  final User? user;
 
   FullBloodCount({
     required this.id,
     required this.testDate,
-    required this.hemoglobin,
-    required this.wbcCount,
-    required this.rbcCount,
+    required this.haemoglobin,
+    required this.totalLeucocyteCount,
     required this.plateletCount,
-    required this.hematocrit,
-    required this.mcv,
-    required this.mch,
-    required this.mchc,
     this.imageUrl,
-    required this.user,
+    this.user,
   });
 
   factory FullBloodCount.fromJson(Map<String, dynamic> json) {
     return FullBloodCount(
       id: json['id'] as int,
-      testDate: json['testDate'] as String,
-      hemoglobin: (json['hemoglobin'] as num).toDouble(),
-      wbcCount: (json['wbcCount'] as num).toDouble(),
-      rbcCount: (json['rbcCount'] as num).toDouble(),
-      plateletCount: (json['plateletCount'] as num).toDouble(),
-      hematocrit: (json['hematocrit'] as num).toDouble(),
-      mcv: (json['mcv'] as num).toDouble(),
-      mch: (json['mch'] as num).toDouble(),
-      mchc: (json['mchc'] as num).toDouble(),
+      testDate: json['testDate'] as String? ?? '',
+      haemoglobin: (json['haemoglobin'] as num?)?.toDouble() ?? 0.0,
+      totalLeucocyteCount: (json['totalLeucocyteCount'] as num?)?.toDouble() ?? 0.0,
+      plateletCount: (json['plateletCount'] as num?)?.toDouble() ?? 0.0,
       imageUrl: json['imageUrl'] as String?,
-      user: User.fromJson(json['user'] as Map<String, dynamic>),
+      user: json['user'] != null
+          ? User.fromJson(json['user'] as Map<String, dynamic>)
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    final data = <String, dynamic>{
       'id': id,
       'testDate': testDate,
-      'hemoglobin': hemoglobin,
-      'wbcCount': wbcCount,
-      'rbcCount': rbcCount,
+      'haemoglobin': haemoglobin,
+      'totalLeucocyteCount': totalLeucocyteCount,
       'plateletCount': plateletCount,
-      'hematocrit': hematocrit,
-      'mcv': mcv,
-      'mch': mch,
-      'mchc': mchc,
       'imageUrl': imageUrl,
-      'user': user.toJson(),
     };
+    if (user != null) {
+      data['user'] = user!.toJson();
+    }
+    return data;
   }
 
+  /// For creating a new record - backend expects user object with id
   Map<String, dynamic> toCreateJson(int userId) {
     return {
       'testDate': testDate,
-      'hemoglobin': hemoglobin,
-      'wbcCount': wbcCount,
-      'rbcCount': rbcCount,
+      'haemoglobin': haemoglobin,
+      'totalLeucocyteCount': totalLeucocyteCount,
       'plateletCount': plateletCount,
-      'hematocrit': hematocrit,
-      'mcv': mcv,
-      'mch': mch,
-      'mchc': mchc,
       'imageUrl': imageUrl,
-      'userId': userId,
+      'user': {'id': userId},
     };
+  }
+
+  /// For updating a record
+  Map<String, dynamic> toUpdateJson() {
+    return {
+      'id': id,
+      'testDate': testDate,
+      'haemoglobin': haemoglobin,
+      'totalLeucocyteCount': totalLeucocyteCount,
+      'plateletCount': plateletCount,
+      'imageUrl': imageUrl,
+      'user': user != null ? {'id': user!.id} : null,
+    };
+  }
+
+  FullBloodCount copyWith({
+    int? id,
+    String? testDate,
+    double? haemoglobin,
+    double? totalLeucocyteCount,
+    double? plateletCount,
+    String? imageUrl,
+    User? user,
+  }) {
+    return FullBloodCount(
+      id: id ?? this.id,
+      testDate: testDate ?? this.testDate,
+      haemoglobin: haemoglobin ?? this.haemoglobin,
+      totalLeucocyteCount: totalLeucocyteCount ?? this.totalLeucocyteCount,
+      plateletCount: plateletCount ?? this.plateletCount,
+      imageUrl: imageUrl ?? this.imageUrl,
+      user: user ?? this.user,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'FullBloodCount(id: $id, date: $testDate, Hb: $haemoglobin, WBC: $totalLeucocyteCount, PLT: $plateletCount)';
   }
 }

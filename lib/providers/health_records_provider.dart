@@ -14,6 +14,7 @@ import '../services/liver_profile_service.dart';
 import '../services/urine_report_service.dart';
 import '../services/report_service.dart';
 
+/// Provider for managing all health records
 class HealthRecordsProvider with ChangeNotifier {
   final FastingBloodSugarService _fbsService = FastingBloodSugarService();
   final BloodPressureService _bpService = BloodPressureService();
@@ -32,6 +33,7 @@ class HealthRecordsProvider with ChangeNotifier {
   List<Report> _reports = [];
 
   bool _isLoading = false;
+  bool _isBulkLoading = false;
   String? _errorMessage;
 
   // Getters
@@ -45,9 +47,14 @@ class HealthRecordsProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
+  /// Load all records for a user
   Future<void> loadAllRecords(int userId) async {
     _isLoading = true;
-    notifyListeners();
+    _isBulkLoading = true;
+    _errorMessage = null;
+
+    // Defer notifyListeners to avoid setState during build
+    Future.microtask(() => notifyListeners());
 
     try {
       await Future.wait([
@@ -63,33 +70,36 @@ class HealthRecordsProvider with ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isLoading = false;
+      _isBulkLoading = false;
       notifyListeners();
     }
   }
 
-  // FBS Methods
+  // ============= FBS Methods =============
   Future<void> loadFBSRecords(int userId) async {
     try {
       _fbsRecords = await _fbsService.getRecordsByUserId(userId);
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     }
   }
 
-  Future<void> addFBSRecord(FastingBloodSugar record, int userId) async {
+  Future<bool> addFBSRecord(FastingBloodSugar record, int userId) async {
     try {
       final newRecord = await _fbsService.addRecord(record, userId);
       _fbsRecords.add(newRecord);
       notifyListeners();
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  Future<void> updateFBSRecord(FastingBloodSugar record) async {
+  Future<bool> updateFBSRecord(FastingBloodSugar record) async {
     try {
       final updatedRecord = await _fbsService.updateRecord(record);
       final index = _fbsRecords.indexWhere((r) => r.id == record.id);
@@ -97,35 +107,52 @@ class HealthRecordsProvider with ChangeNotifier {
         _fbsRecords[index] = updatedRecord;
         notifyListeners();
       }
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  // Blood Pressure Methods
+  Future<bool> deleteFBSRecord(int recordId) async {
+    try {
+      await _fbsService.deleteRecord(recordId);
+      _fbsRecords.removeWhere((r) => r.id == recordId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // ============= Blood Pressure Methods =============
   Future<void> loadBPRecords(int userId) async {
     try {
       _bpRecords = await _bpService.getRecordsByUserId(userId);
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     }
   }
 
-  Future<void> addBPRecord(BloodPressure record, int userId) async {
+  Future<bool> addBPRecord(BloodPressure record, int userId) async {
     try {
       final newRecord = await _bpService.addRecord(record, userId);
       _bpRecords.add(newRecord);
       notifyListeners();
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  Future<void> updateBPRecord(BloodPressure record) async {
+  Future<bool> updateBPRecord(BloodPressure record) async {
     try {
       final updatedRecord = await _bpService.updateRecord(record);
       final index = _bpRecords.indexWhere((r) => r.id == record.id);
@@ -133,35 +160,52 @@ class HealthRecordsProvider with ChangeNotifier {
         _bpRecords[index] = updatedRecord;
         notifyListeners();
       }
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  // Full Blood Count Methods
+  Future<bool> deleteBPRecord(int recordId) async {
+    try {
+      await _bpService.deleteRecord(recordId);
+      _bpRecords.removeWhere((r) => r.id == recordId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // ============= FBC Methods =============
   Future<void> loadFBCRecords(int userId) async {
     try {
       _fbcRecords = await _fbcService.getRecordsByUserId(userId);
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     }
   }
 
-  Future<void> addFBCRecord(FullBloodCount record, int userId) async {
+  Future<bool> addFBCRecord(FullBloodCount record, int userId) async {
     try {
       final newRecord = await _fbcService.addRecord(record, userId);
       _fbcRecords.add(newRecord);
       notifyListeners();
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  Future<void> updateFBCRecord(FullBloodCount record) async {
+  Future<bool> updateFBCRecord(FullBloodCount record) async {
     try {
       final updatedRecord = await _fbcService.updateRecord(record);
       final index = _fbcRecords.indexWhere((r) => r.id == record.id);
@@ -169,46 +213,52 @@ class HealthRecordsProvider with ChangeNotifier {
         _fbcRecords[index] = updatedRecord;
         notifyListeners();
       }
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  Future<void> deleteFBCRecord(int recordId) async {
+  Future<bool> deleteFBCRecord(int recordId) async {
     try {
       await _fbcService.deleteRecord(recordId);
       _fbcRecords.removeWhere((r) => r.id == recordId);
       notifyListeners();
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  // Lipid Profile Methods
+  // ============= Lipid Profile Methods =============
   Future<void> loadLipidRecords(int userId) async {
     try {
       _lipidRecords = await _lipidService.getRecordsByUserId(userId);
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     }
   }
 
-  Future<void> addLipidRecord(LipidProfile record, int userId) async {
+  Future<bool> addLipidRecord(LipidProfile record, int userId) async {
     try {
       final newRecord = await _lipidService.addRecord(record, userId);
       _lipidRecords.add(newRecord);
       notifyListeners();
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  Future<void> updateLipidRecord(LipidProfile record) async {
+  Future<bool> updateLipidRecord(LipidProfile record) async {
     try {
       final updatedRecord = await _lipidService.updateRecord(record);
       final index = _lipidRecords.indexWhere((r) => r.id == record.id);
@@ -216,35 +266,52 @@ class HealthRecordsProvider with ChangeNotifier {
         _lipidRecords[index] = updatedRecord;
         notifyListeners();
       }
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  // Liver Profile Methods
+  Future<bool> deleteLipidRecord(int recordId) async {
+    try {
+      await _lipidService.deleteRecord(recordId);
+      _lipidRecords.removeWhere((r) => r.id == recordId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // ============= Liver Profile Methods =============
   Future<void> loadLiverRecords(int userId) async {
     try {
       _liverRecords = await _liverService.getRecordsByUserId(userId);
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     }
   }
 
-  Future<void> addLiverRecord(LiverProfile record, int userId) async {
+  Future<bool> addLiverRecord(LiverProfile record, int userId) async {
     try {
       final newRecord = await _liverService.addRecord(record, userId);
       _liverRecords.add(newRecord);
       notifyListeners();
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  Future<void> updateLiverRecord(LiverProfile record) async {
+  Future<bool> updateLiverRecord(LiverProfile record) async {
     try {
       final updatedRecord = await _liverService.updateRecord(record);
       final index = _liverRecords.indexWhere((r) => r.id == record.id);
@@ -252,35 +319,52 @@ class HealthRecordsProvider with ChangeNotifier {
         _liverRecords[index] = updatedRecord;
         notifyListeners();
       }
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  // Urine Report Methods
+  Future<bool> deleteLiverRecord(int recordId) async {
+    try {
+      await _liverService.deleteRecord(recordId);
+      _liverRecords.removeWhere((r) => r.id == recordId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // ============= Urine Report Methods =============
   Future<void> loadUrineRecords(int userId) async {
     try {
       _urineRecords = await _urineService.getRecordsByUserId(userId);
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     }
   }
 
-  Future<void> addUrineRecord(UrineReport record, int userId) async {
+  Future<bool> addUrineRecord(UrineReport record, int userId) async {
     try {
       final newRecord = await _urineService.addRecord(record, userId);
       _urineRecords.add(newRecord);
       notifyListeners();
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  Future<void> updateUrineRecord(UrineReport record) async {
+  Future<bool> updateUrineRecord(UrineReport record) async {
     try {
       final updatedRecord = await _urineService.updateRecord(record);
       final index = _urineRecords.indexWhere((r) => r.id == record.id);
@@ -288,25 +372,66 @@ class HealthRecordsProvider with ChangeNotifier {
         _urineRecords[index] = updatedRecord;
         notifyListeners();
       }
+      return true;
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      return false;
     }
   }
 
-  // Reports Methods
+  Future<bool> deleteUrineRecord(int recordId) async {
+    try {
+      await _urineService.deleteRecord(recordId);
+      _urineRecords.removeWhere((r) => r.id == recordId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // ============= Reports Methods =============
   Future<void> loadReports(int userId) async {
     try {
       _reports = await _reportService.getReportsByUserId(userId);
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
-      notifyListeners();
+      if (!_isBulkLoading) notifyListeners();
     }
   }
 
+  Future<bool> deleteReport(int reportId) async {
+    try {
+      await _reportService.deleteReport(reportId);
+      _reports.removeWhere((r) => r.id == reportId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Clear error message
   void clearError() {
     _errorMessage = null;
+    notifyListeners();
+  }
+
+  /// Clear all records (used on logout)
+  void clearRecords() {
+    _fbsRecords = [];
+    _bpRecords = [];
+    _fbcRecords = [];
+    _lipidRecords = [];
+    _liverRecords = [];
+    _urineRecords = [];
+    _reports = [];
     notifyListeners();
   }
 }

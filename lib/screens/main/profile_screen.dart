@@ -88,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         weight: weight,
       );
 
-      print('Attempting to update user: ${updatedUser.toJson()}');
+      debugPrint('Attempting to update user: ${updatedUser.toJson()}');
       final success = await authProvider.updateUser(updatedUser);
 
       if (mounted) {
@@ -103,7 +103,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
       }
     } catch (e) {
-      print('Update profile error: $e');
+      debugPrint('Update profile error: $e');
       if (mounted) {
         _showErrorMessage('Update failed: ${e.toString()}');
       }

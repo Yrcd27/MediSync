@@ -44,10 +44,7 @@ class AnalyticsScreen extends StatelessWidget {
                 // Statistics Cards
                 const Text(
                   'Health Statistics',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
 
@@ -94,7 +91,11 @@ class AnalyticsScreen extends StatelessWidget {
   }
 
   Widget _buildChartSection(
-      String title, IconData icon, Color color, Widget chart) {
+    String title,
+    IconData icon,
+    Color color,
+    Widget chart,
+  ) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -115,10 +116,7 @@ class AnalyticsScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              height: 200,
-              child: chart,
-            ),
+            SizedBox(height: 200, child: chart),
           ],
         ),
       ),
@@ -252,10 +250,7 @@ class AnalyticsScreen extends StatelessWidget {
             ),
             Text(
               unit,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-              ),
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
           ],
@@ -266,8 +261,10 @@ class AnalyticsScreen extends StatelessWidget {
 
   String _calculateAvgFBS(HealthRecordsProvider provider) {
     if (provider.fbsRecords.isEmpty) return '--';
-    final total = provider.fbsRecords
-        .fold<double>(0, (sum, record) => sum + record.fbsLevel);
+    final total = provider.fbsRecords.fold<double>(
+      0,
+      (sum, record) => sum + record.fbsLevel,
+    );
     return (total / provider.fbsRecords.length).toStringAsFixed(1);
   }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/config/app_config.dart';
 import '../../services/auth_service.dart';
-import '../../models/user.dart';
 
 class DebugNetworkScreen extends StatelessWidget {
   const DebugNetworkScreen({super.key});

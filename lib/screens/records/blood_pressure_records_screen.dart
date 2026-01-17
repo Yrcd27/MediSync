@@ -6,6 +6,7 @@ import '../../providers/health_records_provider.dart';
 import '../../models/blood_pressure.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/custom_button.dart';
+import '../../utils/health_analysis.dart';
 
 class BloodPressureRecordsScreen extends StatefulWidget {
   const BloodPressureRecordsScreen({super.key});
@@ -58,20 +59,20 @@ class _BloodPressureRecordsScreenState
 
       if (authProvider.currentUser == null) return;
 
-      final record = BloodPressure(
-        id: 0, // Will be assigned by backend
+      // Create BP record using the factory method that combines systolic/diastolic
+      final record = BloodPressure.create(
         testDate: _testDateController.text,
         systolic: int.parse(_systolicController.text),
         diastolic: int.parse(_diastolicController.text),
         imageUrl:
             _imageUrlController.text.isEmpty ? null : _imageUrlController.text,
-        user: authProvider.currentUser!,
       );
 
-      try {
-        await healthProvider.addBPRecord(record, authProvider.currentUser!.id);
+      final success = await healthProvider.addBPRecord(
+          record, authProvider.currentUser!.id);
 
-        if (mounted) {
+      if (mounted) {
+        if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Blood pressure record added successfully!'),
@@ -85,12 +86,10 @@ class _BloodPressureRecordsScreenState
           _imageUrlController.clear();
           _testDateController.text =
               DateFormat('yyyy-MM-dd').format(DateTime.now());
-        }
-      } catch (e) {
-        if (mounted) {
+        } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error: $e'),
+              content: Text(healthProvider.errorMessage ?? 'Error adding record'),
               backgroundColor: Colors.red,
             ),
           );
@@ -246,19 +245,20 @@ class _BloodPressureRecordsScreenState
                   itemBuilder: (context, index) {
                     final record = healthProvider
                         .bpRecords[healthProvider.bpRecords.length - 1 - index];
+                    final analysis = HealthAnalysis.analyzeBloodPressure(record);
+
                     return Card(
                       margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundColor:
-                              _getBPColor(record.systolic, record.diastolic),
+                          backgroundColor: analysis.color,
                           child: const Icon(
                             Icons.favorite,
                             color: Colors.white,
                           ),
                         ),
                         title: Text(
-                          '${record.systolic}/${record.diastolic} mmHg',
+                          '${record.bpLevel} mmHg',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -269,10 +269,9 @@ class _BloodPressureRecordsScreenState
                           children: [
                             Text('Date: ${record.testDate}'),
                             Text(
-                              _getBPStatus(record.systolic, record.diastolic),
+                              analysis.statusText,
                               style: TextStyle(
-                                color: _getBPColor(
-                                    record.systolic, record.diastolic),
+                                color: analysis.color,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -281,19 +280,38 @@ class _BloodPressureRecordsScreenState
                         trailing: PopupMenuButton(
                           itemBuilder: (context) => [
                             const PopupMenuItem(
-                              value: 'edit',
+                              value: 'delete',
                               child: Row(
                                 children: [
-                                  Icon(Icons.edit),
+                                  Icon(Icons.delete, color: Colors.red),
                                   SizedBox(width: 8),
-                                  Text('Edit'),
+                                  Text('Delete'),
                                 ],
                               ),
                             ),
                           ],
-                          onSelected: (value) {
-                            if (value == 'edit') {
-                              _editRecord(record);
+                          onSelected: (value) async {
+                            if (value == 'delete') {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: const Text('Delete Record'),
+                                  content: const Text('Are you sure you want to delete this record?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, false),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, true),
+                                      child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              if (confirm == true) {
+                                await healthProvider.deleteBPRecord(record.id);
+                              }
                             }
                           },
                         ),
@@ -303,36 +321,6 @@ class _BloodPressureRecordsScreenState
                 );
               },
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _getBPColor(int systolic, int diastolic) {
-    if (systolic < 90 || diastolic < 60) return Colors.blue; // Low
-    if (systolic < 120 && diastolic < 80) return Colors.green; // Normal
-    if (systolic < 140 || diastolic < 90) return Colors.orange; // High Normal
-    return Colors.red; // High
-  }
-
-  String _getBPStatus(int systolic, int diastolic) {
-    if (systolic < 90 || diastolic < 60) return 'Low';
-    if (systolic < 120 && diastolic < 80) return 'Normal';
-    if (systolic < 140 || diastolic < 90) return 'High Normal';
-    return 'High';
-  }
-
-  void _editRecord(BloodPressure record) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Record'),
-        content: const Text('Edit functionality will be implemented here'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
           ),
         ],
       ),
