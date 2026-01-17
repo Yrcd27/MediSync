@@ -56,9 +56,22 @@ class _AppWrapperState extends State<AppWrapper> {
   }
 
   Future<void> _initializeApp() async {
-    await Future.delayed(const Duration(seconds: 2)); // Splash screen delay
+    // Check auth status first
     if (mounted) {
       await context.read<AuthProvider>().checkAuthStatus();
+      
+      // If authenticated, load all health records before showing dashboard
+      if (mounted) {
+        final authProvider = context.read<AuthProvider>();
+        if (authProvider.isAuthenticated && authProvider.currentUser != null) {
+          final healthProvider = context.read<HealthRecordsProvider>();
+          await healthProvider.loadAllRecords(authProvider.currentUser!.id);
+        }
+      }
+      
+      // Ensure minimum splash screen display time (1 second)
+      await Future.delayed(const Duration(seconds: 1));
+      
       if (mounted) {
         setState(() {
           _isInitialized = true;

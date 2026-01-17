@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
-import '../../providers/health_records_provider.dart';
 import '../../widgets/common/custom_bottom_nav_bar.dart';
 import '../../core/constants/app_colors.dart';
 import 'dashboard_screen.dart';
@@ -25,23 +22,6 @@ class _MainLayoutState extends State<MainLayout> {
     const AnalyticsScreen(),
     const ProfileScreen(),
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadUserData();
-    });
-  }
-
-  Future<void> _loadUserData() async {
-    final authProvider = context.read<AuthProvider>();
-    final healthProvider = context.read<HealthRecordsProvider>();
-
-    if (authProvider.currentUser != null) {
-      await healthProvider.loadAllRecords(authProvider.currentUser!.id);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
