@@ -95,10 +95,10 @@ class _LipidProfileRecordsScreenState extends State<LipidProfileRecordsScreen> {
 
         if (mounted) {
           if (success) {
-            CustomSnackbar.show(
+            CustomSnackBar.show(
               context,
               message: 'Lipid profile record added successfully!',
-              type: SnackbarType.success,
+              type: SnackBarType.success,
             );
 
             _totalCholesterolController.clear();
@@ -110,10 +110,10 @@ class _LipidProfileRecordsScreenState extends State<LipidProfileRecordsScreen> {
               'yyyy-MM-dd',
             ).format(DateTime.now());
           } else {
-            CustomSnackbar.show(
+            CustomSnackBar.show(
               context,
               message: healthProvider.errorMessage ?? 'Error adding record',
-              type: SnackbarType.error,
+              type: SnackBarType.error,
             );
           }
         }

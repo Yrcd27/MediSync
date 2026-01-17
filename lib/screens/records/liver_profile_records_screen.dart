@@ -92,10 +92,10 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
 
         if (mounted) {
           if (success) {
-            CustomSnackbar.show(
+            CustomSnackBar.show(
               context,
               message: 'Liver profile record added successfully!',
-              type: SnackbarType.success,
+              type: SnackBarType.success,
             );
 
             _totalProteinController.clear();
@@ -107,10 +107,10 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
               'yyyy-MM-dd',
             ).format(DateTime.now());
           } else {
-            CustomSnackbar.show(
+            CustomSnackBar.show(
               context,
               message: healthProvider.errorMessage ?? 'Error adding record',
-              type: SnackbarType.error,
+              type: SnackBarType.error,
             );
           }
         }

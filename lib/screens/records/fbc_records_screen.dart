@@ -88,10 +88,10 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
 
         if (mounted) {
           if (success) {
-            CustomSnackbar.show(
+            CustomSnackBar.show(
               context,
               message: 'FBC record added successfully!',
-              type: SnackbarType.success,
+              type: SnackBarType.success,
             );
 
             _haemoglobinController.clear();
@@ -102,10 +102,10 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
               'yyyy-MM-dd',
             ).format(DateTime.now());
           } else {
-            CustomSnackbar.show(
+            CustomSnackBar.show(
               context,
               message: healthProvider.errorMessage ?? 'Error adding record',
-              type: SnackbarType.error,
+              type: SnackBarType.error,
             );
           }
         }

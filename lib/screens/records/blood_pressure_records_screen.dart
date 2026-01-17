@@ -86,10 +86,10 @@ class _BloodPressureRecordsScreenState
 
         if (mounted) {
           if (success) {
-            CustomSnackbar.show(
+            CustomSnackBar.show(
               context,
               message: 'Blood pressure record added successfully!',
-              type: SnackbarType.success,
+              type: SnackBarType.success,
             );
 
             _systolicController.clear();
@@ -99,10 +99,10 @@ class _BloodPressureRecordsScreenState
               'yyyy-MM-dd',
             ).format(DateTime.now());
           } else {
-            CustomSnackbar.show(
+            CustomSnackBar.show(
               context,
               message: healthProvider.errorMessage ?? 'Error adding record',
-              type: SnackbarType.error,
+              type: SnackBarType.error,
             );
           }
         }

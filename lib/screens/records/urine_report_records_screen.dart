@@ -125,10 +125,10 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
 
         if (mounted) {
           if (success) {
-            CustomSnackbar.show(
+            CustomSnackBar.show(
               context,
               message: 'Urine report record added successfully!',
-              type: SnackbarType.success,
+              type: SnackBarType.success,
             );
 
             _selectedColor = 'Yellow';
@@ -141,10 +141,10 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
               'yyyy-MM-dd',
             ).format(DateTime.now());
           } else {
-            CustomSnackbar.show(
+            CustomSnackBar.show(
               context,
               message: healthProvider.errorMessage ?? 'Error adding record',
-              type: SnackbarType.error,
+              type: SnackBarType.error,
             );
           }
         }

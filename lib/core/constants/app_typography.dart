@@ -105,4 +105,18 @@ class AppTypography {
     fontWeight: FontWeight.w600,
     letterSpacing: 0.5,
   );
+
+  // Material Design 3 Aliases
+  static TextStyle get headlineLarge => headline1;
+  static TextStyle get headlineMedium => headline2;
+  static TextStyle get headlineSmall => headline3;
+  static TextStyle get titleLarge => title1;
+  static TextStyle get titleMedium => title2;
+  static TextStyle get titleSmall => title3;
+  static TextStyle get bodyLarge => body1;
+  static TextStyle get bodyMedium => body2;
+  static TextStyle get bodySmall => caption;
+  static TextStyle get labelLarge => label1;
+  static TextStyle get labelMedium => label1;
+  static TextStyle get labelSmall => label2;
 }
