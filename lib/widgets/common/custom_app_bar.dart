@@ -25,19 +25,22 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return AppBar(
       title: Text(title, style: AppTypography.title1),
       centerTitle: centerTitle,
-      backgroundColor: backgroundColor ?? 
+      backgroundColor:
+          backgroundColor ??
           (isDark ? AppColors.darkSurface : AppColors.surface),
       elevation: 0,
-      leading: leading ?? (showBackButton 
-          ? IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pop(),
-            )
-          : null),
+      leading:
+          leading ??
+          (showBackButton
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(context).pop(),
+                )
+              : null),
       actions: actions,
       bottom: bottom,
     );

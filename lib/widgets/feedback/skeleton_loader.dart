@@ -20,7 +20,9 @@ class SkeletonLoader extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Shimmer.fromColors(
-      baseColor: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+      baseColor: isDark
+          ? AppColors.darkSurfaceVariant
+          : AppColors.surfaceVariant,
       highlightColor: isDark ? AppColors.darkSurface : AppColors.surface,
       child: Container(
         width: width,
@@ -51,7 +53,10 @@ class SkeletonCard extends StatelessWidget {
           Row(
             children: [
               SkeletonLoader(
-                  width: 40, height: 40, borderRadius: AppSpacing.radiusSm),
+                width: 40,
+                height: 40,
+                borderRadius: AppSpacing.radiusSm,
+              ),
               SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(

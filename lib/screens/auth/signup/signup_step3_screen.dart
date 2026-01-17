@@ -8,10 +8,7 @@ import '../../../providers/auth_provider.dart';
 class SignupStep3Screen extends StatefulWidget {
   final Map<String, dynamic> userData;
 
-  const SignupStep3Screen({
-    super.key,
-    required this.userData,
-  });
+  const SignupStep3Screen({super.key, required this.userData});
 
   @override
   State<SignupStep3Screen> createState() => _SignupStep3ScreenState();
@@ -37,8 +34,9 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
         'weight': double.parse(_weightController.text),
       };
 
-      final success =
-          await context.read<AuthProvider>().register(completeUserData);
+      final success = await context.read<AuthProvider>().register(
+        completeUserData,
+      );
 
       if (!mounted) return;
 
@@ -46,8 +44,9 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
         // Show success message and navigate back to login
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content:
-                Text('Account created successfully! Please login to continue.'),
+            content: Text(
+              'Account created successfully! Please login to continue.',
+            ),
             backgroundColor: Colors.green,
           ),
         );
@@ -57,8 +56,10 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(context.read<AuthProvider>().errorMessage ??
-                'Registration failed'),
+            content: Text(
+              context.read<AuthProvider>().errorMessage ??
+                  'Registration failed',
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -121,19 +122,13 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
                 // Title
                 const Text(
                   'Step 3: Physical Metrics',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'Almost done! Enter your physical measurements',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
@@ -157,10 +152,14 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
                         _buildSummaryRow('Name', widget.userData['name']),
                         _buildSummaryRow('Email', widget.userData['email']),
                         _buildSummaryRow(
-                            'Date of Birth', widget.userData['dateOfBirth']),
+                          'Date of Birth',
+                          widget.userData['dateOfBirth'],
+                        ),
                         _buildSummaryRow('Gender', widget.userData['gender']),
                         _buildSummaryRow(
-                            'Blood Group', widget.userData['bloodGroup']),
+                          'Blood Group',
+                          widget.userData['bloodGroup'],
+                        ),
                       ],
                     ),
                   ),
@@ -171,8 +170,9 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
                   controller: _heightController,
                   label: 'Height (cm)',
                   hint: 'Enter your height in centimeters',
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your height';
@@ -193,8 +193,9 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
                   controller: _weightController,
                   label: 'Weight (kg)',
                   hint: 'Enter your weight in kilograms',
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your weight';
@@ -225,8 +226,9 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
                         builder: (context, authProvider, child) {
                           return PrimaryButton(
                             text: 'Create Account',
-                            onPressed:
-                                authProvider.isLoading ? null : _completeSignup,
+                            onPressed: authProvider.isLoading
+                                ? null
+                                : _completeSignup,
                             isLoading: authProvider.isLoading,
                           );
                         },
@@ -261,9 +263,7 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ),
         ],

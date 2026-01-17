@@ -100,19 +100,13 @@ class _SignupStep1ScreenState extends State<SignupStep1Screen> {
                 // Title
                 const Text(
                   'Step 1: Basic Information',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'Let\'s start with your basic details',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
@@ -139,8 +133,9 @@ class _SignupStep1ScreenState extends State<SignupStep1Screen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
                     }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                        .hasMatch(value)) {
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value)) {
                       return 'Please enter a valid email address';
                     }
                     return null;
@@ -198,10 +193,7 @@ class _SignupStep1ScreenState extends State<SignupStep1Screen> {
                 ),
                 const SizedBox(height: 32),
                 // Next button
-                PrimaryButton(
-                  text: 'Next',
-                  onPressed: _nextStep,
-                ),
+                PrimaryButton(text: 'Next', onPressed: _nextStep),
                 const SizedBox(height: 16),
                 // Back to login
                 Row(

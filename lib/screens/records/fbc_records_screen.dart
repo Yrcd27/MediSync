@@ -153,8 +153,9 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
                           padding: EdgeInsets.all(AppSpacing.sm),
                           decoration: BoxDecoration(
                             color: AppColors.bloodCount.withOpacity(0.1),
-                            borderRadius:
-                                BorderRadius.circular(AppSpacing.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusMd,
+                            ),
                           ),
                           child: Icon(
                             Icons.bloodtype_rounded,
@@ -192,8 +193,9 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
                       controller: _haemoglobinController,
                       label: 'Haemoglobin (g/dL)',
                       hint: '14.5',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
@@ -208,8 +210,9 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
                       controller: _wbcController,
                       label: 'WBC (cells/mcL)',
                       hint: '7500',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
@@ -224,8 +227,9 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
                       controller: _plateletController,
                       label: 'Platelet (cells/mcL)',
                       hint: '250000',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
@@ -271,8 +275,12 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: healthProvider.fbcRecords.length,
                   itemBuilder: (context, index) {
-                    final record = healthProvider
-                        .fbcRecords[healthProvider.fbcRecords.length - 1 - index];
+                    final record =
+                        healthProvider.fbcRecords[healthProvider
+                                .fbcRecords
+                                .length -
+                            1 -
+                            index];
                     return _buildRecordCard(record, isDark);
                   },
                 );
@@ -315,8 +323,9 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
               child: Text(
                 'Hb: ${record.haemoglobin.toStringAsFixed(1)} g/dL',
                 style: AppTypography.titleSmall.copyWith(
-                  color:
-                      isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
                 ),
               ),
             ),
@@ -342,8 +351,9 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
         subtitle: Text(
           DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
           style: AppTypography.bodySmall.copyWith(
-            color:
-                isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.darkTextSecondary
+                : AppColors.textSecondary,
           ),
         ),
         children: [

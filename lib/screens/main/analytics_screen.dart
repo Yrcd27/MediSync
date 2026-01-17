@@ -16,12 +16,8 @@ class AnalyticsScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? AppColors.darkBackground : AppColors.background,
-      appBar: CustomAppBar(
-        title: 'Analytics',
-        showBackButton: true,
-      ),
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
+      appBar: CustomAppBar(title: 'Analytics', showBackButton: true),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(AppSpacing.lg),
         child: Consumer<HealthRecordsProvider>(
@@ -213,12 +209,15 @@ class AnalyticsScreen extends StatelessWidget {
               },
             ),
           ),
-          bottomTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         borderData: FlBorderData(
           show: true,
@@ -240,8 +239,9 @@ class AnalyticsScreen extends StatelessWidget {
                   radius: 4,
                   color: AppColors.bloodSugar,
                   strokeWidth: 2,
-                  strokeColor:
-                      isDark ? AppColors.darkSurface : AppColors.surface,
+                  strokeColor: isDark
+                      ? AppColors.darkSurface
+                      : AppColors.surface,
                 );
               },
             ),
@@ -311,12 +311,15 @@ class AnalyticsScreen extends StatelessWidget {
               },
             ),
           ),
-          bottomTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          bottomTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         borderData: FlBorderData(
           show: true,
@@ -338,8 +341,9 @@ class AnalyticsScreen extends StatelessWidget {
                   radius: 4,
                   color: AppColors.bloodPressure,
                   strokeWidth: 2,
-                  strokeColor:
-                      isDark ? AppColors.darkSurface : AppColors.surface,
+                  strokeColor: isDark
+                      ? AppColors.darkSurface
+                      : AppColors.surface,
                 );
               },
             ),
@@ -361,8 +365,9 @@ class AnalyticsScreen extends StatelessWidget {
                   radius: 4,
                   color: AppColors.primary,
                   strokeWidth: 2,
-                  strokeColor:
-                      isDark ? AppColors.darkSurface : AppColors.surface,
+                  strokeColor: isDark
+                      ? AppColors.darkSurface
+                      : AppColors.surface,
                 );
               },
             ),
@@ -373,7 +378,12 @@ class AnalyticsScreen extends StatelessWidget {
   }
 
   Widget _buildStatCard(
-      BuildContext context, String title, String value, String unit, Color color) {
+    BuildContext context,
+    String title,
+    String value,
+    String unit,
+    Color color,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(

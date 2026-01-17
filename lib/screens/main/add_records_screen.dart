@@ -38,12 +38,8 @@ class _AddRecordsScreenState extends State<AddRecordsScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? AppColors.darkBackground : AppColors.background,
-      appBar: CustomAppBar(
-        title: 'Health Records',
-        showBackButton: true,
-      ),
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
+      appBar: CustomAppBar(title: 'Health Records', showBackButton: true),
       body: Column(
         children: [
           // Tab Bar

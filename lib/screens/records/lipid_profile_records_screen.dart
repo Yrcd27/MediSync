@@ -161,8 +161,9 @@ class _LipidProfileRecordsScreenState extends State<LipidProfileRecordsScreen> {
                           padding: EdgeInsets.all(AppSpacing.sm),
                           decoration: BoxDecoration(
                             color: AppColors.lipidProfile.withOpacity(0.1),
-                            borderRadius:
-                                BorderRadius.circular(AppSpacing.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusMd,
+                            ),
                           ),
                           child: Icon(
                             Icons.favorite_rounded,
@@ -200,8 +201,9 @@ class _LipidProfileRecordsScreenState extends State<LipidProfileRecordsScreen> {
                       controller: _totalCholesterolController,
                       label: 'Total Cholesterol (mg/dL)',
                       hint: '200',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
@@ -216,8 +218,9 @@ class _LipidProfileRecordsScreenState extends State<LipidProfileRecordsScreen> {
                       controller: _hdlController,
                       label: 'HDL (mg/dL)',
                       hint: '50',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
@@ -232,8 +235,9 @@ class _LipidProfileRecordsScreenState extends State<LipidProfileRecordsScreen> {
                       controller: _ldlController,
                       label: 'LDL (mg/dL)',
                       hint: '100',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
@@ -248,8 +252,9 @@ class _LipidProfileRecordsScreenState extends State<LipidProfileRecordsScreen> {
                       controller: _triglyceridesController,
                       label: 'Triglycerides (mg/dL)',
                       hint: '150',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
@@ -295,8 +300,12 @@ class _LipidProfileRecordsScreenState extends State<LipidProfileRecordsScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: healthProvider.lipidRecords.length,
                   itemBuilder: (context, index) {
-                    final record = healthProvider
-                        .lipidRecords[healthProvider.lipidRecords.length - 1 - index];
+                    final record =
+                        healthProvider.lipidRecords[healthProvider
+                                .lipidRecords
+                                .length -
+                            1 -
+                            index];
                     return _buildRecordCard(record, isDark);
                   },
                 );
@@ -324,7 +333,9 @@ class _LipidProfileRecordsScreenState extends State<LipidProfileRecordsScreen> {
         leading: Container(
           padding: EdgeInsets.all(AppSpacing.sm),
           decoration: BoxDecoration(
-            color: _getCholesterolColor(record.totalCholesterol).withOpacity(0.1),
+            color: _getCholesterolColor(
+              record.totalCholesterol,
+            ).withOpacity(0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -339,8 +350,9 @@ class _LipidProfileRecordsScreenState extends State<LipidProfileRecordsScreen> {
               child: Text(
                 'Total: ${record.totalCholesterol.toStringAsFixed(0)} mg/dL',
                 style: AppTypography.titleSmall.copyWith(
-                  color:
-                      isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
                 ),
               ),
             ),
@@ -350,7 +362,9 @@ class _LipidProfileRecordsScreenState extends State<LipidProfileRecordsScreen> {
                 vertical: AppSpacing.sm,
               ),
               decoration: BoxDecoration(
-                color: _getCholesterolColor(record.totalCholesterol).withOpacity(0.1),
+                color: _getCholesterolColor(
+                  record.totalCholesterol,
+                ).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
               ),
               child: Text(
@@ -366,8 +380,9 @@ class _LipidProfileRecordsScreenState extends State<LipidProfileRecordsScreen> {
         subtitle: Text(
           DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
           style: AppTypography.bodySmall.copyWith(
-            color:
-                isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.darkTextSecondary
+                : AppColors.textSecondary,
           ),
         ),
         children: [

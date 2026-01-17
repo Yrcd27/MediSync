@@ -150,8 +150,9 @@ class _BloodPressureRecordsScreenState
                           padding: EdgeInsets.all(AppSpacing.sm),
                           decoration: BoxDecoration(
                             color: AppColors.bloodPressure.withOpacity(0.1),
-                            borderRadius:
-                                BorderRadius.circular(AppSpacing.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusMd,
+                            ),
                           ),
                           child: Icon(
                             Icons.favorite_rounded,
@@ -309,15 +310,15 @@ class _BloodPressureRecordsScreenState
         title: Text(
           '${record.systolic.toStringAsFixed(0)}/${record.diastolic.toStringAsFixed(0)} mmHg',
           style: AppTypography.titleSmall.copyWith(
-            color:
-                isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
           ),
         ),
         subtitle: Text(
           DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
           style: AppTypography.bodySmall.copyWith(
-            color:
-                isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.darkTextSecondary
+                : AppColors.textSecondary,
           ),
         ),
         trailing: Container(

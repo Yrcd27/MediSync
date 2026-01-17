@@ -192,8 +192,9 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
                           padding: EdgeInsets.all(AppSpacing.sm),
                           decoration: BoxDecoration(
                             color: AppColors.urineReport.withOpacity(0.1),
-                            borderRadius:
-                                BorderRadius.circular(AppSpacing.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusMd,
+                            ),
                           ),
                           child: Icon(
                             Icons.opacity_rounded,
@@ -283,8 +284,9 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
                       controller: _specificGravityController,
                       label: 'Specific Gravity (Optional)',
                       hint: '1.020',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                     ),
                     SizedBox(height: AppSpacing.md),
 
@@ -323,8 +325,12 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: healthProvider.urineRecords.length,
                   itemBuilder: (context, index) {
-                    final record = healthProvider
-                        .urineRecords[healthProvider.urineRecords.length - 1 - index];
+                    final record =
+                        healthProvider.urineRecords[healthProvider
+                                .urineRecords
+                                .length -
+                            1 -
+                            index];
                     return _buildRecordCard(record, isDark);
                   },
                 );
@@ -365,10 +371,7 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-          borderSide: BorderSide(
-            color: AppColors.primary,
-            width: 2,
-          ),
+          borderSide: BorderSide(color: AppColors.primary, width: 2),
         ),
         contentPadding: EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
@@ -381,10 +384,7 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
         color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
       ),
       items: options.map((String option) {
-        return DropdownMenuItem<String>(
-          value: option,
-          child: Text(option),
-        );
+        return DropdownMenuItem<String>(value: option, child: Text(option));
       }).toList(),
       onChanged: onChanged,
     );
@@ -420,8 +420,9 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
               child: Text(
                 'Color: ${record.color}',
                 style: AppTypography.titleSmall.copyWith(
-                  color:
-                      isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
                 ),
               ),
             ),
@@ -450,18 +451,22 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
           children: [
             SizedBox(height: AppSpacing.xs),
             Text(
-              DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
+              DateFormat(
+                'MMM dd, yyyy',
+              ).format(DateTime.parse(record.testDate)),
               style: AppTypography.bodySmall.copyWith(
-                color:
-                    isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.textSecondary,
               ),
             ),
             SizedBox(height: AppSpacing.xs),
             Text(
               'Protein: ${record.protein}, Sugar: ${record.sugar}',
               style: AppTypography.labelSmall.copyWith(
-                color:
-                    isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.textSecondary,
               ),
             ),
           ],

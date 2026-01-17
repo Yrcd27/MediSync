@@ -158,8 +158,9 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
                           padding: EdgeInsets.all(AppSpacing.sm),
                           decoration: BoxDecoration(
                             color: AppColors.liverProfile.withOpacity(0.1),
-                            borderRadius:
-                                BorderRadius.circular(AppSpacing.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusMd,
+                            ),
                           ),
                           child: Icon(
                             Icons.science_rounded,
@@ -197,8 +198,9 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
                       controller: _totalProteinController,
                       label: 'Total Protein (g/dL)',
                       hint: '7.0',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
@@ -213,8 +215,9 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
                       controller: _albuminController,
                       label: 'Albumin (g/dL)',
                       hint: '4.0',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
@@ -229,8 +232,9 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
                       controller: _bilirubinController,
                       label: 'Bilirubin (mg/dL)',
                       hint: '1.0',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
@@ -245,8 +249,9 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
                       controller: _sgptController,
                       label: 'SGPT/ALT (U/L)',
                       hint: '30',
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
@@ -292,8 +297,12 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: healthProvider.liverRecords.length,
                   itemBuilder: (context, index) {
-                    final record = healthProvider
-                        .liverRecords[healthProvider.liverRecords.length - 1 - index];
+                    final record =
+                        healthProvider.liverRecords[healthProvider
+                                .liverRecords
+                                .length -
+                            1 -
+                            index];
                     return _buildRecordCard(record, isDark);
                   },
                 );
@@ -336,8 +345,9 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
               child: Text(
                 'SGPT: ${record.sgpt.toStringAsFixed(0)} U/L',
                 style: AppTypography.titleSmall.copyWith(
-                  color:
-                      isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
                 ),
               ),
             ),
@@ -363,8 +373,9 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
         subtitle: Text(
           DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
           style: AppTypography.bodySmall.copyWith(
-            color:
-                isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.darkTextSecondary
+                : AppColors.textSecondary,
           ),
         ),
         children: [

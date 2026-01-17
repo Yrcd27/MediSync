@@ -8,10 +8,7 @@ import 'signup_step3_screen.dart';
 class SignupStep2Screen extends StatefulWidget {
   final Map<String, dynamic> userData;
 
-  const SignupStep2Screen({
-    super.key,
-    required this.userData,
-  });
+  const SignupStep2Screen({super.key, required this.userData});
 
   @override
   State<SignupStep2Screen> createState() => _SignupStep2ScreenState();
@@ -32,7 +29,7 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
     'AB+',
     'AB-',
     'O+',
-    'O-'
+    'O-',
   ];
 
   @override
@@ -160,19 +157,13 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                 // Title
                 const Text(
                   'Step 2: Personal Details',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'Tell us a bit more about yourself',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
@@ -221,8 +212,9 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                       backgroundColor: Colors.grey.shade100,
                       labelStyle: TextStyle(
                         color: isSelected ? Colors.blue : Colors.black87,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.normal,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                       ),
                       side: BorderSide(
                         color: isSelected ? Colors.blue : Colors.grey.shade300,
@@ -258,8 +250,9 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                       backgroundColor: Colors.grey.shade100,
                       labelStyle: TextStyle(
                         color: isSelected ? Colors.blue : Colors.black87,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.normal,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                       ),
                       side: BorderSide(
                         color: isSelected ? Colors.blue : Colors.grey.shade300,
@@ -279,10 +272,7 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: PrimaryButton(
-                        text: 'Next',
-                        onPressed: _nextStep,
-                      ),
+                      child: PrimaryButton(text: 'Next', onPressed: _nextStep),
                     ),
                   ],
                 ),
