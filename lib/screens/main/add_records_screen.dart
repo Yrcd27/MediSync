@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_typography.dart';
+import '../../core/constants/app_spacing.dart';
+import '../../widgets/common/custom_app_bar.dart';
 import '../records/fbs_records_screen.dart';
 import '../records/blood_pressure_records_screen.dart';
 import '../records/fbc_records_screen.dart';
@@ -31,36 +35,64 @@ class _AddRecordsScreenState extends State<AddRecordsScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Health Records'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        bottom: TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          tabs: const [
-            Tab(text: 'Blood Sugar'),
-            Tab(text: 'Blood Pressure'),
-            Tab(text: 'Blood Count'),
-            Tab(text: 'Lipid Profile'),
-            Tab(text: 'Liver Profile'),
-            Tab(text: 'Urine Report'),
-          ],
-        ),
+      backgroundColor:
+          isDark ? AppColors.darkBackground : AppColors.background,
+      appBar: CustomAppBar(
+        title: 'Health Records',
+        showBackButton: true,
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
         children: [
-          FbsRecordsScreen(),
-          BloodPressureRecordsScreen(),
-          FbcRecordsScreen(),
-          LipidProfileRecordsScreen(),
-          LiverProfileRecordsScreen(),
-          UrineReportRecordsScreen(),
+          // Tab Bar
+          Container(
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkSurface : AppColors.surface,
+              border: Border(
+                bottom: BorderSide(
+                  color: isDark ? AppColors.darkBorder : AppColors.border,
+                  width: 1,
+                ),
+              ),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              labelStyle: AppTypography.labelLarge,
+              unselectedLabelStyle: AppTypography.labelMedium,
+              labelColor: AppColors.primary,
+              unselectedLabelColor: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.textSecondary,
+              indicatorColor: AppColors.primary,
+              indicatorWeight: 3,
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              tabs: const [
+                Tab(text: 'Blood Sugar'),
+                Tab(text: 'Blood Pressure'),
+                Tab(text: 'Blood Count'),
+                Tab(text: 'Lipid Profile'),
+                Tab(text: 'Liver Profile'),
+                Tab(text: 'Urine Report'),
+              ],
+            ),
+          ),
+          // Tab Bar View
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                FbsRecordsScreen(),
+                BloodPressureRecordsScreen(),
+                FbcRecordsScreen(),
+                LipidProfileRecordsScreen(),
+                LiverProfileRecordsScreen(),
+                UrineReportRecordsScreen(),
+              ],
+            ),
+          ),
         ],
       ),
     );
