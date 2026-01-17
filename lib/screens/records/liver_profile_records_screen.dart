@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_typography.dart';
+import '../../core/constants/app_spacing.dart';
+import '../../widgets/inputs/custom_text_field.dart';
+import '../../widgets/buttons/primary_button.dart';
+import '../../widgets/feedback/loading_indicator.dart';
+import '../../widgets/feedback/empty_state.dart';
+import '../../widgets/feedback/custom_snackbar.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/health_records_provider.dart';
 import '../../models/liver_profile.dart';
@@ -84,11 +92,10 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
 
         if (mounted) {
           if (success) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Liver profile record added successfully!'),
-                backgroundColor: Colors.green,
-              ),
+            CustomSnackbar.show(
+              context,
+              message: 'Liver profile record added successfully!',
+              type: SnackbarType.success,
             );
 
             _totalProteinController.clear();
@@ -100,13 +107,10 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
               'yyyy-MM-dd',
             ).format(DateTime.now());
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  healthProvider.errorMessage ?? 'Error adding record',
-                ),
-                backgroundColor: Colors.red,
-              ),
+            CustomSnackbar.show(
+              context,
+              message: healthProvider.errorMessage ?? 'Error adding record',
+              type: SnackbarType.error,
             );
           }
         }
@@ -120,286 +124,237 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
     }
   }
 
-  Widget _buildCompactField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    String? Function(String?)? validator,
-  }) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      ),
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      style: const TextStyle(fontSize: 14),
-      validator: validator,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isWide = constraints.maxWidth > 600;
-        final columnCount = isWide ? 2 : 1;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-        return SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: constraints.maxWidth * 0.02,
-              vertical: 8.0,
-            ),
-            child: Column(
-              children: [
-                Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            'Add Liver Profile Record',
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.teal,
-                                ),
-                          ),
-                          const SizedBox(height: 12),
-
-                          InkWell(
-                            onTap: _selectDate,
-                            child: InputDecorator(
-                              decoration: InputDecoration(
-                                labelText: 'Test Date',
-                                suffixIcon: const Icon(
-                                  Icons.calendar_today,
-                                  size: 20,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                              ),
-                              child: Text(
-                                _testDateController.text,
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-
-                          GridView.count(
-                            crossAxisCount: columnCount,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                            childAspectRatio: isWide ? 4.0 : 5.5,
-                            children: [
-                              _buildCompactField(
-                                controller: _totalProteinController,
-                                label: 'Total Protein (g/dL)',
-                                hint: '7.0',
-                                validator: (value) {
-                                  if (value == null || value.isEmpty)
-                                    return 'Required';
-                                  final val = double.tryParse(value);
-                                  if (val == null || val < 4 || val > 10)
-                                    return 'Invalid range';
-                                  return null;
-                                },
-                              ),
-                              _buildCompactField(
-                                controller: _albuminController,
-                                label: 'Albumin (g/dL)',
-                                hint: '4.0',
-                                validator: (value) {
-                                  if (value == null || value.isEmpty)
-                                    return 'Required';
-                                  final val = double.tryParse(value);
-                                  if (val == null || val < 2 || val > 6)
-                                    return 'Invalid range';
-                                  return null;
-                                },
-                              ),
-                              _buildCompactField(
-                                controller: _bilirubinController,
-                                label: 'Bilirubin (mg/dL)',
-                                hint: '1.0',
-                                validator: (value) {
-                                  if (value == null || value.isEmpty)
-                                    return 'Required';
-                                  final val = double.tryParse(value);
-                                  if (val == null || val < 0 || val > 5)
-                                    return 'Invalid range';
-                                  return null;
-                                },
-                              ),
-                              _buildCompactField(
-                                controller: _sgptController,
-                                label: 'SGPT/ALT (U/L)',
-                                hint: '30',
-                                validator: (value) {
-                                  if (value == null || value.isEmpty)
-                                    return 'Required';
-                                  final val = double.tryParse(value);
-                                  if (val == null || val < 5 || val > 200)
-                                    return 'Invalid range';
-                                  return null;
-                                },
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-
-                          TextFormField(
-                            controller: _imageUrlController,
-                            decoration: InputDecoration(
-                              labelText: 'Report Image (Optional)',
-                              hintText: 'URL or file path',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                            ),
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          const SizedBox(height: 12),
-
-                          SizedBox(
-                            width: double.infinity,
-                            height: 60,
-                            child: ElevatedButton(
-                              onPressed: _addRecord,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.teal,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: _isSubmitting
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Add Record',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkSurface : AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
                   ),
-                ),
-
-                const SizedBox(height: 8),
-
-                Consumer<HealthRecordsProvider>(
-                  builder: (context, healthProvider, child) {
-                    if (healthProvider.liverRecords.isEmpty) {
-                      return Card(
-                        child: Container(
-                          padding: const EdgeInsets.all(20),
-                          child: const Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.science, size: 48, color: Colors.grey),
-                              SizedBox(height: 8),
-                              Text(
-                                'No records yet',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
+                ],
+              ),
+              padding: EdgeInsets.all(AppSpacing.lg),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(AppSpacing.sm),
+                          decoration: BoxDecoration(
+                            color: AppColors.liverProfile.withOpacity(0.1),
+                            borderRadius:
+                                BorderRadius.circular(AppSpacing.radiusMd),
+                          ),
+                          child: Icon(
+                            Icons.science_rounded,
+                            color: AppColors.liverProfile,
+                            size: AppSpacing.iconMd,
                           ),
                         ),
-                      );
-                    }
+                        SizedBox(width: AppSpacing.md),
+                        Text(
+                          'Add Liver Profile',
+                          style: AppTypography.titleMedium.copyWith(
+                            color: isDark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: AppSpacing.lg),
 
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: healthProvider.liverRecords.length,
-                      itemBuilder: (context, index) {
-                        final record =
-                            healthProvider.liverRecords[healthProvider
-                                    .liverRecords
-                                    .length -
-                                1 -
-                                index];
-                        return _buildCompactRecordCard(record);
+                    GestureDetector(
+                      onTap: _selectDate,
+                      child: AbsorbPointer(
+                        child: CustomTextField(
+                          controller: _testDateController,
+                          label: 'Test Date',
+                          hint: 'Select date',
+                          suffixIcon: Icons.calendar_today,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    CustomTextField(
+                      controller: _totalProteinController,
+                      label: 'Total Protein (g/dL)',
+                      hint: '7.0',
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Required';
+                        final val = double.tryParse(value);
+                        if (val == null || val < 4 || val > 10)
+                          return 'Invalid range (4-10)';
+                        return null;
                       },
-                    );
-                  },
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    CustomTextField(
+                      controller: _albuminController,
+                      label: 'Albumin (g/dL)',
+                      hint: '4.0',
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Required';
+                        final val = double.tryParse(value);
+                        if (val == null || val < 2 || val > 6)
+                          return 'Invalid range (2-6)';
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    CustomTextField(
+                      controller: _bilirubinController,
+                      label: 'Bilirubin (mg/dL)',
+                      hint: '1.0',
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Required';
+                        final val = double.tryParse(value);
+                        if (val == null || val < 0 || val > 5)
+                          return 'Invalid range (0-5)';
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    CustomTextField(
+                      controller: _sgptController,
+                      label: 'SGPT/ALT (U/L)',
+                      hint: '30',
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Required';
+                        final val = double.tryParse(value);
+                        if (val == null || val < 5 || val > 200)
+                          return 'Invalid range (5-200)';
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    CustomTextField(
+                      controller: _imageUrlController,
+                      label: 'Report Image (Optional)',
+                      hint: 'URL or file path',
+                    ),
+                    SizedBox(height: AppSpacing.lg),
+
+                    PrimaryButton(
+                      text: 'Add Record',
+                      onPressed: _isSubmitting ? null : _addRecord,
+                      isLoading: _isSubmitting,
+                      icon: Icons.add_rounded,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        );
-      },
+
+            SizedBox(height: AppSpacing.lg),
+
+            Consumer<HealthRecordsProvider>(
+              builder: (context, healthProvider, child) {
+                if (healthProvider.liverRecords.isEmpty) {
+                  return const EmptyState(
+                    icon: Icons.science_outlined,
+                    message: 'No liver profile records yet',
+                    description: 'Add your first liver profile record above',
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: healthProvider.liverRecords.length,
+                  itemBuilder: (context, index) {
+                    final record = healthProvider
+                        .liverRecords[healthProvider.liverRecords.length - 1 - index];
+                    return _buildRecordCard(record, isDark);
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildCompactRecordCard(LiverProfile record) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 4),
+  Widget _buildRecordCard(LiverProfile record, bool isDark) {
+    return Container(
+      margin: EdgeInsets.only(bottom: AppSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.border,
+        ),
+      ),
       child: ExpansionTile(
-        leading: CircleAvatar(
-          radius: 16,
-          backgroundColor: _getSGPTColor(record.sgpt),
-          child: const Icon(Icons.science, color: Colors.white, size: 16),
+        tilePadding: EdgeInsets.all(AppSpacing.md),
+        childrenPadding: EdgeInsets.all(AppSpacing.md),
+        leading: Container(
+          padding: EdgeInsets.all(AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: _getSGPTColor(record.sgpt).withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.science_rounded,
+            color: _getSGPTColor(record.sgpt),
+            size: AppSpacing.iconMd,
+          ),
         ),
         title: Row(
           children: [
             Expanded(
               child: Text(
                 'SGPT: ${record.sgpt.toStringAsFixed(0)} U/L',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                style: AppTypography.titleSmall.copyWith(
+                  color:
+                      isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                 ),
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm,
+              ),
               decoration: BoxDecoration(
                 color: _getSGPTColor(record.sgpt).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
               ),
               child: Text(
                 _getSGPTStatus(record.sgpt),
-                style: TextStyle(
+                style: AppTypography.labelSmall.copyWith(
                   color: _getSGPTColor(record.sgpt),
                   fontWeight: FontWeight.bold,
-                  fontSize: 11,
                 ),
               ),
             ),
@@ -407,43 +362,55 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
         ),
         subtitle: Text(
           DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
-          style: const TextStyle(fontSize: 12),
+          style: AppTypography.bodySmall.copyWith(
+            color:
+                isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+          ),
         ),
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Total Protein: ${record.proteinTotalSerum.toStringAsFixed(1)} g/dL',
-                        style: const TextStyle(fontSize: 13),
+          Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Total Protein: ${record.proteinTotalSerum.toStringAsFixed(1)} g/dL',
+                      style: AppTypography.bodySmall.copyWith(
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                       ),
                     ),
-                    Expanded(
-                      child: Text(
-                        'Albumin: ${record.albuminSerum.toStringAsFixed(1)} g/dL',
-                        style: const TextStyle(fontSize: 13),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Albumin: ${record.albuminSerum.toStringAsFixed(1)} g/dL',
+                      style: AppTypography.bodySmall.copyWith(
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Bilirubin: ${record.bilirubinTotalSerum.toStringAsFixed(1)} mg/dL',
-                        style: const TextStyle(fontSize: 13),
+                  ),
+                ],
+              ),
+              SizedBox(height: AppSpacing.sm),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Bilirubin: ${record.bilirubinTotalSerum.toStringAsFixed(1)} mg/dL',
+                      style: AppTypography.bodySmall.copyWith(
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                       ),
                     ),
-                    const Expanded(child: SizedBox()), // Empty space
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                  const Expanded(child: SizedBox()),
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -451,9 +418,9 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
   }
 
   Color _getSGPTColor(double sgpt) {
-    if (sgpt <= 40) return Colors.green;
-    if (sgpt <= 80) return Colors.orange;
-    return Colors.red;
+    if (sgpt <= 40) return AppColors.success;
+    if (sgpt <= 80) return AppColors.warning;
+    return AppColors.error;
   }
 
   String _getSGPTStatus(double sgpt) {

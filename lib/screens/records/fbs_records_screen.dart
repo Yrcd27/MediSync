@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_typography.dart';
+import '../../core/constants/app_spacing.dart';
+import '../../widgets/inputs/custom_text_field.dart';
+import '../../widgets/buttons/primary_button.dart';
+import '../../widgets/feedback/loading_indicator.dart';
+import '../../widgets/feedback/empty_state.dart';
+import '../../widgets/feedback/custom_snackbar.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/health_records_provider.dart';
 import '../../models/fasting_blood_sugar.dart';
@@ -74,11 +82,10 @@ class _FbsRecordsScreenState extends State<FbsRecordsScreen> {
 
         if (mounted) {
           if (success) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('FBS record added successfully!'),
-                backgroundColor: Colors.green,
-              ),
+            CustomSnackbar.show(
+              context,
+              message: 'FBS record added successfully!',
+              type: SnackbarType.success,
             );
 
             _fbsController.clear();
@@ -87,13 +94,10 @@ class _FbsRecordsScreenState extends State<FbsRecordsScreen> {
               'yyyy-MM-dd',
             ).format(DateTime.now());
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  healthProvider.errorMessage ?? 'Error adding record',
-                ),
-                backgroundColor: Colors.red,
-              ),
+            CustomSnackbar.show(
+              context,
+              message: healthProvider.errorMessage ?? 'Error adding record',
+              type: SnackbarType.error,
             );
           }
         }
@@ -109,45 +113,195 @@ class _FbsRecordsScreenState extends State<FbsRecordsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: constraints.maxWidth * 0.02,
-              vertical: 8.0,
-            ),
-            child: Column(
-              children: [
-                Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            'Add Fasting Blood Sugar Record',
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.orange,
-                                ),
-                          ),
-                          const SizedBox(height: 12),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-                          InkWell(
-                            onTap: _selectDate,
-                            child: InputDecorator(
-                              decoration: InputDecoration(
-                                labelText: 'Test Date',
-                                suffixIcon: const Icon(
-                                  Icons.calendar_today,
-                                  size: 20,
-                                ),
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkSurface : AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.all(AppSpacing.lg),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(AppSpacing.sm),
+                          decoration: BoxDecoration(
+                            color: AppColors.bloodSugar.withOpacity(0.1),
+                            borderRadius:
+                                BorderRadius.circular(AppSpacing.radiusMd),
+                          ),
+                          child: Icon(
+                            Icons.bloodtype_rounded,
+                            color: AppColors.bloodSugar,
+                            size: AppSpacing.iconMd,
+                          ),
+                        ),
+                        SizedBox(width: AppSpacing.md),
+                        Text(
+                          'Add Fasting Blood Sugar',
+                          style: AppTypography.titleMedium.copyWith(
+                            color: isDark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: AppSpacing.lg),
+
+                    GestureDetector(
+                      onTap: _selectDate,
+                      child: AbsorbPointer(
+                        child: CustomTextField(
+                          controller: _testDateController,
+                          label: 'Test Date',
+                          hint: 'Select date',
+                          suffixIcon: Icons.calendar_today,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    CustomTextField(
+                      controller: _fbsController,
+                      label: 'Fasting Blood Sugar (mg/dL)',
+                      hint: '90',
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Required';
+                        final val = double.tryParse(value);
+                        if (val == null || val < 30 || val > 400)
+                          return 'Invalid range (30-400)';
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    CustomTextField(
+                      controller: _imageUrlController,
+                      label: 'Report Image (Optional)',
+                      hint: 'URL or file path',
+                    ),
+                    SizedBox(height: AppSpacing.lg),
+
+                    PrimaryButton(
+                      text: 'Add Record',
+                      onPressed: _isSubmitting ? null : _addRecord,
+                      isLoading: _isSubmitting,
+                      icon: Icons.add_rounded,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(height: AppSpacing.lg),
+
+            Consumer<HealthRecordsProvider>(
+              builder: (context, healthProvider, child) {
+                if (healthProvider.fbsRecords.isEmpty) {
+                  return const EmptyState(
+                    icon: Icons.water_drop_outlined,
+                    message: 'No FBS records yet',
+                    description: 'Add your first blood sugar record above',
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: healthProvider.fbsRecords.length,
+                  itemBuilder: (context, index) {
+                    final record = healthProvider
+                        .fbsRecords[healthProvider.fbsRecords.length - 1 - index];
+                    return _buildRecordCard(record, isDark);
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecordCard(FastingBloodSugar record, bool isDark) {
+    return Container(
+      margin: EdgeInsets.only(bottom: AppSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.border,
+        ),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(AppSpacing.md),
+        leading: Container(
+          padding: EdgeInsets.all(AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: _getFBSColor(record.fbsLevel).withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.water_drop_rounded,
+            color: _getFBSColor(record.fbsLevel),
+            size: AppSpacing.iconMd,
+          ),
+        ),
+        title: Text(
+          '${record.fbsLevel.toStringAsFixed(1)} mg/dL',
+          style: AppTypography.titleSmall.copyWith(
+            color:
+                isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+          ),
+        ),
+        subtitle: Text(
+          DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
+          style: AppTypography.bodySmall.copyWith(
+            color:
+                isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+          ),
+        ),
+        trailing: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            color: _getFBSColor(record.fbsLevel).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          ),
+          child: Text(
+            _getFBSStatus(record.fbsLevel),
+            style: AppTypography.labelSmall.copyWith(
+              color: _getFBSColor(record.fbsLevel),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -292,43 +446,66 @@ class _FbsRecordsScreenState extends State<FbsRecordsScreen> {
                     );
                   },
                 ),
-              ],
+              ),
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildCompactRecordCard(FastingBloodSugar record) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 4),
+  Widget _buildRecordCard(FastingBloodSugar record, bool isDark) {
+    return Container(
+      margin: EdgeInsets.only(bottom: AppSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.border,
+        ),
+      ),
       child: ListTile(
-        leading: CircleAvatar(
-          radius: 16,
-          backgroundColor: _getFBSColor(record.fbsLevel),
-          child: const Icon(Icons.water_drop, color: Colors.white, size: 16),
+        contentPadding: EdgeInsets.all(AppSpacing.md),
+        leading: Container(
+          padding: EdgeInsets.all(AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: _getFBSColor(record.fbsLevel).withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.water_drop_rounded,
+            color: _getFBSColor(record.fbsLevel),
+            size: AppSpacing.iconMd,
+          ),
         ),
         title: Text(
           '${record.fbsLevel.toStringAsFixed(1)} mg/dL',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          style: AppTypography.titleSmall.copyWith(
+            color:
+                isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+          ),
         ),
         subtitle: Text(
           DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
-          style: const TextStyle(fontSize: 12),
+          style: AppTypography.bodySmall.copyWith(
+            color:
+                isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+          ),
         ),
         trailing: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
           decoration: BoxDecoration(
             color: _getFBSColor(record.fbsLevel).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
           ),
           child: Text(
             _getFBSStatus(record.fbsLevel),
-            style: TextStyle(
+            style: AppTypography.labelSmall.copyWith(
               color: _getFBSColor(record.fbsLevel),
               fontWeight: FontWeight.bold,
-              fontSize: 11,
             ),
           ),
         ),
@@ -337,9 +514,9 @@ class _FbsRecordsScreenState extends State<FbsRecordsScreen> {
   }
 
   Color _getFBSColor(double fbs) {
-    if (fbs < 100) return Colors.green;
-    if (fbs < 126) return Colors.orange;
-    return Colors.red;
+    if (fbs < 100) return AppColors.success;
+    if (fbs < 126) return AppColors.warning;
+    return AppColors.error;
   }
 
   String _getFBSStatus(double fbs) {

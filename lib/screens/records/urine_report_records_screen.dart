@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_typography.dart';
+import '../../core/constants/app_spacing.dart';
+import '../../widgets/inputs/custom_text_field.dart';
+import '../../widgets/buttons/primary_button.dart';
+import '../../widgets/feedback/loading_indicator.dart';
+import '../../widgets/feedback/empty_state.dart';
+import '../../widgets/feedback/custom_snackbar.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/health_records_provider.dart';
 import '../../models/urine_report.dart';
@@ -117,11 +125,10 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
 
         if (mounted) {
           if (success) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Urine report record added successfully!'),
-                backgroundColor: Colors.green,
-              ),
+            CustomSnackbar.show(
+              context,
+              message: 'Urine report record added successfully!',
+              type: SnackbarType.success,
             );
 
             _selectedColor = 'Yellow';
@@ -134,13 +141,10 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
               'yyyy-MM-dd',
             ).format(DateTime.now());
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  healthProvider.errorMessage ?? 'Error adding record',
-                ),
-                backgroundColor: Colors.red,
-              ),
+            CustomSnackbar.show(
+              context,
+              message: healthProvider.errorMessage ?? 'Error adding record',
+              type: SnackbarType.error,
             );
           }
         }
@@ -154,296 +158,288 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
     }
   }
 
-  Widget _buildDropdownField({
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkSurface : AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.all(AppSpacing.lg),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(AppSpacing.sm),
+                          decoration: BoxDecoration(
+                            color: AppColors.urineReport.withOpacity(0.1),
+                            borderRadius:
+                                BorderRadius.circular(AppSpacing.radiusMd),
+                          ),
+                          child: Icon(
+                            Icons.opacity_rounded,
+                            color: AppColors.urineReport,
+                            size: AppSpacing.iconMd,
+                          ),
+                        ),
+                        SizedBox(width: AppSpacing.md),
+                        Text(
+                          'Add Urine Report',
+                          style: AppTypography.titleMedium.copyWith(
+                            color: isDark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: AppSpacing.lg),
+
+                    GestureDetector(
+                      onTap: _selectDate,
+                      child: AbsorbPointer(
+                        child: CustomTextField(
+                          controller: _testDateController,
+                          label: 'Test Date',
+                          hint: 'Select date',
+                          suffixIcon: Icons.calendar_today,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    _buildStyledDropdown(
+                      label: 'Color',
+                      value: _selectedColor,
+                      options: _colorOptions,
+                      isDark: isDark,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedColor = value ?? 'Yellow';
+                        });
+                      },
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    _buildStyledDropdown(
+                      label: 'Appearance',
+                      value: _selectedAppearance,
+                      options: _appearanceOptions,
+                      isDark: isDark,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedAppearance = value ?? 'Clear';
+                        });
+                      },
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    _buildStyledDropdown(
+                      label: 'Protein',
+                      value: _selectedProtein,
+                      options: _proteinOptions,
+                      isDark: isDark,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedProtein = value ?? 'Negative';
+                        });
+                      },
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    _buildStyledDropdown(
+                      label: 'Sugar',
+                      value: _selectedSugar,
+                      options: _sugarOptions,
+                      isDark: isDark,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedSugar = value ?? 'Negative';
+                        });
+                      },
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    CustomTextField(
+                      controller: _specificGravityController,
+                      label: 'Specific Gravity (Optional)',
+                      hint: '1.020',
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                    ),
+                    SizedBox(height: AppSpacing.md),
+
+                    CustomTextField(
+                      controller: _imageUrlController,
+                      label: 'Report Image (Optional)',
+                      hint: 'URL or file path',
+                    ),
+                    SizedBox(height: AppSpacing.lg),
+
+                    PrimaryButton(
+                      text: 'Add Record',
+                      onPressed: _isSubmitting ? null : _addRecord,
+                      isLoading: _isSubmitting,
+                      icon: Icons.add_rounded,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(height: AppSpacing.lg),
+
+            Consumer<HealthRecordsProvider>(
+              builder: (context, healthProvider, child) {
+                if (healthProvider.urineRecords.isEmpty) {
+                  return const EmptyState(
+                    icon: Icons.opacity_outlined,
+                    message: 'No urine report records yet',
+                    description: 'Add your first urine report record above',
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: healthProvider.urineRecords.length,
+                  itemBuilder: (context, index) {
+                    final record = healthProvider
+                        .urineRecords[healthProvider.urineRecords.length - 1 - index];
+                    return _buildRecordCard(record, isDark);
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStyledDropdown({
     required String label,
     required String value,
     required List<String> options,
+    required bool isDark,
     required ValueChanged<String?> onChanged,
   }) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        labelStyle: AppTypography.bodyMedium.copyWith(
+          color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+        ),
+        filled: true,
+        fillColor: isDark ? AppColors.darkSurface : AppColors.surface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          borderSide: BorderSide(
+            color: isDark ? AppColors.darkBorder : AppColors.border,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          borderSide: BorderSide(
+            color: isDark ? AppColors.darkBorder : AppColors.border,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+          borderSide: BorderSide(
+            color: AppColors.primary,
+            width: 2,
+          ),
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
       ),
       value: value,
-      style: const TextStyle(fontSize: 14, color: Colors.black),
+      dropdownColor: isDark ? AppColors.darkSurface : AppColors.surface,
+      style: AppTypography.bodyMedium.copyWith(
+        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+      ),
       items: options.map((String option) {
-        return DropdownMenuItem<String>(value: option, child: Text(option));
+        return DropdownMenuItem<String>(
+          value: option,
+          child: Text(option),
+        );
       }).toList(),
       onChanged: onChanged,
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isWide = constraints.maxWidth > 600;
-        final columnCount = isWide ? 2 : 1;
-
-        return SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: constraints.maxWidth * 0.02,
-              vertical: 8.0,
-            ),
-            child: Column(
-              children: [
-                Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            'Add Urine Report Record',
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.amber[700],
-                                ),
-                          ),
-                          const SizedBox(height: 12),
-
-                          InkWell(
-                            onTap: _selectDate,
-                            child: InputDecorator(
-                              decoration: InputDecoration(
-                                labelText: 'Test Date',
-                                suffixIcon: const Icon(
-                                  Icons.calendar_today,
-                                  size: 20,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                              ),
-                              child: Text(
-                                _testDateController.text,
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-
-                          GridView.count(
-                            crossAxisCount: columnCount,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                            childAspectRatio: isWide ? 4.0 : 5.5,
-                            children: [
-                              _buildDropdownField(
-                                label: 'Color',
-                                value: _selectedColor,
-                                options: _colorOptions,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedColor = value ?? 'Yellow';
-                                  });
-                                },
-                              ),
-                              _buildDropdownField(
-                                label: 'Appearance',
-                                value: _selectedAppearance,
-                                options: _appearanceOptions,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedAppearance = value ?? 'Clear';
-                                  });
-                                },
-                              ),
-                              _buildDropdownField(
-                                label: 'Protein',
-                                value: _selectedProtein,
-                                options: _proteinOptions,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedProtein = value ?? 'Negative';
-                                  });
-                                },
-                              ),
-                              _buildDropdownField(
-                                label: 'Sugar',
-                                value: _selectedSugar,
-                                options: _sugarOptions,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedSugar = value ?? 'Negative';
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-
-                          TextFormField(
-                            controller: _specificGravityController,
-                            decoration: InputDecoration(
-                              labelText: 'Specific Gravity (Optional)',
-                              hintText: '1.020',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                            ),
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          const SizedBox(height: 8),
-
-                          TextFormField(
-                            controller: _imageUrlController,
-                            decoration: InputDecoration(
-                              labelText: 'Report Image (Optional)',
-                              hintText: 'URL or file path',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                            ),
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                          const SizedBox(height: 12),
-
-                          SizedBox(
-                            width: double.infinity,
-                            height: 60,
-                            child: ElevatedButton(
-                              onPressed: _addRecord,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.amber[700],
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: _isSubmitting
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Add Record',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                Consumer<HealthRecordsProvider>(
-                  builder: (context, healthProvider, child) {
-                    if (healthProvider.urineRecords.isEmpty) {
-                      return Card(
-                        child: Container(
-                          padding: const EdgeInsets.all(20),
-                          child: const Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.opacity, size: 48, color: Colors.grey),
-                              SizedBox(height: 8),
-                              Text(
-                                'No records yet',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: healthProvider.urineRecords.length,
-                      itemBuilder: (context, index) {
-                        final record =
-                            healthProvider.urineRecords[healthProvider
-                                    .urineRecords
-                                    .length -
-                                1 -
-                                index];
-                        return _buildCompactRecordCard(record);
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildCompactRecordCard(UrineReport record) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 4),
+  Widget _buildRecordCard(UrineReport record, bool isDark) {
+    return Container(
+      margin: EdgeInsets.only(bottom: AppSpacing.md),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.border,
+        ),
+      ),
       child: ListTile(
-        leading: CircleAvatar(
-          radius: 16,
-          backgroundColor: _getUrineColor(record.color),
-          child: const Icon(Icons.opacity, color: Colors.white, size: 16),
+        contentPadding: EdgeInsets.all(AppSpacing.md),
+        leading: Container(
+          padding: EdgeInsets.all(AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: _getUrineColor(record.color).withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.opacity_rounded,
+            color: _getUrineColor(record.color),
+            size: AppSpacing.iconMd,
+          ),
         ),
         title: Row(
           children: [
             Expanded(
               child: Text(
                 'Color: ${record.color}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                style: AppTypography.titleSmall.copyWith(
+                  color:
+                      isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
                 ),
               ),
             ),
             if (record.protein != 'Negative' || record.sugar != 'Negative')
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm,
+                ),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(4),
+                  color: AppColors.warning.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                 ),
                 child: Text(
                   'Abnormal',
-                  style: TextStyle(
-                    color: Colors.orange,
+                  style: AppTypography.labelSmall.copyWith(
+                    color: AppColors.warning,
                     fontWeight: FontWeight.bold,
-                    fontSize: 11,
                   ),
                 ),
               ),
@@ -452,16 +448,21 @@ class _UrineReportRecordsScreenState extends State<UrineReportRecordsScreen> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: AppSpacing.xs),
             Text(
-              DateFormat(
-                'MMM dd, yyyy',
-              ).format(DateTime.parse(record.testDate)),
-              style: const TextStyle(fontSize: 12),
+              DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
+              style: AppTypography.bodySmall.copyWith(
+                color:
+                    isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+              ),
             ),
-            const SizedBox(height: 2),
+            SizedBox(height: AppSpacing.xs),
             Text(
               'Protein: ${record.protein}, Sugar: ${record.sugar}',
-              style: const TextStyle(fontSize: 11, color: Colors.grey),
+              style: AppTypography.labelSmall.copyWith(
+                color:
+                    isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+              ),
             ),
           ],
         ),
