@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/health_records_provider.dart';
+import '../../widgets/common/custom_bottom_nav_bar.dart';
+import '../../core/constants/app_colors.dart';
 import 'dashboard_screen.dart';
 import 'add_records_screen.dart';
 import 'analytics_screen.dart';
@@ -44,33 +46,36 @@ class _MainLayoutState extends State<MainLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
         },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
-        elevation: 8,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
+          BottomNavItem(
+            icon: Icons.dashboard_outlined,
+            activeIcon: Icons.dashboard,
             label: 'Dashboard',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline),
+          BottomNavItem(
+            icon: Icons.add_circle_outline,
+            activeIcon: Icons.add_circle,
             label: 'Add Records',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.analytics),
+          BottomNavItem(
+            icon: Icons.analytics_outlined,
+            activeIcon: Icons.analytics,
             label: 'Analytics',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavItem(
+            icon: Icons.person_outline,
+            activeIcon: Icons.person,
+            label: 'Profile',
+          ),
         ],
       ),
     );

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
-import '../../widgets/custom_text_field.dart';
-import '../../widgets/custom_button.dart';
+import '../../widgets/inputs/custom_text_field.dart';
+import '../../widgets/buttons/primary_button.dart';
+import '../../widgets/feedback/custom_snackbar.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_spacing.dart';
+import '../../core/constants/app_typography.dart';
 import '../main/main_layout.dart';
 import 'signup/signup_step1_screen.dart';
 
@@ -43,12 +47,10 @@ class _LoginScreenState extends State<LoginScreen> {
             context.read<AuthProvider>().errorMessage ?? 'Login failed';
         print('❌ Login failed: $errorMsg');
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMsg),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 4),
-          ),
+        CustomSnackBar.show(
+          context,
+          message: errorMsg,
+          type: SnackBarType.error,
         );
       } else if (success && mounted) {
         print('✅ Login successful! Navigating to dashboard...');
@@ -72,15 +74,16 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(AppSpacing.xl),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 60),
+                const SizedBox(height: AppSpacing.xxxl),
                 // Logo
                 Center(
                   child: Column(
@@ -89,37 +92,39 @@ class _LoginScreenState extends State<LoginScreen> {
                         size: const Size(120, 48),
                         painter: _PulseMarkPainter(),
                       ),
-                      const SizedBox(height: 16),
-                      const Text(
+                      const SizedBox(height: AppSpacing.lg),
+                      Text(
                         'MediSync',
-                        style: TextStyle(
-                          fontSize: 28,
+                        style: AppTypography.headline1.copyWith(
+                          color: AppColors.primary,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: AppSpacing.xxxl),
                 // Welcome text
-                const Text(
+                Text(
                   'Welcome Back',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: AppTypography.headline2,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                const SizedBox(height: AppSpacing.sm),
+                Text(
                   'Sign in to access your health records',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: AppTypography.body1.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xxxl),
                 // Email field
                 CustomTextField(
                   controller: _emailController,
                   label: 'Email',
                   hint: 'Enter your email',
+                  prefixIcon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -131,25 +136,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.lg),
                 // Password field
                 CustomTextField(
                   controller: _passwordController,
                   label: 'Password',
                   hint: 'Enter your password',
+                  prefixIcon: Icons.lock_outlined,
+                  suffixIcon: _obscurePassword
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  onSuffixIconPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
                   obscureText: _obscurePassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
@@ -157,30 +159,33 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xxxl),
                 // Login button
                 Consumer<AuthProvider>(
                   builder: (context, authProvider, child) {
-                    return CustomButton(
+                    return PrimaryButton(
                       text: 'Login',
                       onPressed: authProvider.isLoading ? null : _login,
                       isLoading: authProvider.isLoading,
                     );
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.lg),
                 // Signup link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have an account? "),
+                    Text(
+                      "Don't have an account? ",
+                      style: AppTypography.body2,
+                    ),
                     TextButton(
                       onPressed: _navigateToSignup,
-                      child: const Text(
+                      child: Text(
                         'Sign up',
-                        style: TextStyle(
+                        style: AppTypography.body2.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue,
+                          color: AppColors.primary,
                         ),
                       ),
                     ),
@@ -199,7 +204,7 @@ class _PulseMarkPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.blue
+      ..color = AppColors.primary
       ..strokeWidth = 2.5
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
