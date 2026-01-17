@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/custom_button.dart';
+import '../main/main_layout.dart';
 import 'signup/signup_step1_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -49,8 +50,14 @@ class _LoginScreenState extends State<LoginScreen> {
             duration: const Duration(seconds: 4),
           ),
         );
-      } else if (success) {
-        print('✅ Login successful!');
+      } else if (success && mounted) {
+        print('✅ Login successful! Navigating to dashboard...');
+        // Navigate to main layout (dashboard) after successful login
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const MainLayout()),
+          (route) => false,
+        );
       }
     }
   }
