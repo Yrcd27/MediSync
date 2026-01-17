@@ -149,7 +149,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         content: Text(
           'Are you sure you want to logout?',
           style: AppTypography.body1.copyWith(
-            color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.darkTextSecondary
+                : AppColors.textSecondary,
           ),
         ),
         actions: [
@@ -157,12 +159,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () => Navigator.pop(context, false),
             child: Text(
               'Cancel',
-              style: TextStyle(color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary),
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.textSecondary,
+              ),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Logout', style: TextStyle(color: AppColors.error)),
+            child: const Text(
+              'Logout',
+              style: TextStyle(color: AppColors.error),
+            ),
           ),
         ],
       ),
@@ -200,7 +209,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             IconButton(
               icon: Icon(
                 Icons.edit_rounded,
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
               ),
               onPressed: () {
                 setState(() {
@@ -209,10 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
           IconButton(
-            icon: Icon(
-              Icons.logout_rounded,
-              color: AppColors.error,
-            ),
+            icon: Icon(Icons.logout_rounded, color: AppColors.error),
             onPressed: _logout,
           ),
         ],
@@ -226,7 +234,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Text(
                 'No user data available',
                 style: AppTypography.body1.copyWith(
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textSecondary,
                 ),
               ),
             );
@@ -267,7 +277,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Text(
                   user.name,
                   style: AppTypography.title1.copyWith(
-                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary,
                   ),
                 ),
 
@@ -276,7 +288,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Text(
                   user.email,
                   style: AppTypography.body2.copyWith(
-                    color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary,
                   ),
                 ),
 
@@ -305,7 +319,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Text(
                             'Personal Information',
                             style: AppTypography.title2.copyWith(
-                              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                              color: isDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.textPrimary,
                             ),
                           ),
 
@@ -520,13 +536,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Text(
                           'App Information',
                           style: AppTypography.title2.copyWith(
-                            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                            color: isDark
+                                ? AppColors.darkTextPrimary
+                                : AppColors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.md),
                         _buildInfoRow('App Version', '1.0.0', isDark),
                         _buildInfoRow('Developer', 'MediSync Team', isDark),
-                        _buildInfoRow('Support', 'support@medisync.com', isDark),
+                        _buildInfoRow(
+                          'Support',
+                          'support@medisync.com',
+                          isDark,
+                        ),
                       ],
                     ),
                   ),
@@ -548,7 +570,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text(
             label,
             style: AppTypography.body2.copyWith(
-              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.textSecondary,
             ),
           ),
           Text(

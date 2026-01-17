@@ -10,9 +10,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: AppColors.primaryGradient,
-        ),
+        decoration: BoxDecoration(gradient: AppColors.primaryGradient),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -24,7 +22,7 @@ class SplashScreen extends StatelessWidget {
                 height: 120,
                 color: Colors.white,
               ),
-              const SizedBox(height: AppSpacing.xxxl),
+              const SizedBox(height: AppSpacing.lg),
               // App Name
               Text(
                 'MediSync',
