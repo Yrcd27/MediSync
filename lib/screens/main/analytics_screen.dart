@@ -8,8 +8,17 @@ import '../../widgets/common/custom_app_bar.dart';
 import '../../widgets/feedback/empty_state.dart';
 import '../../providers/health_records_provider.dart';
 
-class AnalyticsScreen extends StatelessWidget {
+enum TimeRange { week, month, threeMonths, year, all }
+
+class AnalyticsScreen extends StatefulWidget {
   const AnalyticsScreen({super.key});
+
+  @override
+  State<AnalyticsScreen> createState() => _AnalyticsScreenState();
+}
+
+class _AnalyticsScreenState extends State<AnalyticsScreen> {
+  TimeRange _selectedRange = TimeRange.month;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +26,7 @@ class AnalyticsScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
-      appBar: CustomAppBar(title: 'Analytics', showBackButton: true),
+      appBar: CustomAppBar(title: 'Analytics', showBackButton: false),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(AppSpacing.lg),
         child: Consumer<HealthRecordsProvider>(
@@ -25,6 +34,10 @@ class AnalyticsScreen extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Time Range Filter
+                _buildTimeRangeFilter(context),
+                SizedBox(height: AppSpacing.xl),
+
                 // Blood Sugar Trends
                 _buildChartSection(
                   context,
@@ -43,6 +56,50 @@ class AnalyticsScreen extends StatelessWidget {
                   Icons.favorite_rounded,
                   AppColors.bloodPressure,
                   _buildBPChart(context, healthProvider),
+                ),
+
+                SizedBox(height: AppSpacing.xl),
+
+                // Full Blood Count Trends
+                _buildChartSection(
+                  context,
+                  'Blood Count Trends',
+                  Icons.water_drop_rounded,
+                  AppColors.bloodCount,
+                  _buildFBCChart(context, healthProvider),
+                ),
+
+                SizedBox(height: AppSpacing.xl),
+
+                // Lipid Profile Trends
+                _buildChartSection(
+                  context,
+                  'Lipid Profile Trends',
+                  Icons.medication_rounded,
+                  AppColors.lipidProfile,
+                  _buildLipidChart(context, healthProvider),
+                ),
+
+                SizedBox(height: AppSpacing.xl),
+
+                // Liver Profile Trends
+                _buildChartSection(
+                  context,
+                  'Liver Function Trends',
+                  Icons.local_hospital_rounded,
+                  AppColors.liverProfile,
+                  _buildLiverChart(context, healthProvider),
+                ),
+
+                SizedBox(height: AppSpacing.xl),
+
+                // Urine Report Trends
+                _buildChartSection(
+                  context,
+                  'Urine Analysis Trends',
+                  Icons.science_rounded,
+                  AppColors.urineReport,
+                  _buildUrineChart(context, healthProvider),
                 ),
 
                 SizedBox(height: AppSpacing.xl),
@@ -104,6 +161,58 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildTimeRangeFilter(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: EdgeInsets.all(AppSpacing.xs),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildRangeButton(context, 'Week', TimeRange.week),
+          _buildRangeButton(context, 'Month', TimeRange.month),
+          _buildRangeButton(context, '3M', TimeRange.threeMonths),
+          _buildRangeButton(context, 'Year', TimeRange.year),
+          _buildRangeButton(context, 'All', TimeRange.all),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRangeButton(BuildContext context, String label, TimeRange range) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isSelected = _selectedRange == range;
+
+    return GestureDetector(
+      onTap: () => setState(() => _selectedRange = range),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary
+              : (isDark ? AppColors.darkBackground : Colors.transparent),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        ),
+        child: Text(
+          label,
+          style: AppTypography.labelMedium.copyWith(
+            color: isSelected
+                ? Colors.white
+                : (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary),
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildChartSection(
     BuildContext context,
     String title,
@@ -158,7 +267,12 @@ class AnalyticsScreen extends StatelessWidget {
   }
 
   Widget _buildFBSChart(BuildContext context, HealthRecordsProvider provider) {
-    if (provider.fbsRecords.isEmpty) {
+    final filteredRecords = _filterRecordsByTimeRange(
+      provider.fbsRecords.map((r) => DateTime.parse(r.testDate)).toList(),
+      provider.fbsRecords,
+    );
+
+    if (filteredRecords.isEmpty) {
       return const EmptyState(
         icon: Icons.show_chart_rounded,
         message: 'No blood sugar data available',
@@ -166,7 +280,7 @@ class AnalyticsScreen extends StatelessWidget {
       );
     }
 
-    final spots = provider.fbsRecords.asMap().entries.map((entry) {
+    final spots = filteredRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.fbsLevel);
     }).toList();
 
@@ -256,7 +370,12 @@ class AnalyticsScreen extends StatelessWidget {
   }
 
   Widget _buildBPChart(BuildContext context, HealthRecordsProvider provider) {
-    if (provider.bpRecords.isEmpty) {
+    final filteredRecords = _filterRecordsByTimeRange(
+      provider.bpRecords.map((r) => DateTime.parse(r.testDate)).toList(),
+      provider.bpRecords,
+    );
+
+    if (filteredRecords.isEmpty) {
       return const EmptyState(
         icon: Icons.show_chart_rounded,
         message: 'No blood pressure data available',
@@ -264,11 +383,11 @@ class AnalyticsScreen extends StatelessWidget {
       );
     }
 
-    final systolicSpots = provider.bpRecords.asMap().entries.map((entry) {
+    final systolicSpots = filteredRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.systolic.toDouble());
     }).toList();
 
-    final diastolicSpots = provider.bpRecords.asMap().entries.map((entry) {
+    final diastolicSpots = filteredRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.diastolic.toDouble());
     }).toList();
 
@@ -433,6 +552,502 @@ class AnalyticsScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+    );
+  }
+
+  Widget _buildFBCChart(BuildContext context, HealthRecordsProvider provider) {
+    final filteredRecords = _filterRecordsByTimeRange(
+      provider.fbcRecords.map((r) => DateTime.parse(r.testDate)).toList(),
+      provider.fbcRecords,
+    );
+
+    if (filteredRecords.isEmpty) {
+      return const EmptyState(
+        icon: Icons.show_chart_rounded,
+        message: 'No blood count data available',
+        description: 'Start tracking to see trends',
+      );
+    }
+
+    final hemoglobinSpots = filteredRecords.asMap().entries.map((entry) {
+      return FlSpot(entry.key.toDouble(), entry.value.hemoglobin);
+    }).toList();
+
+    final wbcSpots = filteredRecords.asMap().entries.map((entry) {
+      return FlSpot(entry.key.toDouble(), entry.value.wbc / 1000);
+    }).toList();
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return LineChart(
+      LineChartData(
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: true,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: (isDark ? AppColors.darkBorder : AppColors.border)
+                  .withOpacity(0.3),
+              strokeWidth: 1,
+            );
+          },
+          getDrawingVerticalLine: (value) {
+            return FlLine(
+              color: (isDark ? AppColors.darkBorder : AppColors.border)
+                  .withOpacity(0.3),
+              strokeWidth: 1,
+            );
+          },
+        ),
+        titlesData: FlTitlesData(
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toInt().toString(),
+                  style: AppTypography.bodySmall.copyWith(
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary,
+                  ),
+                );
+              },
+            ),
+          ),
+          bottomTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+        ),
+        borderData: FlBorderData(
+          show: true,
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.border,
+          ),
+        ),
+        lineBarsData: [
+          LineChartBarData(
+            spots: hemoglobinSpots,
+            isCurved: true,
+            color: AppColors.bloodCount,
+            barWidth: 3,
+            isStrokeCapRound: true,
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, barData, index) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: AppColors.bloodCount,
+                  strokeWidth: 2,
+                  strokeColor: isDark
+                      ? AppColors.darkSurface
+                      : AppColors.surface,
+                );
+              },
+            ),
+            belowBarData: BarAreaData(
+              show: true,
+              color: AppColors.bloodCount.withOpacity(0.1),
+            ),
+          ),
+          LineChartBarData(
+            spots: wbcSpots,
+            isCurved: true,
+            color: AppColors.primary.withOpacity(0.6),
+            barWidth: 2,
+            isStrokeCapRound: true,
+            dotData: FlDotData(show: false),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLipidChart(BuildContext context, HealthRecordsProvider provider) {
+    final filteredRecords = _filterRecordsByTimeRange(
+      provider.lipidRecords.map((r) => DateTime.parse(r.testDate)).toList(),
+      provider.lipidRecords,
+    );
+
+    if (filteredRecords.isEmpty) {
+      return const EmptyState(
+        icon: Icons.show_chart_rounded,
+        message: 'No lipid profile data available',
+        description: 'Start tracking to see trends',
+      );
+    }
+
+    final totalCholSpots = filteredRecords.asMap().entries.map((entry) {
+      return FlSpot(entry.key.toDouble(), entry.value.totalCholesterol);
+    }).toList();
+
+    final hdlSpots = filteredRecords.asMap().entries.map((entry) {
+      return FlSpot(entry.key.toDouble(), entry.value.hdl);
+    }).toList();
+
+    final ldlSpots = filteredRecords.asMap().entries.map((entry) {
+      return FlSpot(entry.key.toDouble(), entry.value.ldl);
+    }).toList();
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return LineChart(
+      LineChartData(
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: true,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: (isDark ? AppColors.darkBorder : AppColors.border)
+                  .withOpacity(0.3),
+              strokeWidth: 1,
+            );
+          },
+          getDrawingVerticalLine: (value) {
+            return FlLine(
+              color: (isDark ? AppColors.darkBorder : AppColors.border)
+                  .withOpacity(0.3),
+              strokeWidth: 1,
+            );
+          },
+        ),
+        titlesData: FlTitlesData(
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toInt().toString(),
+                  style: AppTypography.bodySmall.copyWith(
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary,
+                  ),
+                );
+              },
+            ),
+          ),
+          bottomTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+        ),
+        borderData: FlBorderData(
+          show: true,
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.border,
+          ),
+        ),
+        lineBarsData: [
+          LineChartBarData(
+            spots: totalCholSpots,
+            isCurved: true,
+            color: AppColors.lipidProfile,
+            barWidth: 3,
+            isStrokeCapRound: true,
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, barData, index) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: AppColors.lipidProfile,
+                  strokeWidth: 2,
+                  strokeColor: isDark
+                      ? AppColors.darkSurface
+                      : AppColors.surface,
+                );
+              },
+            ),
+            belowBarData: BarAreaData(
+              show: true,
+              color: AppColors.lipidProfile.withOpacity(0.1),
+            ),
+          ),
+          LineChartBarData(
+            spots: hdlSpots,
+            isCurved: true,
+            color: AppColors.success,
+            barWidth: 2,
+            isStrokeCapRound: true,
+            dotData: FlDotData(show: false),
+          ),
+          LineChartBarData(
+            spots: ldlSpots,
+            isCurved: true,
+            color: AppColors.error,
+            barWidth: 2,
+            isStrokeCapRound: true,
+            dotData: FlDotData(show: false),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLiverChart(BuildContext context, HealthRecordsProvider provider) {
+    final filteredRecords = _filterRecordsByTimeRange(
+      provider.liverRecords.map((r) => DateTime.parse(r.testDate)).toList(),
+      provider.liverRecords,
+    );
+
+    if (filteredRecords.isEmpty) {
+      return const EmptyState(
+        icon: Icons.show_chart_rounded,
+        message: 'No liver profile data available',
+        description: 'Start tracking to see trends',
+      );
+    }
+
+    final sgptSpots = filteredRecords.asMap().entries.map((entry) {
+      return FlSpot(entry.key.toDouble(), entry.value.sgpt);
+    }).toList();
+
+    final sgotSpots = filteredRecords.asMap().entries.map((entry) {
+      return FlSpot(entry.key.toDouble(), entry.value.sgot);
+    }).toList();
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return LineChart(
+      LineChartData(
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: true,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: (isDark ? AppColors.darkBorder : AppColors.border)
+                  .withOpacity(0.3),
+              strokeWidth: 1,
+            );
+          },
+          getDrawingVerticalLine: (value) {
+            return FlLine(
+              color: (isDark ? AppColors.darkBorder : AppColors.border)
+                  .withOpacity(0.3),
+              strokeWidth: 1,
+            );
+          },
+        ),
+        titlesData: FlTitlesData(
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toInt().toString(),
+                  style: AppTypography.bodySmall.copyWith(
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary,
+                  ),
+                );
+              },
+            ),
+          ),
+          bottomTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+        ),
+        borderData: FlBorderData(
+          show: true,
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.border,
+          ),
+        ),
+        lineBarsData: [
+          LineChartBarData(
+            spots: sgptSpots,
+            isCurved: true,
+            color: AppColors.liverProfile,
+            barWidth: 3,
+            isStrokeCapRound: true,
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, barData, index) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: AppColors.liverProfile,
+                  strokeWidth: 2,
+                  strokeColor: isDark
+                      ? AppColors.darkSurface
+                      : AppColors.surface,
+                );
+              },
+            ),
+            belowBarData: BarAreaData(
+              show: true,
+              color: AppColors.liverProfile.withOpacity(0.1),
+            ),
+          ),
+          LineChartBarData(
+            spots: sgotSpots,
+            isCurved: true,
+            color: AppColors.warning,
+            barWidth: 2,
+            isStrokeCapRound: true,
+            dotData: FlDotData(show: false),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUrineChart(BuildContext context, HealthRecordsProvider provider) {
+    final filteredRecords = _filterRecordsByTimeRange(
+      provider.urineRecords.map((r) => DateTime.parse(r.testDate)).toList(),
+      provider.urineRecords,
+    );
+
+    if (filteredRecords.isEmpty) {
+      return const EmptyState(
+        icon: Icons.show_chart_rounded,
+        message: 'No urine report data available',
+        description: 'Start tracking to see trends',
+      );
+    }
+
+    final sgSpots = filteredRecords.asMap().entries.map((entry) {
+      return FlSpot(entry.key.toDouble(), entry.value.specificGravity);
+    }).toList();
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return LineChart(
+      LineChartData(
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: true,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: (isDark ? AppColors.darkBorder : AppColors.border)
+                  .withOpacity(0.3),
+              strokeWidth: 1,
+            );
+          },
+          getDrawingVerticalLine: (value) {
+            return FlLine(
+              color: (isDark ? AppColors.darkBorder : AppColors.border)
+                  .withOpacity(0.3),
+              strokeWidth: 1,
+            );
+          },
+        ),
+        titlesData: FlTitlesData(
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toStringAsFixed(3),
+                  style: AppTypography.bodySmall.copyWith(
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.textSecondary,
+                    fontSize: 10,
+                  ),
+                );
+              },
+            ),
+          ),
+          bottomTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+        ),
+        borderData: FlBorderData(
+          show: true,
+          border: Border.all(
+            color: isDark ? AppColors.darkBorder : AppColors.border,
+          ),
+        ),
+        lineBarsData: [
+          LineChartBarData(
+            spots: sgSpots,
+            isCurved: true,
+            color: AppColors.urineReport,
+            barWidth: 3,
+            isStrokeCapRound: true,
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, barData, index) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: AppColors.urineReport,
+                  strokeWidth: 2,
+                  strokeColor: isDark
+                      ? AppColors.darkSurface
+                      : AppColors.surface,
+                );
+              },
+            ),
+            belowBarData: BarAreaData(
+              show: true,
+              color: AppColors.urineReport.withOpacity(0.1),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<T> _filterRecordsByTimeRange<T>(List<DateTime> dates, List<T> records) {
+    if (dates.isEmpty || records.isEmpty) return [];
+    
+    final now = DateTime.now();
+    DateTime cutoffDate;
+
+    switch (_selectedRange) {
+      case TimeRange.week:
+        cutoffDate = now.subtract(const Duration(days: 7));
+        break;
+      case TimeRange.month:
+        cutoffDate = now.subtract(const Duration(days: 30));
+        break;
+      case TimeRange.threeMonths:
+        cutoffDate = now.subtract(const Duration(days: 90));
+        break;
+      case TimeRange.year:
+        cutoffDate = now.subtract(const Duration(days: 365));
+        break;
+      case TimeRange.all:
+        return records;
+    }
+
+    final filtered = <T>[];
+    for (int i = 0; i < dates.length; i++) {
+      if (dates[i].isAfter(cutoffDate)) {
+        filtered.add(records[i]);
+      }
+    }
+    return filtered;
   }
 
   String _calculateAvgFBS(HealthRecordsProvider provider) {
