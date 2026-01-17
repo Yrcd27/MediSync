@@ -120,7 +120,11 @@ class _AddBloodCountScreenState extends State<AddBloodCountScreen> {
                     color: AppColors.bloodCount.withOpacity(0.15),
                     borderRadius: AppSpacing.borderRadiusLg,
                   ),
-                  child: Icon(Icons.science_rounded, size: 40, color: AppColors.bloodCount),
+                  child: Icon(
+                    Icons.science_rounded,
+                    size: 40,
+                    color: AppColors.bloodCount,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -157,7 +161,8 @@ class _AddBloodCountScreenState extends State<AddBloodCountScreen> {
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Required';
                   final val = double.tryParse(v);
-                  if (val == null || val < 1000 || val > 50000) return 'Enter 1000-50000';
+                  if (val == null || val < 1000 || val > 50000)
+                    return 'Enter 1000-50000';
                   return null;
                 },
               ),
@@ -174,7 +179,8 @@ class _AddBloodCountScreenState extends State<AddBloodCountScreen> {
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Required';
                   final val = double.tryParse(v);
-                  if (val == null || val < 50000 || val > 700000) return 'Enter valid range';
+                  if (val == null || val < 50000 || val > 700000)
+                    return 'Enter valid range';
                   return null;
                 },
               ),
@@ -192,15 +198,33 @@ class _AddBloodCountScreenState extends State<AddBloodCountScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.info_outline_rounded, color: AppColors.info, size: 20),
+                        Icon(
+                          Icons.info_outline_rounded,
+                          color: AppColors.info,
+                          size: 20,
+                        ),
                         const SizedBox(width: AppSpacing.sm),
-                        Text('Normal Ranges', style: AppTypography.label2.copyWith(color: AppColors.info)),
+                        Text(
+                          'Normal Ranges',
+                          style: AppTypography.label2.copyWith(
+                            color: AppColors.info,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.sm),
-                    Text('Hb: Male 13.5-17.5, Female 12-16 g/dL', style: AppTypography.caption),
-                    Text('WBC: 4,500-11,000 cells/mcL', style: AppTypography.caption),
-                    Text('Platelets: 150,000-400,000 cells/mcL', style: AppTypography.caption),
+                    Text(
+                      'Hb: Male 13.5-17.5, Female 12-16 g/dL',
+                      style: AppTypography.caption,
+                    ),
+                    Text(
+                      'WBC: 4,500-11,000 cells/mcL',
+                      style: AppTypography.caption,
+                    ),
+                    Text(
+                      'Platelets: 150,000-400,000 cells/mcL',
+                      style: AppTypography.caption,
+                    ),
                   ],
                 ),
               ),
@@ -231,14 +255,23 @@ class _AddBloodCountScreenState extends State<AddBloodCountScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
-              color: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+              color: isDark
+                  ? AppColors.darkSurfaceVariant
+                  : AppColors.surfaceVariant,
               borderRadius: AppSpacing.borderRadiusMd,
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today_rounded, color: AppColors.bloodCount, size: 20),
+                Icon(
+                  Icons.calendar_today_rounded,
+                  color: AppColors.bloodCount,
+                  size: 20,
+                ),
                 const SizedBox(width: AppSpacing.md),
-                Text(DateFormat('MMMM dd, yyyy').format(_selectedDate), style: AppTypography.body1),
+                Text(
+                  DateFormat('MMMM dd, yyyy').format(_selectedDate),
+                  style: AppTypography.body1,
+                ),
                 const Spacer(),
                 const Icon(Icons.arrow_drop_down_rounded),
               ],
@@ -270,7 +303,9 @@ class _AddBloodCountScreenState extends State<AddBloodCountScreen> {
             hintText: hint,
             suffixText: suffix,
             filled: true,
-            fillColor: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+            fillColor: isDark
+                ? AppColors.darkSurfaceVariant
+                : AppColors.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: AppSpacing.borderRadiusMd,
               borderSide: BorderSide.none,

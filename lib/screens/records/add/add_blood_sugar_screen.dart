@@ -116,7 +116,11 @@ class _AddBloodSugarScreenState extends State<AddBloodSugarScreen> {
                     color: AppColors.bloodSugar.withOpacity(0.15),
                     borderRadius: AppSpacing.borderRadiusLg,
                   ),
-                  child: Icon(Icons.water_drop_rounded, size: 40, color: AppColors.bloodSugar),
+                  child: Icon(
+                    Icons.water_drop_rounded,
+                    size: 40,
+                    color: AppColors.bloodSugar,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -130,12 +134,18 @@ class _AddBloodSugarScreenState extends State<AddBloodSugarScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+                    color: isDark
+                        ? AppColors.darkSurfaceVariant
+                        : AppColors.surfaceVariant,
                     borderRadius: AppSpacing.borderRadiusMd,
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.calendar_today_rounded, color: AppColors.bloodSugar, size: 20),
+                      Icon(
+                        Icons.calendar_today_rounded,
+                        color: AppColors.bloodSugar,
+                        size: 20,
+                      ),
                       const SizedBox(width: AppSpacing.md),
                       Text(
                         DateFormat('MMMM dd, yyyy').format(_selectedDate),
@@ -155,27 +165,35 @@ class _AddBloodSugarScreenState extends State<AddBloodSugarScreen> {
               const SizedBox(height: AppSpacing.sm),
               TextFormField(
                 controller: _fbsController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 style: AppTypography.headline3,
                 textAlign: TextAlign.center,
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'Required';
                   final val = double.tryParse(value);
-                  if (val == null || val < 30 || val > 500) return 'Enter 30-500';
+                  if (val == null || val < 30 || val > 500)
+                    return 'Enter 30-500';
                   return null;
                 },
                 decoration: InputDecoration(
                   hintText: '95',
                   suffixText: 'mg/dL',
                   filled: true,
-                  fillColor: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+                  fillColor: isDark
+                      ? AppColors.darkSurfaceVariant
+                      : AppColors.surfaceVariant,
                   border: OutlineInputBorder(
                     borderRadius: AppSpacing.borderRadiusMd,
                     borderSide: BorderSide.none,
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: AppSpacing.borderRadiusMd,
-                    borderSide: BorderSide(color: AppColors.bloodSugar, width: 2),
+                    borderSide: BorderSide(
+                      color: AppColors.bloodSugar,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
@@ -193,14 +211,29 @@ class _AddBloodSugarScreenState extends State<AddBloodSugarScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.info_outline_rounded, color: AppColors.info, size: 20),
+                        Icon(
+                          Icons.info_outline_rounded,
+                          color: AppColors.info,
+                          size: 20,
+                        ),
                         const SizedBox(width: AppSpacing.sm),
-                        Text('Reference Ranges', style: AppTypography.label2.copyWith(color: AppColors.info)),
+                        Text(
+                          'Reference Ranges',
+                          style: AppTypography.label2.copyWith(
+                            color: AppColors.info,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.sm),
-                    Text('Normal: Below 100 mg/dL', style: AppTypography.caption),
-                    Text('Pre-diabetic: 100-125 mg/dL', style: AppTypography.caption),
+                    Text(
+                      'Normal: Below 100 mg/dL',
+                      style: AppTypography.caption,
+                    ),
+                    Text(
+                      'Pre-diabetic: 100-125 mg/dL',
+                      style: AppTypography.caption,
+                    ),
                     Text('Diabetic: 126+ mg/dL', style: AppTypography.caption),
                   ],
                 ),

@@ -123,7 +123,11 @@ class _AddLiverProfileScreenState extends State<AddLiverProfileScreen> {
                     color: AppColors.liverProfile.withOpacity(0.15),
                     borderRadius: AppSpacing.borderRadiusLg,
                   ),
-                  child: Icon(Icons.local_hospital_rounded, size: 40, color: AppColors.liverProfile),
+                  child: Icon(
+                    Icons.local_hospital_rounded,
+                    size: 40,
+                    color: AppColors.liverProfile,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -133,22 +137,54 @@ class _AddLiverProfileScreenState extends State<AddLiverProfileScreen> {
 
               Row(
                 children: [
-                  Expanded(child: _buildInputField(_proteinController, 'Total Protein', '7.0', 'g/dL', isDark,
-                      (v) => _validateRange(v, 3, 12))),
+                  Expanded(
+                    child: _buildInputField(
+                      _proteinController,
+                      'Total Protein',
+                      '7.0',
+                      'g/dL',
+                      isDark,
+                      (v) => _validateRange(v, 3, 12),
+                    ),
+                  ),
                   const SizedBox(width: AppSpacing.md),
-                  Expanded(child: _buildInputField(_albuminController, 'Albumin', '4.0', 'g/dL', isDark,
-                      (v) => _validateRange(v, 1, 7))),
+                  Expanded(
+                    child: _buildInputField(
+                      _albuminController,
+                      'Albumin',
+                      '4.0',
+                      'g/dL',
+                      isDark,
+                      (v) => _validateRange(v, 1, 7),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
 
               Row(
                 children: [
-                  Expanded(child: _buildInputField(_bilirubinController, 'Bilirubin', '0.8', 'mg/dL', isDark,
-                      (v) => _validateRange(v, 0.1, 15))),
+                  Expanded(
+                    child: _buildInputField(
+                      _bilirubinController,
+                      'Bilirubin',
+                      '0.8',
+                      'mg/dL',
+                      isDark,
+                      (v) => _validateRange(v, 0.1, 15),
+                    ),
+                  ),
                   const SizedBox(width: AppSpacing.md),
-                  Expanded(child: _buildInputField(_sgptController, 'SGPT (ALT)', '25', 'U/L', isDark,
-                      (v) => _validateRange(v, 5, 500))),
+                  Expanded(
+                    child: _buildInputField(
+                      _sgptController,
+                      'SGPT (ALT)',
+                      '25',
+                      'U/L',
+                      isDark,
+                      (v) => _validateRange(v, 5, 500),
+                    ),
+                  ),
                 ],
               ),
 
@@ -165,15 +201,30 @@ class _AddLiverProfileScreenState extends State<AddLiverProfileScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.info_outline_rounded, color: AppColors.info, size: 20),
+                        Icon(
+                          Icons.info_outline_rounded,
+                          color: AppColors.info,
+                          size: 20,
+                        ),
                         const SizedBox(width: AppSpacing.sm),
-                        Text('Normal Ranges', style: AppTypography.label2.copyWith(color: AppColors.info)),
+                        Text(
+                          'Normal Ranges',
+                          style: AppTypography.label2.copyWith(
+                            color: AppColors.info,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.sm),
-                    Text('Total Protein: 6.0-8.3 g/dL', style: AppTypography.caption),
+                    Text(
+                      'Total Protein: 6.0-8.3 g/dL',
+                      style: AppTypography.caption,
+                    ),
                     Text('Albumin: 3.5-5.0 g/dL', style: AppTypography.caption),
-                    Text('Bilirubin: 0.1-1.2 mg/dL', style: AppTypography.caption),
+                    Text(
+                      'Bilirubin: 0.1-1.2 mg/dL',
+                      style: AppTypography.caption,
+                    ),
                     Text('SGPT (ALT): 7-56 U/L', style: AppTypography.caption),
                   ],
                 ),
@@ -212,14 +263,23 @@ class _AddLiverProfileScreenState extends State<AddLiverProfileScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
-              color: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+              color: isDark
+                  ? AppColors.darkSurfaceVariant
+                  : AppColors.surfaceVariant,
               borderRadius: AppSpacing.borderRadiusMd,
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today_rounded, color: AppColors.liverProfile, size: 20),
+                Icon(
+                  Icons.calendar_today_rounded,
+                  color: AppColors.liverProfile,
+                  size: 20,
+                ),
                 const SizedBox(width: AppSpacing.md),
-                Text(DateFormat('MMMM dd, yyyy').format(_selectedDate), style: AppTypography.body1),
+                Text(
+                  DateFormat('MMMM dd, yyyy').format(_selectedDate),
+                  style: AppTypography.body1,
+                ),
                 const Spacer(),
                 const Icon(Icons.arrow_drop_down_rounded),
               ],
@@ -251,13 +311,21 @@ class _AddLiverProfileScreenState extends State<AddLiverProfileScreen> {
             hintText: hint,
             suffixText: suffix,
             filled: true,
-            fillColor: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
-            border: OutlineInputBorder(borderRadius: AppSpacing.borderRadiusMd, borderSide: BorderSide.none),
+            fillColor: isDark
+                ? AppColors.darkSurfaceVariant
+                : AppColors.surfaceVariant,
+            border: OutlineInputBorder(
+              borderRadius: AppSpacing.borderRadiusMd,
+              borderSide: BorderSide.none,
+            ),
             focusedBorder: OutlineInputBorder(
               borderRadius: AppSpacing.borderRadiusMd,
               borderSide: BorderSide(color: AppColors.liverProfile, width: 2),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.md,
+            ),
           ),
         ),
       ],

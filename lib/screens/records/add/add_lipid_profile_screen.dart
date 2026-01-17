@@ -126,7 +126,11 @@ class _AddLipidProfileScreenState extends State<AddLipidProfileScreen> {
                     color: AppColors.lipidProfile.withOpacity(0.15),
                     borderRadius: AppSpacing.borderRadiusLg,
                   ),
-                  child: Icon(Icons.monitor_heart_rounded, size: 40, color: AppColors.lipidProfile),
+                  child: Icon(
+                    Icons.monitor_heart_rounded,
+                    size: 40,
+                    color: AppColors.lipidProfile,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -134,28 +138,66 @@ class _AddLipidProfileScreenState extends State<AddLipidProfileScreen> {
               _buildDatePicker(isDark),
               const SizedBox(height: AppSpacing.xl),
 
-              _buildInputField(_totalCholController, 'Total Cholesterol', '180', 'mg/dL', isDark,
-                  (v) => _validateRange(v, 50, 400)),
+              _buildInputField(
+                _totalCholController,
+                'Total Cholesterol',
+                '180',
+                'mg/dL',
+                isDark,
+                (v) => _validateRange(v, 50, 400),
+              ),
               const SizedBox(height: AppSpacing.lg),
 
               Row(
                 children: [
-                  Expanded(child: _buildInputField(_hdlController, 'HDL', '50', 'mg/dL', isDark,
-                      (v) => _validateRange(v, 10, 150))),
+                  Expanded(
+                    child: _buildInputField(
+                      _hdlController,
+                      'HDL',
+                      '50',
+                      'mg/dL',
+                      isDark,
+                      (v) => _validateRange(v, 10, 150),
+                    ),
+                  ),
                   const SizedBox(width: AppSpacing.md),
-                  Expanded(child: _buildInputField(_ldlController, 'LDL', '100', 'mg/dL', isDark,
-                      (v) => _validateRange(v, 20, 300))),
+                  Expanded(
+                    child: _buildInputField(
+                      _ldlController,
+                      'LDL',
+                      '100',
+                      'mg/dL',
+                      isDark,
+                      (v) => _validateRange(v, 20, 300),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
 
               Row(
                 children: [
-                  Expanded(child: _buildInputField(_vldlController, 'VLDL', '30', 'mg/dL', isDark,
-                      (v) => _validateRange(v, 5, 100))),
+                  Expanded(
+                    child: _buildInputField(
+                      _vldlController,
+                      'VLDL',
+                      '30',
+                      'mg/dL',
+                      isDark,
+                      (v) => _validateRange(v, 5, 100),
+                    ),
+                  ),
                   const SizedBox(width: AppSpacing.md),
-                  Expanded(child: _buildInputField(_triglyceridesController, 'Triglycerides', '150', 'mg/dL', isDark,
-                      (v) => _validateRange(v, 30, 600))),
+                  Expanded(
+                    child: _buildInputField(
+                      _triglyceridesController,
+                      'Triglycerides',
+                      '150',
+                      'mg/dL',
+                      isDark,
+                      (v) => _validateRange(v, 30, 600),
+                    ),
+                  ),
                 ],
               ),
 
@@ -172,16 +214,37 @@ class _AddLipidProfileScreenState extends State<AddLipidProfileScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.info_outline_rounded, color: AppColors.info, size: 20),
+                        Icon(
+                          Icons.info_outline_rounded,
+                          color: AppColors.info,
+                          size: 20,
+                        ),
                         const SizedBox(width: AppSpacing.sm),
-                        Text('Desirable Levels', style: AppTypography.label2.copyWith(color: AppColors.info)),
+                        Text(
+                          'Desirable Levels',
+                          style: AppTypography.label2.copyWith(
+                            color: AppColors.info,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.sm),
-                    Text('Total Cholesterol: <200 mg/dL', style: AppTypography.caption),
-                    Text('HDL: >40 mg/dL (higher is better)', style: AppTypography.caption),
-                    Text('LDL: <100 mg/dL (lower is better)', style: AppTypography.caption),
-                    Text('Triglycerides: <150 mg/dL', style: AppTypography.caption),
+                    Text(
+                      'Total Cholesterol: <200 mg/dL',
+                      style: AppTypography.caption,
+                    ),
+                    Text(
+                      'HDL: >40 mg/dL (higher is better)',
+                      style: AppTypography.caption,
+                    ),
+                    Text(
+                      'LDL: <100 mg/dL (lower is better)',
+                      style: AppTypography.caption,
+                    ),
+                    Text(
+                      'Triglycerides: <150 mg/dL',
+                      style: AppTypography.caption,
+                    ),
                   ],
                 ),
               ),
@@ -219,14 +282,23 @@ class _AddLipidProfileScreenState extends State<AddLipidProfileScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
-              color: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+              color: isDark
+                  ? AppColors.darkSurfaceVariant
+                  : AppColors.surfaceVariant,
               borderRadius: AppSpacing.borderRadiusMd,
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today_rounded, color: AppColors.lipidProfile, size: 20),
+                Icon(
+                  Icons.calendar_today_rounded,
+                  color: AppColors.lipidProfile,
+                  size: 20,
+                ),
                 const SizedBox(width: AppSpacing.md),
-                Text(DateFormat('MMMM dd, yyyy').format(_selectedDate), style: AppTypography.body1),
+                Text(
+                  DateFormat('MMMM dd, yyyy').format(_selectedDate),
+                  style: AppTypography.body1,
+                ),
                 const Spacer(),
                 const Icon(Icons.arrow_drop_down_rounded),
               ],
@@ -258,8 +330,13 @@ class _AddLipidProfileScreenState extends State<AddLipidProfileScreen> {
             hintText: hint,
             suffixText: suffix,
             filled: true,
-            fillColor: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
-            border: OutlineInputBorder(borderRadius: AppSpacing.borderRadiusMd, borderSide: BorderSide.none),
+            fillColor: isDark
+                ? AppColors.darkSurfaceVariant
+                : AppColors.surfaceVariant,
+            border: OutlineInputBorder(
+              borderRadius: AppSpacing.borderRadiusMd,
+              borderSide: BorderSide.none,
+            ),
             focusedBorder: OutlineInputBorder(
               borderRadius: AppSpacing.borderRadiusMd,
               borderSide: BorderSide(color: AppColors.lipidProfile, width: 2),

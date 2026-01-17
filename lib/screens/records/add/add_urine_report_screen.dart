@@ -26,9 +26,26 @@ class _AddUrineReportScreenState extends State<AddUrineReportScreen> {
   String _selectedSugar = 'Negative';
   bool _isSubmitting = false;
 
-  final List<String> _colorOptions = ['Pale Yellow', 'Yellow', 'Dark Yellow', 'Amber', 'Red/Pink'];
-  final List<String> _appearanceOptions = ['Clear', 'Slightly Cloudy', 'Cloudy', 'Turbid'];
-  final List<String> _proteinSugarOptions = ['Negative', 'Trace', '+', '++', '+++'];
+  final List<String> _colorOptions = [
+    'Pale Yellow',
+    'Yellow',
+    'Dark Yellow',
+    'Amber',
+    'Red/Pink',
+  ];
+  final List<String> _appearanceOptions = [
+    'Clear',
+    'Slightly Cloudy',
+    'Cloudy',
+    'Turbid',
+  ];
+  final List<String> _proteinSugarOptions = [
+    'Negative',
+    'Trace',
+    '+',
+    '++',
+    '+++',
+  ];
 
   @override
   void dispose() {
@@ -126,7 +143,11 @@ class _AddUrineReportScreenState extends State<AddUrineReportScreen> {
                     color: AppColors.urineReport.withOpacity(0.15),
                     borderRadius: AppSpacing.borderRadiusLg,
                   ),
-                  child: Icon(Icons.opacity_rounded, size: 40, color: AppColors.urineReport),
+                  child: Icon(
+                    Icons.opacity_rounded,
+                    size: 40,
+                    color: AppColors.urineReport,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -139,40 +160,79 @@ class _AddUrineReportScreenState extends State<AddUrineReportScreen> {
               const SizedBox(height: AppSpacing.sm),
               TextFormField(
                 controller: _sgController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Required';
                   final val = double.tryParse(v);
-                  if (val == null || val < 1.000 || val > 1.040) return 'Enter 1.000-1.040';
+                  if (val == null || val < 1.000 || val > 1.040)
+                    return 'Enter 1.000-1.040';
                   return null;
                 },
                 decoration: InputDecoration(
                   hintText: '1.015',
                   filled: true,
-                  fillColor: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
-                  border: OutlineInputBorder(borderRadius: AppSpacing.borderRadiusMd, borderSide: BorderSide.none),
+                  fillColor: isDark
+                      ? AppColors.darkSurfaceVariant
+                      : AppColors.surfaceVariant,
+                  border: OutlineInputBorder(
+                    borderRadius: AppSpacing.borderRadiusMd,
+                    borderSide: BorderSide.none,
+                  ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: AppSpacing.borderRadiusMd,
-                    borderSide: BorderSide(color: AppColors.urineReport, width: 2),
+                    borderSide: BorderSide(
+                      color: AppColors.urineReport,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
 
               // Color Dropdown
-              _buildDropdown('Color', _selectedColor, _colorOptions, (v) => setState(() => _selectedColor = v!), isDark),
+              _buildDropdown(
+                'Color',
+                _selectedColor,
+                _colorOptions,
+                (v) => setState(() => _selectedColor = v!),
+                isDark,
+              ),
               const SizedBox(height: AppSpacing.lg),
 
               // Appearance Dropdown
-              _buildDropdown('Appearance', _selectedAppearance, _appearanceOptions, (v) => setState(() => _selectedAppearance = v!), isDark),
+              _buildDropdown(
+                'Appearance',
+                _selectedAppearance,
+                _appearanceOptions,
+                (v) => setState(() => _selectedAppearance = v!),
+                isDark,
+              ),
               const SizedBox(height: AppSpacing.lg),
 
               // Protein & Sugar in row
               Row(
                 children: [
-                  Expanded(child: _buildDropdown('Protein', _selectedProtein, _proteinSugarOptions, (v) => setState(() => _selectedProtein = v!), isDark)),
+                  Expanded(
+                    child: _buildDropdown(
+                      'Protein',
+                      _selectedProtein,
+                      _proteinSugarOptions,
+                      (v) => setState(() => _selectedProtein = v!),
+                      isDark,
+                    ),
+                  ),
                   const SizedBox(width: AppSpacing.md),
-                  Expanded(child: _buildDropdown('Sugar', _selectedSugar, _proteinSugarOptions, (v) => setState(() => _selectedSugar = v!), isDark)),
+                  Expanded(
+                    child: _buildDropdown(
+                      'Sugar',
+                      _selectedSugar,
+                      _proteinSugarOptions,
+                      (v) => setState(() => _selectedSugar = v!),
+                      isDark,
+                    ),
+                  ),
                 ],
               ),
 
@@ -189,15 +249,33 @@ class _AddUrineReportScreenState extends State<AddUrineReportScreen> {
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.info_outline_rounded, color: AppColors.info, size: 20),
+                        Icon(
+                          Icons.info_outline_rounded,
+                          color: AppColors.info,
+                          size: 20,
+                        ),
                         const SizedBox(width: AppSpacing.sm),
-                        Text('Normal Values', style: AppTypography.label2.copyWith(color: AppColors.info)),
+                        Text(
+                          'Normal Values',
+                          style: AppTypography.label2.copyWith(
+                            color: AppColors.info,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.sm),
-                    Text('Specific Gravity: 1.005-1.030', style: AppTypography.caption),
-                    Text('Color: Pale Yellow to Yellow', style: AppTypography.caption),
-                    Text('Protein & Sugar: Negative', style: AppTypography.caption),
+                    Text(
+                      'Specific Gravity: 1.005-1.030',
+                      style: AppTypography.caption,
+                    ),
+                    Text(
+                      'Color: Pale Yellow to Yellow',
+                      style: AppTypography.caption,
+                    ),
+                    Text(
+                      'Protein & Sugar: Negative',
+                      style: AppTypography.caption,
+                    ),
                   ],
                 ),
               ),
@@ -228,14 +306,23 @@ class _AddUrineReportScreenState extends State<AddUrineReportScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(AppSpacing.lg),
             decoration: BoxDecoration(
-              color: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+              color: isDark
+                  ? AppColors.darkSurfaceVariant
+                  : AppColors.surfaceVariant,
               borderRadius: AppSpacing.borderRadiusMd,
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today_rounded, color: AppColors.urineReport, size: 20),
+                Icon(
+                  Icons.calendar_today_rounded,
+                  color: AppColors.urineReport,
+                  size: 20,
+                ),
                 const SizedBox(width: AppSpacing.md),
-                Text(DateFormat('MMMM dd, yyyy').format(_selectedDate), style: AppTypography.body1),
+                Text(
+                  DateFormat('MMMM dd, yyyy').format(_selectedDate),
+                  style: AppTypography.body1,
+                ),
                 const Spacer(),
                 const Icon(Icons.arrow_drop_down_rounded),
               ],
@@ -246,7 +333,13 @@ class _AddUrineReportScreenState extends State<AddUrineReportScreen> {
     );
   }
 
-  Widget _buildDropdown(String label, String value, List<String> options, void Function(String?) onChanged, bool isDark) {
+  Widget _buildDropdown(
+    String label,
+    String value,
+    List<String> options,
+    void Function(String?) onChanged,
+    bool isDark,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -255,17 +348,23 @@ class _AddUrineReportScreenState extends State<AddUrineReportScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           decoration: BoxDecoration(
-            color: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+            color: isDark
+                ? AppColors.darkSurfaceVariant
+                : AppColors.surfaceVariant,
             borderRadius: AppSpacing.borderRadiusMd,
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: value,
               isExpanded: true,
-              items: options.map((o) => DropdownMenuItem(value: o, child: Text(o))).toList(),
+              items: options
+                  .map((o) => DropdownMenuItem(value: o, child: Text(o)))
+                  .toList(),
               onChanged: onChanged,
               style: AppTypography.body1.copyWith(
-                color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.textPrimary,
               ),
               dropdownColor: isDark ? AppColors.darkSurface : AppColors.surface,
             ),

@@ -46,7 +46,9 @@ class ViewBloodPressureScreen extends StatelessWidget {
               actionLabel: 'Add Record',
               onAction: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const AddBloodPressureScreen()),
+                MaterialPageRoute(
+                  builder: (_) => const AddBloodPressureScreen(),
+                ),
               ),
             );
           }
@@ -76,7 +78,9 @@ class ViewBloodPressureScreen extends StatelessWidget {
                   // Records List
                   Text('All Records', style: AppTypography.title2),
                   const SizedBox(height: AppSpacing.md),
-                  ...sortedRecords.map((r) => _buildRecordCard(context, r, isDark, provider)),
+                  ...sortedRecords.map(
+                    (r) => _buildRecordCard(context, r, isDark, provider),
+                  ),
                   const SizedBox(height: AppSpacing.xl),
                 ],
               ),
@@ -97,8 +101,11 @@ class ViewBloodPressureScreen extends StatelessWidget {
 
   Widget _buildSummaryCard(List<BloodPressure> records, bool isDark) {
     final latest = records.first;
-    final avgSystolic = records.map((r) => r.systolic).reduce((a, b) => a + b) / records.length;
-    final avgDiastolic = records.map((r) => r.diastolic).reduce((a, b) => a + b) / records.length;
+    final avgSystolic =
+        records.map((r) => r.systolic).reduce((a, b) => a + b) / records.length;
+    final avgDiastolic =
+        records.map((r) => r.diastolic).reduce((a, b) => a + b) /
+        records.length;
 
     String status = 'Normal';
     Color statusColor = AppColors.success;
@@ -135,7 +142,11 @@ class ViewBloodPressureScreen extends StatelessWidget {
                   color: AppColors.bloodPressure.withOpacity(0.15),
                   borderRadius: AppSpacing.borderRadiusMd,
                 ),
-                child: Icon(Icons.favorite_rounded, color: AppColors.bloodPressure, size: 28),
+                child: Icon(
+                  Icons.favorite_rounded,
+                  color: AppColors.bloodPressure,
+                  size: 28,
+                ),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
@@ -146,21 +157,29 @@ class ViewBloodPressureScreen extends StatelessWidget {
                     Text(
                       latest.bpLevel,
                       style: AppTypography.headline2.copyWith(
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                       ),
                     ),
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm,
+                ),
                 decoration: BoxDecoration(
                   color: statusColor.withOpacity(0.15),
                   borderRadius: AppSpacing.borderRadiusFull,
                 ),
                 child: Text(
                   status,
-                  style: AppTypography.label2.copyWith(color: statusColor, fontWeight: FontWeight.bold),
+                  style: AppTypography.label2.copyWith(
+                    color: statusColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
@@ -168,9 +187,17 @@ class ViewBloodPressureScreen extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           Row(
             children: [
-              _buildStatItem('Average', '${avgSystolic.toStringAsFixed(0)}/${avgDiastolic.toStringAsFixed(0)}', isDark),
+              _buildStatItem(
+                'Average',
+                '${avgSystolic.toStringAsFixed(0)}/${avgDiastolic.toStringAsFixed(0)}',
+                isDark,
+              ),
               _buildStatItem('Records', '${records.length}', isDark),
-              _buildStatItem('Date', DateFormat('MMM dd').format(DateTime.parse(latest.testDate)), isDark),
+              _buildStatItem(
+                'Date',
+                DateFormat('MMM dd').format(DateTime.parse(latest.testDate)),
+                isDark,
+              ),
             ],
           ),
         ],
@@ -182,10 +209,13 @@ class ViewBloodPressureScreen extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Text(value, style: AppTypography.title3.copyWith(
-            color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
-            fontWeight: FontWeight.bold,
-          )),
+          Text(
+            value,
+            style: AppTypography.title3.copyWith(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           Text(label, style: AppTypography.caption),
         ],
       ),
@@ -205,7 +235,10 @@ class ViewBloodPressureScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Trend (Last ${chartRecords.length} readings)', style: AppTypography.title3),
+          Text(
+            'Trend (Last ${chartRecords.length} readings)',
+            style: AppTypography.title3,
+          ),
           const SizedBox(height: AppSpacing.lg),
           SizedBox(
             height: 200,
@@ -213,16 +246,32 @@ class ViewBloodPressureScreen extends StatelessWidget {
               LineChartData(
                 gridData: FlGridData(show: true, drawVerticalLine: false),
                 titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40)),
-                  bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                 ),
                 borderData: FlBorderData(show: false),
                 lineBarsData: [
                   LineChartBarData(
-                    spots: chartRecords.asMap().entries.map((e) =>
-                      FlSpot(e.key.toDouble(), e.value.systolic.toDouble())).toList(),
+                    spots: chartRecords
+                        .asMap()
+                        .entries
+                        .map(
+                          (e) => FlSpot(
+                            e.key.toDouble(),
+                            e.value.systolic.toDouble(),
+                          ),
+                        )
+                        .toList(),
                     isCurved: true,
                     color: AppColors.bloodPressure,
                     barWidth: 3,
@@ -233,8 +282,16 @@ class ViewBloodPressureScreen extends StatelessWidget {
                     ),
                   ),
                   LineChartBarData(
-                    spots: chartRecords.asMap().entries.map((e) =>
-                      FlSpot(e.key.toDouble(), e.value.diastolic.toDouble())).toList(),
+                    spots: chartRecords
+                        .asMap()
+                        .entries
+                        .map(
+                          (e) => FlSpot(
+                            e.key.toDouble(),
+                            e.value.diastolic.toDouble(),
+                          ),
+                        )
+                        .toList(),
                     isCurved: true,
                     color: AppColors.primary,
                     barWidth: 3,
@@ -265,14 +322,23 @@ class ViewBloodPressureScreen extends StatelessWidget {
   Widget _buildLegendItem(String label, Color color) {
     return Row(
       children: [
-        Container(width: 12, height: 12, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
         const SizedBox(width: AppSpacing.xs),
         Text(label, style: AppTypography.caption),
       ],
     );
   }
 
-  Widget _buildRecordCard(BuildContext context, BloodPressure record, bool isDark, HealthRecordsProvider provider) {
+  Widget _buildRecordCard(
+    BuildContext context,
+    BloodPressure record,
+    bool isDark,
+    HealthRecordsProvider provider,
+  ) {
     Color statusColor = AppColors.success;
     String status = 'Normal';
     if (record.systolic >= 140 || record.diastolic >= 90) {
@@ -300,24 +366,34 @@ class ViewBloodPressureScreen extends StatelessWidget {
                 Text(
                   record.bpLevel,
                   style: AppTypography.title2.copyWith(
-                    color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
+                  DateFormat(
+                    'MMM dd, yyyy',
+                  ).format(DateTime.parse(record.testDate)),
                   style: AppTypography.caption,
                 ),
               ],
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.xs,
+            ),
             decoration: BoxDecoration(
               color: statusColor.withOpacity(0.15),
               borderRadius: AppSpacing.borderRadiusFull,
             ),
-            child: Text(status, style: AppTypography.label2.copyWith(color: statusColor)),
+            child: Text(
+              status,
+              style: AppTypography.label2.copyWith(color: statusColor),
+            ),
           ),
           PopupMenuButton<String>(
             onSelected: (value) async {
@@ -326,12 +402,20 @@ class ViewBloodPressureScreen extends StatelessWidget {
                   context: context,
                   builder: (ctx) => AlertDialog(
                     title: const Text('Delete Record'),
-                    content: const Text('Are you sure you want to delete this record?'),
+                    content: const Text(
+                      'Are you sure you want to delete this record?',
+                    ),
                     actions: [
-                      TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('Cancel'),
+                      ),
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        child: Text('Delete', style: TextStyle(color: AppColors.error)),
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(color: AppColors.error),
+                        ),
                       ),
                     ],
                   ),

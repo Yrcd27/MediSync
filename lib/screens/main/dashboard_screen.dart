@@ -12,6 +12,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/constants/app_typography.dart';
 import '../../utils/health_analysis.dart';
+import 'analytics_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -143,8 +144,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           label: 'View Charts',
                           color: AppColors.success,
                           onTap: () {
-                            // Note: Tab switching requires parent TabController
-                            // User can manually tap Analytics tab
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const AnalyticsScreen(),
+                              ),
+                            );
                           },
                         ),
                       ),
@@ -410,10 +415,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         decoration: BoxDecoration(
           color: isDark ? AppColors.darkSurface : AppColors.surface,
           borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-          border: Border.all(
-            color: color.withOpacity(0.3),
-            width: 2,
-          ),
+          border: Border.all(color: color.withOpacity(0.3), width: 2),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

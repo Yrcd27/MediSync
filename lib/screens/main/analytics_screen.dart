@@ -183,7 +183,11 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  Widget _buildRangeButton(BuildContext context, String label, TimeRange range) {
+  Widget _buildRangeButton(
+    BuildContext context,
+    String label,
+    TimeRange range,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelected = _selectedRange == range;
 
@@ -573,7 +577,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     }).toList();
 
     final wbcSpots = filteredRecords.asMap().entries.map((entry) {
-      return FlSpot(entry.key.toDouble(), entry.value.totalLeucocyteCount / 1000);
+      return FlSpot(
+        entry.key.toDouble(),
+        entry.value.totalLeucocyteCount / 1000,
+      );
     }).toList();
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -669,7 +676,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  Widget _buildLipidChart(BuildContext context, HealthRecordsProvider provider) {
+  Widget _buildLipidChart(
+    BuildContext context,
+    HealthRecordsProvider provider,
+  ) {
     final filteredRecords = _filterRecordsByTimeRange(
       provider.lipidRecords.map((r) => DateTime.parse(r.testDate)).toList(),
       provider.lipidRecords,
@@ -796,7 +806,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  Widget _buildLiverChart(BuildContext context, HealthRecordsProvider provider) {
+  Widget _buildLiverChart(
+    BuildContext context,
+    HealthRecordsProvider provider,
+  ) {
     final filteredRecords = _filterRecordsByTimeRange(
       provider.liverRecords.map((r) => DateTime.parse(r.testDate)).toList(),
       provider.liverRecords,
@@ -911,7 +924,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     );
   }
 
-  Widget _buildUrineChart(BuildContext context, HealthRecordsProvider provider) {
+  Widget _buildUrineChart(
+    BuildContext context,
+    HealthRecordsProvider provider,
+  ) {
     final filteredRecords = _filterRecordsByTimeRange(
       provider.urineRecords.map((r) => DateTime.parse(r.testDate)).toList(),
       provider.urineRecords,
@@ -1017,7 +1033,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   List<T> _filterRecordsByTimeRange<T>(List<DateTime> dates, List<T> records) {
     if (dates.isEmpty || records.isEmpty) return [];
-    
+
     final now = DateTime.now();
     DateTime cutoffDate;
 

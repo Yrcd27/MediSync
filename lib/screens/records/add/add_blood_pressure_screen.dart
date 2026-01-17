@@ -174,7 +174,9 @@ class _AddBloodPressureScreenState extends State<AddBloodPressureScreen> {
               Text(
                 'Test Date',
                 style: AppTypography.label1.copyWith(
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -184,7 +186,9 @@ class _AddBloodPressureScreenState extends State<AddBloodPressureScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+                    color: isDark
+                        ? AppColors.darkSurfaceVariant
+                        : AppColors.surfaceVariant,
                     borderRadius: AppSpacing.borderRadiusMd,
                   ),
                   child: Row(
@@ -198,13 +202,17 @@ class _AddBloodPressureScreenState extends State<AddBloodPressureScreen> {
                       Text(
                         DateFormat('MMMM dd, yyyy').format(_selectedDate),
                         style: AppTypography.body1.copyWith(
-                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                          color: isDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.textPrimary,
                         ),
                       ),
                       const Spacer(),
                       Icon(
                         Icons.arrow_drop_down_rounded,
-                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.textSecondary,
                       ),
                     ],
                   ),
@@ -217,7 +225,9 @@ class _AddBloodPressureScreenState extends State<AddBloodPressureScreen> {
               Text(
                 'Blood Pressure Reading',
                 style: AppTypography.label1.copyWith(
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -241,11 +251,15 @@ class _AddBloodPressureScreenState extends State<AddBloodPressureScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                    ),
                     child: Text(
                       '/',
                       style: AppTypography.headline2.copyWith(
-                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.textSecondary,
                       ),
                     ),
                   ),
@@ -280,12 +294,18 @@ class _AddBloodPressureScreenState extends State<AddBloodPressureScreen> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline_rounded, color: AppColors.info, size: 20),
+                    Icon(
+                      Icons.info_outline_rounded,
+                      color: AppColors.info,
+                      size: 20,
+                    ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
                         'Normal: Below 120/80 mmHg',
-                        style: AppTypography.caption.copyWith(color: AppColors.info),
+                        style: AppTypography.caption.copyWith(
+                          color: AppColors.info,
+                        ),
                       ),
                     ),
                   ],
@@ -321,7 +341,9 @@ class _AddBloodPressureScreenState extends State<AddBloodPressureScreen> {
         Text(
           label,
           style: AppTypography.caption.copyWith(
-            color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.darkTextSecondary
+                : AppColors.textSecondary,
           ),
         ),
         const SizedBox(height: AppSpacing.xs),
@@ -341,7 +363,9 @@ class _AddBloodPressureScreenState extends State<AddBloodPressureScreen> {
             suffixText: suffix,
             suffixStyle: AppTypography.caption,
             filled: true,
-            fillColor: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+            fillColor: isDark
+                ? AppColors.darkSurfaceVariant
+                : AppColors.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: AppSpacing.borderRadiusMd,
               borderSide: BorderSide.none,

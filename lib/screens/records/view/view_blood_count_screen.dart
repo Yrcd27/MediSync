@@ -27,7 +27,10 @@ class ViewBloodCountScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add_rounded),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddBloodCountScreen())),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AddBloodCountScreen()),
+            ),
           ),
         ],
       ),
@@ -41,11 +44,15 @@ class ViewBloodCountScreen extends StatelessWidget {
               message: 'No Blood Count Records',
               description: 'Start tracking your CBC results',
               actionLabel: 'Add Record',
-              onAction: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddBloodCountScreen())),
+              onAction: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AddBloodCountScreen()),
+              ),
             );
           }
 
-          final sortedRecords = List<FullBloodCount>.from(records)..sort((a, b) => b.testDate.compareTo(a.testDate));
+          final sortedRecords = List<FullBloodCount>.from(records)
+            ..sort((a, b) => b.testDate.compareTo(a.testDate));
 
           return RefreshIndicator(
             onRefresh: () async {
@@ -64,7 +71,9 @@ class ViewBloodCountScreen extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xl),
                   Text('All Records', style: AppTypography.title2),
                   const SizedBox(height: AppSpacing.md),
-                  ...sortedRecords.map((r) => _buildRecordCard(context, r, isDark, provider)),
+                  ...sortedRecords.map(
+                    (r) => _buildRecordCard(context, r, isDark, provider),
+                  ),
                   const SizedBox(height: AppSpacing.xl),
                 ],
               ),
@@ -73,7 +82,10 @@ class ViewBloodCountScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddBloodCountScreen())),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AddBloodCountScreen()),
+        ),
         backgroundColor: AppColors.bloodCount,
         child: const Icon(Icons.add_rounded, color: Colors.white),
       ),
@@ -86,15 +98,26 @@ class ViewBloodCountScreen extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(color: isDark ? AppColors.darkSurface : AppColors.surface, borderRadius: AppSpacing.borderRadiusMd),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
+        borderRadius: AppSpacing.borderRadiusMd,
+      ),
       child: Column(
         children: [
           Row(
             children: [
               Container(
-                width: 56, height: 56,
-                decoration: BoxDecoration(color: AppColors.bloodCount.withOpacity(0.15), borderRadius: AppSpacing.borderRadiusMd),
-                child: Icon(Icons.science_rounded, color: AppColors.bloodCount, size: 28),
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: AppColors.bloodCount.withOpacity(0.15),
+                  borderRadius: AppSpacing.borderRadiusMd,
+                ),
+                child: Icon(
+                  Icons.science_rounded,
+                  color: AppColors.bloodCount,
+                  size: 28,
+                ),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
@@ -102,7 +125,10 @@ class ViewBloodCountScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Latest Hemoglobin', style: AppTypography.label1),
-                    Text('${latest.haemoglobin.toStringAsFixed(1)} g/dL', style: AppTypography.headline2),
+                    Text(
+                      '${latest.haemoglobin.toStringAsFixed(1)} g/dL',
+                      style: AppTypography.headline2,
+                    ),
                   ],
                 ),
               ),
@@ -111,8 +137,16 @@ class ViewBloodCountScreen extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           Row(
             children: [
-              _buildStatItem('WBC', '${(latest.totalLeucocyteCount / 1000).toStringAsFixed(1)}K', isDark),
-              _buildStatItem('Platelets', '${(latest.plateletCount / 1000).toStringAsFixed(0)}K', isDark),
+              _buildStatItem(
+                'WBC',
+                '${(latest.totalLeucocyteCount / 1000).toStringAsFixed(1)}K',
+                isDark,
+              ),
+              _buildStatItem(
+                'Platelets',
+                '${(latest.plateletCount / 1000).toStringAsFixed(0)}K',
+                isDark,
+              ),
               _buildStatItem('Records', '${records.length}', isDark),
             ],
           ),
@@ -122,10 +156,17 @@ class ViewBloodCountScreen extends StatelessWidget {
   }
 
   Widget _buildStatItem(String label, String value, bool isDark) {
-    return Expanded(child: Column(children: [
-      Text(value, style: AppTypography.title3.copyWith(fontWeight: FontWeight.bold)),
-      Text(label, style: AppTypography.caption),
-    ]));
+    return Expanded(
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: AppTypography.title3.copyWith(fontWeight: FontWeight.bold),
+          ),
+          Text(label, style: AppTypography.caption),
+        ],
+      ),
+    );
   }
 
   Widget _buildChartSection(List<FullBloodCount> records, bool isDark) {
@@ -134,7 +175,10 @@ class ViewBloodCountScreen extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(color: isDark ? AppColors.darkSurface : AppColors.surface, borderRadius: AppSpacing.borderRadiusMd),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
+        borderRadius: AppSpacing.borderRadiusMd,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -146,20 +190,37 @@ class ViewBloodCountScreen extends StatelessWidget {
               LineChartData(
                 gridData: FlGridData(show: true, drawVerticalLine: false),
                 titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40)),
-                  bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                 ),
                 borderData: FlBorderData(show: false),
                 lineBarsData: [
                   LineChartBarData(
-                    spots: chartRecords.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.haemoglobin)).toList(),
+                    spots: chartRecords
+                        .asMap()
+                        .entries
+                        .map(
+                          (e) => FlSpot(e.key.toDouble(), e.value.haemoglobin),
+                        )
+                        .toList(),
                     isCurved: true,
                     color: AppColors.bloodCount,
                     barWidth: 3,
                     dotData: FlDotData(show: true),
-                    belowBarData: BarAreaData(show: true, color: AppColors.bloodCount.withOpacity(0.1)),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: AppColors.bloodCount.withOpacity(0.1),
+                    ),
                   ),
                 ],
               ),
@@ -170,7 +231,12 @@ class ViewBloodCountScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRecordCard(BuildContext context, FullBloodCount record, bool isDark, HealthRecordsProvider provider) {
+  Widget _buildRecordCard(
+    BuildContext context,
+    FullBloodCount record,
+    bool isDark,
+    HealthRecordsProvider provider,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -185,27 +251,53 @@ class ViewBloodCountScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Hb: ${record.haemoglobin.toStringAsFixed(1)} g/dL', style: AppTypography.title3),
+                Text(
+                  'Hb: ${record.haemoglobin.toStringAsFixed(1)} g/dL',
+                  style: AppTypography.title3,
+                ),
                 const SizedBox(height: AppSpacing.xs),
-                Text('WBC: ${record.totalLeucocyteCount.toStringAsFixed(0)} | PLT: ${record.plateletCount.toStringAsFixed(0)}', style: AppTypography.caption),
-                Text(DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)), style: AppTypography.caption),
+                Text(
+                  'WBC: ${record.totalLeucocyteCount.toStringAsFixed(0)} | PLT: ${record.plateletCount.toStringAsFixed(0)}',
+                  style: AppTypography.caption,
+                ),
+                Text(
+                  DateFormat(
+                    'MMM dd, yyyy',
+                  ).format(DateTime.parse(record.testDate)),
+                  style: AppTypography.caption,
+                ),
               ],
             ),
           ),
           PopupMenuButton<String>(
             onSelected: (value) async {
               if (value == 'delete') {
-                final confirm = await showDialog<bool>(context: context, builder: (ctx) => AlertDialog(
-                  title: const Text('Delete Record'), content: const Text('Are you sure?'),
-                  actions: [
-                    TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-                    TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text('Delete', style: TextStyle(color: AppColors.error))),
-                  ],
-                ));
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Delete Record'),
+                    content: const Text('Are you sure?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(color: AppColors.error),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
                 if (confirm == true) await provider.deleteFBCRecord(record.id);
               }
             },
-            itemBuilder: (ctx) => [const PopupMenuItem(value: 'delete', child: Text('Delete'))],
+            itemBuilder: (ctx) => [
+              const PopupMenuItem(value: 'delete', child: Text('Delete')),
+            ],
           ),
         ],
       ),

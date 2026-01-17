@@ -59,7 +59,9 @@ class RecordsHubScreen extends StatelessWidget {
                   Text(
                     'Health Categories',
                     style: AppTypography.title2.copyWith(
-                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -85,7 +87,9 @@ class RecordsHubScreen extends StatelessWidget {
                         unit: 'mmHg',
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const ViewBloodPressureScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const ViewBloodPressureScreen(),
+                          ),
                         ),
                         isDark: isDark,
                       ),
@@ -96,12 +100,15 @@ class RecordsHubScreen extends StatelessWidget {
                         color: AppColors.bloodSugar,
                         count: healthProvider.fbsRecords.length,
                         latestValue: healthProvider.fbsRecords.isNotEmpty
-                            ? healthProvider.fbsRecords.last.fbsLevel.toStringAsFixed(0)
+                            ? healthProvider.fbsRecords.last.fbsLevel
+                                  .toStringAsFixed(0)
                             : null,
                         unit: 'mg/dL',
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const ViewBloodSugarScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const ViewBloodSugarScreen(),
+                          ),
                         ),
                         isDark: isDark,
                       ),
@@ -117,7 +124,9 @@ class RecordsHubScreen extends StatelessWidget {
                         unit: 'g/dL',
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const ViewBloodCountScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const ViewBloodCountScreen(),
+                          ),
                         ),
                         isDark: isDark,
                       ),
@@ -133,7 +142,9 @@ class RecordsHubScreen extends StatelessWidget {
                         unit: 'mg/dL',
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const ViewLipidProfileScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const ViewLipidProfileScreen(),
+                          ),
                         ),
                         isDark: isDark,
                       ),
@@ -149,7 +160,9 @@ class RecordsHubScreen extends StatelessWidget {
                         unit: 'U/L',
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const ViewLiverProfileScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const ViewLiverProfileScreen(),
+                          ),
                         ),
                         isDark: isDark,
                       ),
@@ -165,7 +178,9 @@ class RecordsHubScreen extends StatelessWidget {
                         unit: '',
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const ViewUrineReportScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const ViewUrineReportScreen(),
+                          ),
                         ),
                         isDark: isDark,
                       ),
@@ -181,7 +196,9 @@ class RecordsHubScreen extends StatelessWidget {
                       Text(
                         'Recent Records',
                         style: AppTypography.title2.copyWith(
-                          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                          color: isDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.textPrimary,
                         ),
                       ),
                       TextButton(
@@ -190,7 +207,9 @@ class RecordsHubScreen extends StatelessWidget {
                         },
                         child: Text(
                           'View All',
-                          style: AppTypography.label1.copyWith(color: AppColors.primary),
+                          style: AppTypography.label1.copyWith(
+                            color: AppColors.primary,
+                          ),
                         ),
                       ),
                     ],
@@ -327,14 +346,18 @@ class RecordsHubScreen extends StatelessWidget {
                     vertical: AppSpacing.xs,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+                    color: isDark
+                        ? AppColors.darkSurfaceVariant
+                        : AppColors.surfaceVariant,
                     borderRadius: AppSpacing.borderRadiusFull,
                   ),
                   child: Text(
                     '$count',
                     style: AppTypography.label2.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.textPrimary,
                     ),
                   ),
                 ),
@@ -344,7 +367,9 @@ class RecordsHubScreen extends StatelessWidget {
             Text(
               title,
               style: AppTypography.label1.copyWith(
-                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.textSecondary,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -354,7 +379,9 @@ class RecordsHubScreen extends StatelessWidget {
               Text(
                 latestValue,
                 style: AppTypography.title3.copyWith(
-                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.textPrimary,
                   fontWeight: FontWeight.bold,
                 ),
                 maxLines: 1,
@@ -500,7 +527,9 @@ class RecordsHubScreen extends StatelessWidget {
                     Text(
                       record['type'] as String,
                       style: AppTypography.label1.copyWith(
-                        color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),

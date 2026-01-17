@@ -27,7 +27,10 @@ class ViewBloodSugarScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add_rounded),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddBloodSugarScreen())),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AddBloodSugarScreen()),
+            ),
           ),
         ],
       ),
@@ -41,11 +44,15 @@ class ViewBloodSugarScreen extends StatelessWidget {
               message: 'No Blood Sugar Records',
               description: 'Start tracking your fasting blood sugar',
               actionLabel: 'Add Record',
-              onAction: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddBloodSugarScreen())),
+              onAction: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AddBloodSugarScreen()),
+              ),
             );
           }
 
-          final sortedRecords = List<FastingBloodSugar>.from(records)..sort((a, b) => b.testDate.compareTo(a.testDate));
+          final sortedRecords = List<FastingBloodSugar>.from(records)
+            ..sort((a, b) => b.testDate.compareTo(a.testDate));
 
           return RefreshIndicator(
             onRefresh: () async {
@@ -64,7 +71,9 @@ class ViewBloodSugarScreen extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xl),
                   Text('All Records', style: AppTypography.title2),
                   const SizedBox(height: AppSpacing.md),
-                  ...sortedRecords.map((r) => _buildRecordCard(context, r, isDark, provider)),
+                  ...sortedRecords.map(
+                    (r) => _buildRecordCard(context, r, isDark, provider),
+                  ),
                   const SizedBox(height: AppSpacing.xl),
                 ],
               ),
@@ -73,7 +82,10 @@ class ViewBloodSugarScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddBloodSugarScreen())),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AddBloodSugarScreen()),
+        ),
         backgroundColor: AppColors.bloodSugar,
         child: const Icon(Icons.add_rounded, color: Colors.white),
       ),
@@ -82,7 +94,8 @@ class ViewBloodSugarScreen extends StatelessWidget {
 
   Widget _buildSummaryCard(List<FastingBloodSugar> records, bool isDark) {
     final latest = records.first;
-    final avg = records.map((r) => r.fbsLevel).reduce((a, b) => a + b) / records.length;
+    final avg =
+        records.map((r) => r.fbsLevel).reduce((a, b) => a + b) / records.length;
 
     String status = 'Normal';
     Color statusColor = AppColors.success;
@@ -106,12 +119,17 @@ class ViewBloodSugarScreen extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 56, height: 56,
+                width: 56,
+                height: 56,
                 decoration: BoxDecoration(
                   color: AppColors.bloodSugar.withOpacity(0.15),
                   borderRadius: AppSpacing.borderRadiusMd,
                 ),
-                child: Icon(Icons.water_drop_rounded, color: AppColors.bloodSugar, size: 28),
+                child: Icon(
+                  Icons.water_drop_rounded,
+                  color: AppColors.bloodSugar,
+                  size: 28,
+                ),
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
@@ -119,23 +137,46 @@ class ViewBloodSugarScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Latest Reading', style: AppTypography.label1),
-                    Text('${latest.fbsLevel.toStringAsFixed(0)} mg/dL', style: AppTypography.headline2),
+                    Text(
+                      '${latest.fbsLevel.toStringAsFixed(0)} mg/dL',
+                      style: AppTypography.headline2,
+                    ),
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-                decoration: BoxDecoration(color: statusColor.withOpacity(0.15), borderRadius: AppSpacing.borderRadiusFull),
-                child: Text(status, style: AppTypography.label2.copyWith(color: statusColor, fontWeight: FontWeight.bold)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm,
+                ),
+                decoration: BoxDecoration(
+                  color: statusColor.withOpacity(0.15),
+                  borderRadius: AppSpacing.borderRadiusFull,
+                ),
+                child: Text(
+                  status,
+                  style: AppTypography.label2.copyWith(
+                    color: statusColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
           Row(
             children: [
-              _buildStatItem('Average', '${avg.toStringAsFixed(0)} mg/dL', isDark),
+              _buildStatItem(
+                'Average',
+                '${avg.toStringAsFixed(0)} mg/dL',
+                isDark,
+              ),
               _buildStatItem('Records', '${records.length}', isDark),
-              _buildStatItem('Date', DateFormat('MMM dd').format(DateTime.parse(latest.testDate)), isDark),
+              _buildStatItem(
+                'Date',
+                DateFormat('MMM dd').format(DateTime.parse(latest.testDate)),
+                isDark,
+              ),
             ],
           ),
         ],
@@ -147,7 +188,10 @@ class ViewBloodSugarScreen extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Text(value, style: AppTypography.title3.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            value,
+            style: AppTypography.title3.copyWith(fontWeight: FontWeight.bold),
+          ),
           Text(label, style: AppTypography.caption),
         ],
       ),
@@ -160,11 +204,17 @@ class ViewBloodSugarScreen extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(color: isDark ? AppColors.darkSurface : AppColors.surface, borderRadius: AppSpacing.borderRadiusMd),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
+        borderRadius: AppSpacing.borderRadiusMd,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Trend (Last ${chartRecords.length} readings)', style: AppTypography.title3),
+          Text(
+            'Trend (Last ${chartRecords.length} readings)',
+            style: AppTypography.title3,
+          ),
           const SizedBox(height: AppSpacing.lg),
           SizedBox(
             height: 200,
@@ -172,26 +222,51 @@ class ViewBloodSugarScreen extends StatelessWidget {
               LineChartData(
                 gridData: FlGridData(show: true, drawVerticalLine: false),
                 titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40)),
-                  bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                 ),
                 borderData: FlBorderData(show: false),
                 lineBarsData: [
                   LineChartBarData(
-                    spots: chartRecords.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.fbsLevel)).toList(),
+                    spots: chartRecords
+                        .asMap()
+                        .entries
+                        .map((e) => FlSpot(e.key.toDouble(), e.value.fbsLevel))
+                        .toList(),
                     isCurved: true,
                     color: AppColors.bloodSugar,
                     barWidth: 3,
                     dotData: FlDotData(show: true),
-                    belowBarData: BarAreaData(show: true, color: AppColors.bloodSugar.withOpacity(0.1)),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: AppColors.bloodSugar.withOpacity(0.1),
+                    ),
                   ),
                 ],
                 extraLinesData: ExtraLinesData(
                   horizontalLines: [
-                    HorizontalLine(y: 100, color: AppColors.warning, strokeWidth: 1, dashArray: [5, 5]),
-                    HorizontalLine(y: 126, color: AppColors.error, strokeWidth: 1, dashArray: [5, 5]),
+                    HorizontalLine(
+                      y: 100,
+                      color: AppColors.warning,
+                      strokeWidth: 1,
+                      dashArray: [5, 5],
+                    ),
+                    HorizontalLine(
+                      y: 126,
+                      color: AppColors.error,
+                      strokeWidth: 1,
+                      dashArray: [5, 5],
+                    ),
                   ],
                 ),
               ),
@@ -202,11 +277,21 @@ class ViewBloodSugarScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRecordCard(BuildContext context, FastingBloodSugar record, bool isDark, HealthRecordsProvider provider) {
+  Widget _buildRecordCard(
+    BuildContext context,
+    FastingBloodSugar record,
+    bool isDark,
+    HealthRecordsProvider provider,
+  ) {
     Color statusColor = AppColors.success;
     String status = 'Normal';
-    if (record.fbsLevel >= 126) { statusColor = AppColors.error; status = 'Diabetic'; }
-    else if (record.fbsLevel >= 100) { statusColor = AppColors.warning; status = 'Pre-diabetic'; }
+    if (record.fbsLevel >= 126) {
+      statusColor = AppColors.error;
+      status = 'Diabetic';
+    } else if (record.fbsLevel >= 100) {
+      statusColor = AppColors.warning;
+      status = 'Pre-diabetic';
+    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -222,16 +307,33 @@ class ViewBloodSugarScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${record.fbsLevel.toStringAsFixed(0)} mg/dL', style: AppTypography.title2),
+                Text(
+                  '${record.fbsLevel.toStringAsFixed(0)} mg/dL',
+                  style: AppTypography.title2,
+                ),
                 const SizedBox(height: AppSpacing.xs),
-                Text(DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)), style: AppTypography.caption),
+                Text(
+                  DateFormat(
+                    'MMM dd, yyyy',
+                  ).format(DateTime.parse(record.testDate)),
+                  style: AppTypography.caption,
+                ),
               ],
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-            decoration: BoxDecoration(color: statusColor.withOpacity(0.15), borderRadius: AppSpacing.borderRadiusFull),
-            child: Text(status, style: AppTypography.label2.copyWith(color: statusColor)),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.xs,
+            ),
+            decoration: BoxDecoration(
+              color: statusColor.withOpacity(0.15),
+              borderRadius: AppSpacing.borderRadiusFull,
+            ),
+            child: Text(
+              status,
+              style: AppTypography.label2.copyWith(color: statusColor),
+            ),
           ),
           PopupMenuButton<String>(
             onSelected: (value) async {
@@ -242,15 +344,26 @@ class ViewBloodSugarScreen extends StatelessWidget {
                     title: const Text('Delete Record'),
                     content: const Text('Are you sure?'),
                     actions: [
-                      TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-                      TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text('Delete', style: TextStyle(color: AppColors.error))),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(color: AppColors.error),
+                        ),
+                      ),
                     ],
                   ),
                 );
                 if (confirm == true) await provider.deleteFBSRecord(record.id);
               }
             },
-            itemBuilder: (ctx) => [const PopupMenuItem(value: 'delete', child: Text('Delete'))],
+            itemBuilder: (ctx) => [
+              const PopupMenuItem(value: 'delete', child: Text('Delete')),
+            ],
           ),
         ],
       ),

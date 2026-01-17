@@ -24,7 +24,15 @@ class ViewLipidProfileScreen extends StatelessWidget {
         title: Text('Lipid Profile', style: AppTypography.title1),
         backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
         elevation: 0,
-        actions: [IconButton(icon: const Icon(Icons.add_rounded), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddLipidProfileScreen())))],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add_rounded),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AddLipidProfileScreen()),
+            ),
+          ),
+        ],
       ),
       body: Consumer<HealthRecordsProvider>(
         builder: (context, provider, _) {
@@ -36,11 +44,17 @@ class ViewLipidProfileScreen extends StatelessWidget {
               message: 'No Lipid Profile Records',
               description: 'Start tracking your cholesterol levels',
               actionLabel: 'Add Record',
-              onAction: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddLipidProfileScreen())),
+              onAction: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AddLipidProfileScreen(),
+                ),
+              ),
             );
           }
 
-          final sortedRecords = List<LipidProfile>.from(records)..sort((a, b) => b.testDate.compareTo(a.testDate));
+          final sortedRecords = List<LipidProfile>.from(records)
+            ..sort((a, b) => b.testDate.compareTo(a.testDate));
 
           return RefreshIndicator(
             onRefresh: () async {
@@ -59,7 +73,9 @@ class ViewLipidProfileScreen extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xl),
                   Text('All Records', style: AppTypography.title2),
                   const SizedBox(height: AppSpacing.md),
-                  ...sortedRecords.map((r) => _buildRecordCard(context, r, isDark, provider)),
+                  ...sortedRecords.map(
+                    (r) => _buildRecordCard(context, r, isDark, provider),
+                  ),
                   const SizedBox(height: AppSpacing.xl),
                 ],
               ),
@@ -68,7 +84,10 @@ class ViewLipidProfileScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddLipidProfileScreen())),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AddLipidProfileScreen()),
+        ),
         backgroundColor: AppColors.lipidProfile,
         child: const Icon(Icons.add_rounded, color: Colors.white),
       ),
@@ -79,46 +98,114 @@ class ViewLipidProfileScreen extends StatelessWidget {
     final latest = records.first;
 
     Color tcColor = AppColors.success;
-    if (latest.totalCholesterol >= 240) tcColor = AppColors.error;
-    else if (latest.totalCholesterol >= 200) tcColor = AppColors.warning;
+    if (latest.totalCholesterol >= 240)
+      tcColor = AppColors.error;
+    else if (latest.totalCholesterol >= 200)
+      tcColor = AppColors.warning;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(color: isDark ? AppColors.darkSurface : AppColors.surface, borderRadius: AppSpacing.borderRadiusMd),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
+        borderRadius: AppSpacing.borderRadiusMd,
+      ),
       child: Column(
         children: [
-          Row(children: [
-            Container(width: 56, height: 56, decoration: BoxDecoration(color: AppColors.lipidProfile.withOpacity(0.15), borderRadius: AppSpacing.borderRadiusMd),
-              child: Icon(Icons.monitor_heart_rounded, color: AppColors.lipidProfile, size: 28)),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Total Cholesterol', style: AppTypography.label1),
-              Text('${latest.totalCholesterol.toStringAsFixed(0)} mg/dL', style: AppTypography.headline2),
-            ])),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-              decoration: BoxDecoration(color: tcColor.withOpacity(0.15), borderRadius: AppSpacing.borderRadiusFull),
-              child: Text(latest.totalCholesterol < 200 ? 'Optimal' : latest.totalCholesterol < 240 ? 'Borderline' : 'High',
-                style: AppTypography.label2.copyWith(color: tcColor, fontWeight: FontWeight.bold)),
-            ),
-          ]),
+          Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: AppColors.lipidProfile.withOpacity(0.15),
+                  borderRadius: AppSpacing.borderRadiusMd,
+                ),
+                child: Icon(
+                  Icons.monitor_heart_rounded,
+                  color: AppColors.lipidProfile,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Total Cholesterol', style: AppTypography.label1),
+                    Text(
+                      '${latest.totalCholesterol.toStringAsFixed(0)} mg/dL',
+                      style: AppTypography.headline2,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm,
+                ),
+                decoration: BoxDecoration(
+                  color: tcColor.withOpacity(0.15),
+                  borderRadius: AppSpacing.borderRadiusFull,
+                ),
+                child: Text(
+                  latest.totalCholesterol < 200
+                      ? 'Optimal'
+                      : latest.totalCholesterol < 240
+                      ? 'Borderline'
+                      : 'High',
+                  style: AppTypography.label2.copyWith(
+                    color: tcColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: AppSpacing.lg),
-          Row(children: [
-            _buildStatItem('HDL', '${latest.hdl.toStringAsFixed(0)}', AppColors.success, isDark),
-            _buildStatItem('LDL', '${latest.ldl.toStringAsFixed(0)}', AppColors.error, isDark),
-            _buildStatItem('TG', '${latest.triglycerides.toStringAsFixed(0)}', AppColors.warning, isDark),
-          ]),
+          Row(
+            children: [
+              _buildStatItem(
+                'HDL',
+                '${latest.hdl.toStringAsFixed(0)}',
+                AppColors.success,
+                isDark,
+              ),
+              _buildStatItem(
+                'LDL',
+                '${latest.ldl.toStringAsFixed(0)}',
+                AppColors.error,
+                isDark,
+              ),
+              _buildStatItem(
+                'TG',
+                '${latest.triglycerides.toStringAsFixed(0)}',
+                AppColors.warning,
+                isDark,
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
   Widget _buildStatItem(String label, String value, Color color, bool isDark) {
-    return Expanded(child: Column(children: [
-      Text(value, style: AppTypography.title2.copyWith(color: color, fontWeight: FontWeight.bold)),
-      Text(label, style: AppTypography.caption),
-    ]));
+    return Expanded(
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: AppTypography.title2.copyWith(
+              color: color,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(label, style: AppTypography.caption),
+        ],
+      ),
+    );
   }
 
   Widget _buildChartSection(List<LipidProfile> records, bool isDark) {
@@ -127,72 +214,181 @@ class ViewLipidProfileScreen extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(color: isDark ? AppColors.darkSurface : AppColors.surface, borderRadius: AppSpacing.borderRadiusMd),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('Cholesterol Trends', style: AppTypography.title3),
-        const SizedBox(height: AppSpacing.lg),
-        SizedBox(height: 200, child: LineChart(
-          LineChartData(
-            gridData: FlGridData(show: true, drawVerticalLine: false),
-            titlesData: FlTitlesData(
-              leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40)),
-              bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
+        borderRadius: AppSpacing.borderRadiusMd,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Cholesterol Trends', style: AppTypography.title3),
+          const SizedBox(height: AppSpacing.lg),
+          SizedBox(
+            height: 200,
+            child: LineChart(
+              LineChartData(
+                gridData: FlGridData(show: true, drawVerticalLine: false),
+                titlesData: FlTitlesData(
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  rightTitles: AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                ),
+                borderData: FlBorderData(show: false),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: chartRecords
+                        .asMap()
+                        .entries
+                        .map(
+                          (e) => FlSpot(
+                            e.key.toDouble(),
+                            e.value.totalCholesterol,
+                          ),
+                        )
+                        .toList(),
+                    isCurved: true,
+                    color: AppColors.lipidProfile,
+                    barWidth: 3,
+                    dotData: FlDotData(show: true),
+                  ),
+                  LineChartBarData(
+                    spots: chartRecords
+                        .asMap()
+                        .entries
+                        .map((e) => FlSpot(e.key.toDouble(), e.value.ldl))
+                        .toList(),
+                    isCurved: true,
+                    color: AppColors.error,
+                    barWidth: 2,
+                    dotData: FlDotData(show: false),
+                  ),
+                  LineChartBarData(
+                    spots: chartRecords
+                        .asMap()
+                        .entries
+                        .map((e) => FlSpot(e.key.toDouble(), e.value.hdl))
+                        .toList(),
+                    isCurved: true,
+                    color: AppColors.success,
+                    barWidth: 2,
+                    dotData: FlDotData(show: false),
+                  ),
+                ],
+              ),
             ),
-            borderData: FlBorderData(show: false),
-            lineBarsData: [
-              LineChartBarData(spots: chartRecords.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.totalCholesterol)).toList(), isCurved: true, color: AppColors.lipidProfile, barWidth: 3, dotData: FlDotData(show: true)),
-              LineChartBarData(spots: chartRecords.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.ldl)).toList(), isCurved: true, color: AppColors.error, barWidth: 2, dotData: FlDotData(show: false)),
-              LineChartBarData(spots: chartRecords.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.hdl)).toList(), isCurved: true, color: AppColors.success, barWidth: 2, dotData: FlDotData(show: false)),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildLegendItem('TC', AppColors.lipidProfile),
+              const SizedBox(width: AppSpacing.lg),
+              _buildLegendItem('LDL', AppColors.error),
+              const SizedBox(width: AppSpacing.lg),
+              _buildLegendItem('HDL', AppColors.success),
             ],
           ),
-        )),
-        const SizedBox(height: AppSpacing.md),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          _buildLegendItem('TC', AppColors.lipidProfile),
-          const SizedBox(width: AppSpacing.lg),
-          _buildLegendItem('LDL', AppColors.error),
-          const SizedBox(width: AppSpacing.lg),
-          _buildLegendItem('HDL', AppColors.success),
-        ]),
-      ]),
+        ],
+      ),
     );
   }
 
   Widget _buildLegendItem(String label, Color color) {
-    return Row(children: [
-      Container(width: 12, height: 12, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-      const SizedBox(width: AppSpacing.xs),
-      Text(label, style: AppTypography.caption),
-    ]);
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: AppSpacing.xs),
+        Text(label, style: AppTypography.caption),
+      ],
+    );
   }
 
-  Widget _buildRecordCard(BuildContext context, LipidProfile record, bool isDark, HealthRecordsProvider provider) {
+  Widget _buildRecordCard(
+    BuildContext context,
+    LipidProfile record,
+    bool isDark,
+    HealthRecordsProvider provider,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(color: isDark ? AppColors.darkSurface : AppColors.surface, borderRadius: AppSpacing.borderRadiusMd, border: Border(left: BorderSide(color: AppColors.lipidProfile, width: 4))),
-      child: Row(children: [
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('TC: ${record.totalCholesterol.toStringAsFixed(0)} mg/dL', style: AppTypography.title3),
-          const SizedBox(height: AppSpacing.xs),
-          Text('HDL: ${record.hdl.toStringAsFixed(0)} | LDL: ${record.ldl.toStringAsFixed(0)} | TG: ${record.triglycerides.toStringAsFixed(0)}', style: AppTypography.caption),
-          Text(DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)), style: AppTypography.caption),
-        ])),
-        PopupMenuButton<String>(
-          onSelected: (value) async {
-            if (value == 'delete') {
-              final confirm = await showDialog<bool>(context: context, builder: (ctx) => AlertDialog(
-                title: const Text('Delete Record'), content: const Text('Are you sure?'),
-                actions: [TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')), TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text('Delete', style: TextStyle(color: AppColors.error)))],
-              ));
-              if (confirm == true) await provider.deleteLipidRecord(record.id);
-            }
-          },
-          itemBuilder: (ctx) => [const PopupMenuItem(value: 'delete', child: Text('Delete'))],
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkSurface : AppColors.surface,
+        borderRadius: AppSpacing.borderRadiusMd,
+        border: Border(
+          left: BorderSide(color: AppColors.lipidProfile, width: 4),
         ),
-      ]),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'TC: ${record.totalCholesterol.toStringAsFixed(0)} mg/dL',
+                  style: AppTypography.title3,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  'HDL: ${record.hdl.toStringAsFixed(0)} | LDL: ${record.ldl.toStringAsFixed(0)} | TG: ${record.triglycerides.toStringAsFixed(0)}',
+                  style: AppTypography.caption,
+                ),
+                Text(
+                  DateFormat(
+                    'MMM dd, yyyy',
+                  ).format(DateTime.parse(record.testDate)),
+                  style: AppTypography.caption,
+                ),
+              ],
+            ),
+          ),
+          PopupMenuButton<String>(
+            onSelected: (value) async {
+              if (value == 'delete') {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Delete Record'),
+                    content: const Text('Are you sure?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(color: AppColors.error),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirm == true)
+                  await provider.deleteLipidRecord(record.id);
+              }
+            },
+            itemBuilder: (ctx) => [
+              const PopupMenuItem(value: 'delete', child: Text('Delete')),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
