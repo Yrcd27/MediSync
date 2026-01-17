@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/custom_text_field.dart';
-import '../../../widgets/custom_button.dart';
+import '../../../widgets/inputs/custom_text_field.dart';
+import '../../../widgets/buttons/primary_button.dart';
 import 'signup_step2_screen.dart';
 
 class SignupStep1Screen extends StatefulWidget {
@@ -153,16 +153,14 @@ class _SignupStep1ScreenState extends State<SignupStep1Screen> {
                   label: 'Password',
                   hint: 'Create a strong password',
                   obscureText: _obscurePassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(_obscurePassword
-                        ? Icons.visibility
-                        : Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
+                  suffixIcon: _obscurePassword
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  onSuffixIconPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a password';
@@ -180,16 +178,14 @@ class _SignupStep1ScreenState extends State<SignupStep1Screen> {
                   label: 'Confirm Password',
                   hint: 'Confirm your password',
                   obscureText: _obscureConfirmPassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(_obscureConfirmPassword
-                        ? Icons.visibility
-                        : Icons.visibility_off),
-                    onPressed: () {
-                      setState(() {
-                        _obscureConfirmPassword = !_obscureConfirmPassword;
-                      });
-                    },
-                  ),
+                  suffixIcon: _obscureConfirmPassword
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  onSuffixIconPressed: () {
+                    setState(() {
+                      _obscureConfirmPassword = !_obscureConfirmPassword;
+                    });
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please confirm your password';
@@ -202,7 +198,7 @@ class _SignupStep1ScreenState extends State<SignupStep1Screen> {
                 ),
                 const SizedBox(height: 32),
                 // Next button
-                CustomButton(
+                PrimaryButton(
                   text: 'Next',
                   onPressed: _nextStep,
                 ),

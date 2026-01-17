@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
-import '../../widgets/custom_text_field.dart';
-import '../../widgets/custom_button.dart';
+import '../../widgets/inputs/custom_text_field.dart';
+import '../../widgets/buttons/primary_button.dart';
+import '../../widgets/buttons/secondary_button.dart';
 import '../auth/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -378,7 +379,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Row(
                               children: [
                                 Expanded(
-                                  child: CustomButton(
+                                  child: SecondaryButton(
                                     text: 'Cancel',
                                     onPressed: () {
                                       setState(() {
@@ -386,13 +387,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       });
                                       _loadUserData(); // Reset form
                                     },
-                                    backgroundColor: Colors.grey.shade300,
-                                    textColor: Colors.black87,
                                   ),
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
-                                  child: CustomButton(
+                                  child: PrimaryButton(
                                     text: 'Save Changes',
                                     onPressed: authProvider.isLoading
                                         ? null
@@ -403,14 +402,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             )
                           else
-                            CustomButton(
+                            PrimaryButton(
                               text: 'Edit Profile',
                               onPressed: () {
                                 setState(() {
                                   _isEditing = true;
                                 });
                               },
-                              backgroundColor: Colors.blue,
                             ),
                         ],
                       ),

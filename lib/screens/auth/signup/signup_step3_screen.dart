@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../widgets/custom_text_field.dart';
-import '../../../widgets/custom_button.dart';
+import '../../../widgets/inputs/custom_text_field.dart';
+import '../../../widgets/buttons/primary_button.dart';
+import '../../../widgets/buttons/secondary_button.dart';
 import '../../../providers/auth_provider.dart';
 
 class SignupStep3Screen extends StatefulWidget {
@@ -213,18 +214,16 @@ class _SignupStep3ScreenState extends State<SignupStep3Screen> {
                 Row(
                   children: [
                     Expanded(
-                      child: CustomButton(
+                      child: SecondaryButton(
                         text: 'Back',
                         onPressed: () => Navigator.pop(context),
-                        backgroundColor: Colors.grey.shade300,
-                        textColor: Colors.black87,
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Consumer<AuthProvider>(
                         builder: (context, authProvider, child) {
-                          return CustomButton(
+                          return PrimaryButton(
                             text: 'Create Account',
                             onPressed:
                                 authProvider.isLoading ? null : _completeSignup,

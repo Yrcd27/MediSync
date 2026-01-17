@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../widgets/custom_text_field.dart';
-import '../../../widgets/custom_button.dart';
+import '../../../widgets/inputs/custom_text_field.dart';
+import '../../../widgets/buttons/primary_button.dart';
+import '../../../widgets/buttons/secondary_button.dart';
 import 'signup_step3_screen.dart';
 
 class SignupStep2Screen extends StatefulWidget {
@@ -183,7 +184,7 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                       controller: _dobController,
                       label: 'Date of Birth',
                       hint: 'Select your date of birth',
-                      suffixIcon: const Icon(Icons.calendar_today),
+                      suffixIcon: Icons.calendar_today,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please select your date of birth';
@@ -271,16 +272,14 @@ class _SignupStep2ScreenState extends State<SignupStep2Screen> {
                 Row(
                   children: [
                     Expanded(
-                      child: CustomButton(
+                      child: SecondaryButton(
                         text: 'Back',
                         onPressed: () => Navigator.pop(context),
-                        backgroundColor: Colors.grey.shade300,
-                        textColor: Colors.black87,
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: CustomButton(
+                      child: PrimaryButton(
                         text: 'Next',
                         onPressed: _nextStep,
                       ),
