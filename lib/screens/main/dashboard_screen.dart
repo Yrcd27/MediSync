@@ -7,6 +7,7 @@ import '../../widgets/cards/health_metric_card.dart';
 import '../../widgets/common/custom_app_bar.dart';
 import '../../widgets/common/section_header.dart';
 import '../../widgets/feedback/loading_indicator.dart';
+import '../../widgets/modals/record_type_selector.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/constants/app_typography.dart';
@@ -111,6 +112,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ],
                       ),
                     ),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+
+                  // Quick Actions
+                  const SectionHeader(title: 'Quick Actions'),
+                  const SizedBox(height: AppSpacing.md),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildQuickActionButton(
+                          context,
+                          icon: Icons.add_circle,
+                          label: 'Add Record',
+                          color: AppColors.primary,
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) => const RecordTypeSelector(),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: _buildQuickActionButton(
+                          context,
+                          icon: Icons.analytics,
+                          label: 'View Charts',
+                          color: AppColors.success,
+                          onTap: () {
+                            // Switch to analytics tab
+                            DefaultTabController.of(context)?.animateTo(2);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: AppSpacing.xl),
 
@@ -351,6 +389,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
       trailing: Text(
         value,
         style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildQuickActionButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+      child: Container(
+        padding: EdgeInsets.all(AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.darkSurface : AppColors.surface,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 2,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: AppSpacing.iconMd),
+            SizedBox(width: AppSpacing.sm),
+            Text(
+              label,
+              style: AppTypography.titleSmall.copyWith(
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
