@@ -27,19 +27,29 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
+      print('🔐 Login button pressed');
+      print('📧 Email: ${_emailController.text.trim()}');
+      
       final success = await context.read<AuthProvider>().login(
             _emailController.text.trim(),
             _passwordController.text,
           );
 
+      print('✅ Login result: $success');
+
       if (!success && mounted) {
+        final errorMsg = context.read<AuthProvider>().errorMessage ?? 'Login failed';
+        print('❌ Login failed: $errorMsg');
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-                context.read<AuthProvider>().errorMessage ?? 'Login failed'),
+            content: Text(errorMsg),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
           ),
         );
+      } else if (success) {
+        print('✅ Login successful!');
       }
     }
   }
