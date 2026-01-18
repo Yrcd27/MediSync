@@ -9,6 +9,8 @@ import '../../../providers/health_records_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../models/blood_pressure.dart';
 import '../../../widgets/feedback/empty_state.dart';
+import '../../../widgets/cards/analysis_detail_card.dart';
+import '../../../utils/health_analysis.dart' as health;
 import '../add/add_blood_pressure_screen.dart';
 
 class ViewBloodPressureScreen extends StatelessWidget {
@@ -200,8 +202,52 @@ class ViewBloodPressureScreen extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: AppSpacing.xl),
+
+          // Health Analysis
+          Text(
+            'Health Analysis',
+            style: AppTypography.titleMedium.copyWith(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          _buildAnalysisCards(latest, isDark),
+          const SizedBox(height: AppSpacing.xl),
         ],
       ),
+    );
+  }
+
+  Widget _buildAnalysisCards(BloodPressure record, bool isDark) {
+    final bpAnalysis = health.HealthAnalysis.analyzeBloodPressure(record);
+    final systolicAnalysis =
+        health.HealthAnalysis.analyzeSystolic(record.systolic);
+    final diastolicAnalysis =
+        health.HealthAnalysis.analyzeDiastolic(record.diastolic);
+
+    return Column(
+      children: [
+        AnalysisDetailCard(
+          analysis: bpAnalysis,
+          metricName: 'Blood Pressure',
+          value: record.bpLevel,
+          unit: 'mmHg',
+        ),
+        AnalysisDetailCard(
+          analysis: systolicAnalysis,
+          metricName: 'Systolic',
+          value: record.systolic.toStringAsFixed(0),
+          unit: 'mmHg',
+        ),
+        AnalysisDetailCard(
+          analysis: diastolicAnalysis,
+          metricName: 'Diastolic',
+          value: record.diastolic.toStringAsFixed(0),
+          unit: 'mmHg',
+        ),
+      ],
     );
   }
 

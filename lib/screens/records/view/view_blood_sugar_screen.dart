@@ -9,6 +9,8 @@ import '../../../providers/health_records_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../models/fasting_blood_sugar.dart';
 import '../../../widgets/feedback/empty_state.dart';
+import '../../../widgets/cards/analysis_detail_card.dart';
+import '../../../utils/health_analysis.dart' as health;
 import '../add/add_blood_sugar_screen.dart';
 
 class ViewBloodSugarScreen extends StatelessWidget {
@@ -179,6 +181,24 @@ class ViewBloodSugarScreen extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: AppSpacing.xl),
+
+          // Health Analysis
+          Text(
+            'Health Analysis',
+            style: AppTypography.titleMedium.copyWith(
+              color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          AnalysisDetailCard(
+            analysis: health.HealthAnalysis.analyzeFBS(latest.fbsLevel),
+            metricName: 'Fasting Blood Sugar',
+            value: latest.fbsLevel.toStringAsFixed(0),
+            unit: 'mg/dL',
+          ),
+          const SizedBox(height: AppSpacing.xl),
         ],
       ),
     );
