@@ -541,15 +541,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     if (testType == 'Blood Pressure' && data is BloodPressure) {
                       analysis = health.HealthAnalysis.analyzeBloodPressure(
-                        data.systolic,
-                        data.diastolic,
+                        data,
                       );
                       metricName = 'Blood Pressure';
                       value = '${data.systolic}/${data.diastolic}';
                       unit = 'mmHg';
                     } else if (testType == 'Blood Sugar' &&
                         data is FastingBloodSugar) {
-                      analysis = health.HealthAnalysis.analyzeFastingBloodSugar(
+                      analysis = health.HealthAnalysis.analyzeFBS(
                         data.fbsLevel,
                       );
                       metricName = 'Fasting Blood Sugar';
