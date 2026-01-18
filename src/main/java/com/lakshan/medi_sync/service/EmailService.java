@@ -46,7 +46,7 @@ public class EmailService {
 
             Map<String, Object> emailData = new HashMap<>();
             emailData.put("from", "onboarding@resend.dev");
-            emailData.put("to", new String[]{recipientEmail});
+            emailData.put("to", recipientEmail);
             emailData.put("subject", subject);
             emailData.put("text", body);
 
