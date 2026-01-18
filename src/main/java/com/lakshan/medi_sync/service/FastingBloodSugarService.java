@@ -15,11 +15,17 @@ public class FastingBloodSugarService {
 
     private final FastingBloodSugarRepository fbsRepository;
     private final ReportRepository reportRepository;
+    private final EmailService emailService;
 
     @Autowired
-    public FastingBloodSugarService(FastingBloodSugarRepository fbsRepository, ReportRepository reportRepository) {
+    public FastingBloodSugarService(
+            FastingBloodSugarRepository fbsRepository,
+            ReportRepository reportRepository,
+            EmailService emailService
+    ) {
         this.fbsRepository = fbsRepository;
         this.reportRepository = reportRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -32,6 +38,7 @@ public class FastingBloodSugarService {
         report.setReportDate(fastingBloodSugar.getTestDate());
         reportRepository.save(report);
 
+        emailService.createEmailFormat(fastingBloodSugar);
     }
 
     public List<FastingBloodSugar> getAllFastingBloodSugarRecords() {
