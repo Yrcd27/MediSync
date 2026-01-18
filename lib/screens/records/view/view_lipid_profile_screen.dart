@@ -225,16 +225,48 @@ class ViewLipidProfileScreen extends StatelessWidget {
           Text('Cholesterol Trends', style: AppTypography.title3),
           const SizedBox(height: AppSpacing.lg),
           SizedBox(
-            height: 200,
+            height: 250,
             child: LineChart(
               LineChartData(
-                gridData: FlGridData(show: true, drawVerticalLine: false),
+                gridData: FlGridData(
+                  show: true, 
+                  drawVerticalLine: false,
+                  getDrawingHorizontalLine: (value) {
+                    return FlLine(
+                      color: Colors.grey.withOpacity(0.3),
+                      strokeWidth: 1,
+                    );
+                  },
+                ),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 40,
+                      interval: 50,
+                      getTitlesWidget: (value, meta) {
+                        return Text(
+                          '${value.toInt()}',
+                          style: AppTypography.caption.copyWith(fontSize: 11),
+                        );
+                      },
+                    ),
                   ),
                   bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 30,
+                      getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+                        if (index >= 0 && index < chartRecords.length) {
+                          return Text(
+                            DateFormat('MM/dd').format(chartRecords[index].testDate),
+                            style: AppTypography.caption.copyWith(fontSize: 10),
+                          );
+                        }
+                        return const Text('');
+                      },
+                    ),
                   ),
                   topTitles: AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
@@ -244,6 +276,143 @@ class ViewLipidProfileScreen extends StatelessWidget {
                   ),
                 ),
                 borderData: FlBorderData(show: false),
+                minX: 0,
+                maxX: (chartRecords.length - 1).toDouble(),
+                minY: 0,
+                maxY: 300,
+                lineTouchData: LineTouchData(
+                  enabled: true,
+                  touchTooltipData: LineTouchTooltipData(
+                    tooltipBgColor: isDark ? AppColors.darkSurface : AppColors.surface,
+                    tooltipBorder: BorderSide(
+                      color: isDark ? AppColors.darkBorder : AppColors.border,
+                    ),
+                    getTooltipItems: (List<LineBarSpot> touchedSpots) {
+                      return touchedSpots.map((spot) {
+                        final record = chartRecords[spot.x.toInt()];
+                        final date = DateFormat('MMM dd, yyyy').format(record.testDate);
+                        
+                        String label = '';
+                        String status = '';
+                        Color lineColor = AppColors.primary;
+                        
+                        if (spot.barIndex == 0) {
+                          label = 'Total Cholesterol: ${record.totalCholesterol.toStringAsFixed(0)} mg/dL';
+                          status = record.totalCholesterol < 200 ? 'Normal' :
+                                  record.totalCholesterol < 240 ? 'Borderline High' : 'High';
+                          lineColor = AppColors.lipidProfile;
+                        } else if (spot.barIndex == 1) {
+                          label = 'LDL: ${record.ldl.toStringAsFixed(0)} mg/dL';
+                          status = record.ldl < 100 ? 'Optimal' :
+                                  record.ldl < 130 ? 'Near Optimal' :
+                                  record.ldl < 160 ? 'Borderline High' : 'High';
+                          lineColor = AppColors.error;
+                        } else {
+                          label = 'HDL: ${record.hdl.toStringAsFixed(0)} mg/dL';
+                          status = record.hdl >= 60 ? 'Protective' :
+                                  record.hdl >= 40 ? 'Normal' : 'Low Risk';
+                          lineColor = AppColors.success;
+                        }
+                        
+                        return LineTooltipItem(
+                          '$label\n$status\n$date',
+                          TextStyle(
+                            color: lineColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        );
+                      }).toList();
+                    },
+                  ),
+                ),
+                extraLinesData: ExtraLinesData(
+                  horizontalLines: [
+                    // Total Cholesterol References
+                    HorizontalLine(
+                      y: 200,
+                      color: Colors.green.withOpacity(0.7),
+                      strokeWidth: 2,
+                      dashArray: [5, 3],
+                      label: HorizontalLineLabel(
+                        show: true,
+                        labelResolver: (line) => 'TC Normal (200 mg/dL)',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                        alignment: Alignment.topRight,
+                      ),
+                    ),
+                    HorizontalLine(
+                      y: 240,
+                      color: Colors.red.withOpacity(0.7),
+                      strokeWidth: 2,
+                      dashArray: [5, 3],
+                      label: HorizontalLineLabel(
+                        show: true,
+                        labelResolver: (line) => 'TC High (240 mg/dL)',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                        alignment: Alignment.topRight,
+                      ),
+                    ),
+                    // LDL References
+                    HorizontalLine(
+                      y: 100,
+                      color: Colors.blue.withOpacity(0.7),
+                      strokeWidth: 2,
+                      dashArray: [3, 2],
+                      label: HorizontalLineLabel(
+                        show: true,
+                        labelResolver: (line) => 'LDL Optimal (100 mg/dL)',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                        alignment: Alignment.bottomLeft,
+                      ),
+                    ),
+                    HorizontalLine(
+                      y: 160,
+                      color: Colors.orange.withOpacity(0.7),
+                      strokeWidth: 2,
+                      dashArray: [3, 2],
+                      label: HorizontalLineLabel(
+                        show: true,
+                        labelResolver: (line) => 'LDL High (160 mg/dL)',
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                        alignment: Alignment.bottomLeft,
+                      ),
+                    ),
+                    // HDL Reference
+                    HorizontalLine(
+                      y: 60,
+                      color: Colors.purple.withOpacity(0.7),
+                      strokeWidth: 2,
+                      dashArray: [2, 1],
+                      label: HorizontalLineLabel(
+                        show: true,
+                        labelResolver: (line) => 'HDL Protective (60 mg/dL)',
+                        style: TextStyle(
+                          color: Colors.purple,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                        ),
+                        alignment: Alignment.centerLeft,
+                      ),
+                    ),
+                  ],
+                ),
                 lineBarsData: [
                   LineChartBarData(
                     spots: chartRecords
@@ -259,7 +428,17 @@ class ViewLipidProfileScreen extends StatelessWidget {
                     isCurved: true,
                     color: AppColors.lipidProfile,
                     barWidth: 3,
-                    dotData: FlDotData(show: true),
+                    dotData: FlDotData(
+                      show: true,
+                      getDotPainter: (spot, percent, barData, index) {
+                        return FlDotCirclePainter(
+                          radius: 4,
+                          color: AppColors.lipidProfile,
+                          strokeWidth: 2,
+                          strokeColor: Colors.white,
+                        );
+                      },
+                    ),
                   ),
                   LineChartBarData(
                     spots: chartRecords
@@ -269,8 +448,18 @@ class ViewLipidProfileScreen extends StatelessWidget {
                         .toList(),
                     isCurved: true,
                     color: AppColors.error,
-                    barWidth: 2,
-                    dotData: FlDotData(show: false),
+                    barWidth: 2.5,
+                    dotData: FlDotData(
+                      show: true,
+                      getDotPainter: (spot, percent, barData, index) {
+                        return FlDotCirclePainter(
+                          radius: 3,
+                          color: AppColors.error,
+                          strokeWidth: 1.5,
+                          strokeColor: Colors.white,
+                        );
+                      },
+                    ),
                   ),
                   LineChartBarData(
                     spots: chartRecords
@@ -280,11 +469,23 @@ class ViewLipidProfileScreen extends StatelessWidget {
                         .toList(),
                     isCurved: true,
                     color: AppColors.success,
-                    barWidth: 2,
-                    dotData: FlDotData(show: false),
+                    barWidth: 2.5,
+                    dotData: FlDotData(
+                      show: true,
+                      getDotPainter: (spot, percent, barData, index) {
+                        return FlDotCirclePainter(
+                          radius: 3,
+                          color: AppColors.success,
+                          strokeWidth: 1.5,
+                          strokeColor: Colors.white,
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
+              duration: const Duration(milliseconds: 350),
+              curve: Curves.easeInOut,
             ),
           ),
           const SizedBox(height: AppSpacing.md),
