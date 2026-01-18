@@ -179,6 +179,12 @@ class HealthRecordsProvider with ChangeNotifier {
   Future<void> loadFBSRecords(int userId) async {
     try {
       _fbsRecords = await _fbsService.getRecordsByUserId(userId);
+      // Sort by test date (newest first), then by ID (highest first) for same date
+      _fbsRecords.sort((a, b) {
+        final dateComparison = b.testDate.compareTo(a.testDate);
+        if (dateComparison != 0) return dateComparison;
+        return b.id.compareTo(a.id);
+      });
       if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
@@ -190,6 +196,12 @@ class HealthRecordsProvider with ChangeNotifier {
     try {
       final newRecord = await _fbsService.addRecord(record, userId);
       _fbsRecords.add(newRecord);
+      // Re-sort after adding new record (by date, then by ID)
+      _fbsRecords.sort((a, b) {
+        final dateComparison = b.testDate.compareTo(a.testDate);
+        if (dateComparison != 0) return dateComparison;
+        return b.id.compareTo(a.id);
+      });
       notifyListeners();
       return true;
     } catch (e) {
@@ -232,6 +244,12 @@ class HealthRecordsProvider with ChangeNotifier {
   Future<void> loadBPRecords(int userId) async {
     try {
       _bpRecords = await _bpService.getRecordsByUserId(userId);
+      // Sort by test date (newest first), then by ID (highest first) for same date
+      _bpRecords.sort((a, b) {
+        final dateComparison = b.testDate.compareTo(a.testDate);
+        if (dateComparison != 0) return dateComparison;
+        return b.id.compareTo(a.id);
+      });
       if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
@@ -243,6 +261,12 @@ class HealthRecordsProvider with ChangeNotifier {
     try {
       final newRecord = await _bpService.addRecord(record, userId);
       _bpRecords.add(newRecord);
+      // Re-sort after adding new record (by date, then by ID)
+      _bpRecords.sort((a, b) {
+        final dateComparison = b.testDate.compareTo(a.testDate);
+        if (dateComparison != 0) return dateComparison;
+        return b.id.compareTo(a.id);
+      });
       notifyListeners();
       return true;
     } catch (e) {
@@ -285,6 +309,12 @@ class HealthRecordsProvider with ChangeNotifier {
   Future<void> loadFBCRecords(int userId) async {
     try {
       _fbcRecords = await _fbcService.getRecordsByUserId(userId);
+      // Sort by test date (newest first), then by ID (highest first) for same date
+      _fbcRecords.sort((a, b) {
+        final dateComparison = b.testDate.compareTo(a.testDate);
+        if (dateComparison != 0) return dateComparison;
+        return b.id.compareTo(a.id);
+      });
       if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
@@ -296,6 +326,12 @@ class HealthRecordsProvider with ChangeNotifier {
     try {
       final newRecord = await _fbcService.addRecord(record, userId);
       _fbcRecords.add(newRecord);
+      // Re-sort after adding new record (by date, then by ID)
+      _fbcRecords.sort((a, b) {
+        final dateComparison = b.testDate.compareTo(a.testDate);
+        if (dateComparison != 0) return dateComparison;
+        return b.id.compareTo(a.id);
+      });
       notifyListeners();
       return true;
     } catch (e) {
@@ -338,6 +374,12 @@ class HealthRecordsProvider with ChangeNotifier {
   Future<void> loadLipidRecords(int userId) async {
     try {
       _lipidRecords = await _lipidService.getRecordsByUserId(userId);
+      // Sort by test date (newest first), then by ID (highest first) for same date
+      _lipidRecords.sort((a, b) {
+        final dateComparison = b.testDate.compareTo(a.testDate);
+        if (dateComparison != 0) return dateComparison;
+        return b.id.compareTo(a.id);
+      });
       if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
@@ -349,6 +391,12 @@ class HealthRecordsProvider with ChangeNotifier {
     try {
       final newRecord = await _lipidService.addRecord(record, userId);
       _lipidRecords.add(newRecord);
+      // Re-sort after adding new record (by date, then by ID)
+      _lipidRecords.sort((a, b) {
+        final dateComparison = b.testDate.compareTo(a.testDate);
+        if (dateComparison != 0) return dateComparison;
+        return b.id.compareTo(a.id);
+      });
       notifyListeners();
       return true;
     } catch (e) {
@@ -391,6 +439,12 @@ class HealthRecordsProvider with ChangeNotifier {
   Future<void> loadLiverRecords(int userId) async {
     try {
       _liverRecords = await _liverService.getRecordsByUserId(userId);
+      // Sort by test date (newest first), then by ID (highest first) for same date
+      _liverRecords.sort((a, b) {
+        final dateComparison = b.testDate.compareTo(a.testDate);
+        if (dateComparison != 0) return dateComparison;
+        return b.id.compareTo(a.id);
+      });
       if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
@@ -402,6 +456,12 @@ class HealthRecordsProvider with ChangeNotifier {
     try {
       final newRecord = await _liverService.addRecord(record, userId);
       _liverRecords.add(newRecord);
+      // Re-sort after adding new record (by date, then by ID)
+      _liverRecords.sort((a, b) {
+        final dateComparison = b.testDate.compareTo(a.testDate);
+        if (dateComparison != 0) return dateComparison;
+        return b.id.compareTo(a.id);
+      });
       notifyListeners();
       return true;
     } catch (e) {
@@ -444,6 +504,12 @@ class HealthRecordsProvider with ChangeNotifier {
   Future<void> loadUrineRecords(int userId) async {
     try {
       _urineRecords = await _urineService.getRecordsByUserId(userId);
+      // Sort by test date (newest first), then by ID (highest first) for same date
+      _urineRecords.sort((a, b) {
+        final dateComparison = b.testDate.compareTo(a.testDate);
+        if (dateComparison != 0) return dateComparison;
+        return b.id.compareTo(a.id);
+      });
       if (!_isBulkLoading) notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
@@ -455,6 +521,12 @@ class HealthRecordsProvider with ChangeNotifier {
     try {
       final newRecord = await _urineService.addRecord(record, userId);
       _urineRecords.add(newRecord);
+      // Re-sort after adding new record (by date, then by ID)
+      _urineRecords.sort((a, b) {
+        final dateComparison = b.testDate.compareTo(a.testDate);
+        if (dateComparison != 0) return dateComparison;
+        return b.id.compareTo(a.id);
+      });
       notifyListeners();
       return true;
     } catch (e) {

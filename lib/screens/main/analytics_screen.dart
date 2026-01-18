@@ -284,7 +284,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       );
     }
 
-    final spots = filteredRecords.asMap().entries.map((entry) {
+    // Reverse data for chronological display (oldest to newest from left to right)
+    final chartRecords = filteredRecords.reversed.toList();
+    final spots = chartRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.fbsLevel);
     }).toList();
 
@@ -294,20 +296,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       LineChartData(
         gridData: FlGridData(
           show: true,
-          drawVerticalLine: true,
+          drawVerticalLine: false,
           getDrawingHorizontalLine: (value) {
-            return FlLine(
-              color: (isDark ? AppColors.darkBorder : AppColors.border)
-                  .withOpacity(0.3),
-              strokeWidth: 1,
-            );
-          },
-          getDrawingVerticalLine: (value) {
-            return FlLine(
-              color: (isDark ? AppColors.darkBorder : AppColors.border)
-                  .withOpacity(0.3),
-              strokeWidth: 1,
-            );
+            return FlLine(color: Colors.grey.withOpacity(0.3), strokeWidth: 1);
           },
         ),
         titlesData: FlTitlesData(
@@ -315,6 +306,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 40,
+              interval: 20,
               getTitlesWidget: (value, meta) {
                 return Text(
                   value.toInt().toString(),
@@ -322,6 +314,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     color: isDark
                         ? AppColors.darkTextSecondary
                         : AppColors.textSecondary,
+                    fontSize: 11,
                   ),
                 );
               },
@@ -337,10 +330,42 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             sideTitles: SideTitles(showTitles: false),
           ),
         ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.border,
+        borderData: FlBorderData(show: false),
+        minX: 0,
+        maxX: (chartRecords.length - 1).toDouble(),
+        minY: 70,
+        maxY: 180,
+        lineTouchData: LineTouchData(
+          enabled: true,
+          touchTooltipData: LineTouchTooltipData(
+            tooltipBgColor: isDark ? AppColors.darkSurface : AppColors.surface,
+            tooltipBorder: BorderSide(
+              color: isDark ? AppColors.darkBorder : AppColors.border,
+            ),
+            getTooltipItems: (List<LineBarSpot> touchedSpots) {
+              return touchedSpots.map((spot) {
+                final record = chartRecords[spot.x.toInt()];
+                final value = record.fbsLevel.toInt();
+
+                String status;
+                if (value < 100) {
+                  status = 'Normal';
+                } else if (value < 126) {
+                  status = 'Pre-diabetic';
+                } else {
+                  status = 'Diabetic';
+                }
+
+                return LineTooltipItem(
+                  'FBS: ${value} mg/dL\n$status',
+                  TextStyle(
+                    color: spot.bar.color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                );
+              }).toList();
+            },
           ),
         ),
         lineBarsData: [
@@ -357,19 +382,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   radius: 4,
                   color: AppColors.bloodSugar,
                   strokeWidth: 2,
-                  strokeColor: isDark
-                      ? AppColors.darkSurface
-                      : AppColors.surface,
+                  strokeColor: Colors.white,
                 );
               },
-            ),
-            belowBarData: BarAreaData(
-              show: true,
-              color: AppColors.bloodSugar.withOpacity(0.1),
             ),
           ),
         ],
       ),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
   }
 
@@ -387,11 +408,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       );
     }
 
-    final systolicSpots = filteredRecords.asMap().entries.map((entry) {
+    // Reverse data for chronological display (oldest to newest from left to right)
+    final chartRecords = filteredRecords.reversed.toList();
+    final systolicSpots = chartRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.systolic.toDouble());
     }).toList();
 
-    final diastolicSpots = filteredRecords.asMap().entries.map((entry) {
+    final diastolicSpots = chartRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.diastolic.toDouble());
     }).toList();
 
@@ -437,7 +460,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
         ),
         borderData: FlBorderData(show: false),
         minX: 0,
-        maxX: (filteredRecords.length - 1).toDouble(),
+        maxX: (chartRecords.length - 1).toDouble(),
         minY: 50,
         maxY: 200,
         lineTouchData: LineTouchData(
@@ -449,7 +472,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             ),
             getTooltipItems: (List<LineBarSpot> touchedSpots) {
               return touchedSpots.map((spot) {
-                final record = filteredRecords[spot.x.toInt()];
+                final record = chartRecords[spot.x.toInt()];
                 final label = spot.barIndex == 0 ? 'Systolic' : 'Diastolic';
                 final value = spot.barIndex == 0
                     ? record.systolic
@@ -624,11 +647,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       );
     }
 
-    final hemoglobinSpots = filteredRecords.asMap().entries.map((entry) {
+    // Reverse data for chronological display (oldest to newest from left to right)
+    final chartRecords = filteredRecords.reversed.toList();
+    final hemoglobinSpots = chartRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.haemoglobin);
     }).toList();
 
-    final wbcSpots = filteredRecords.asMap().entries.map((entry) {
+    final wbcSpots = chartRecords.asMap().entries.map((entry) {
       return FlSpot(
         entry.key.toDouble(),
         entry.value.totalLeucocyteCount / 1000,
@@ -641,20 +666,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       LineChartData(
         gridData: FlGridData(
           show: true,
-          drawVerticalLine: true,
+          drawVerticalLine: false,
           getDrawingHorizontalLine: (value) {
-            return FlLine(
-              color: (isDark ? AppColors.darkBorder : AppColors.border)
-                  .withOpacity(0.3),
-              strokeWidth: 1,
-            );
-          },
-          getDrawingVerticalLine: (value) {
-            return FlLine(
-              color: (isDark ? AppColors.darkBorder : AppColors.border)
-                  .withOpacity(0.3),
-              strokeWidth: 1,
-            );
+            return FlLine(color: Colors.grey.withOpacity(0.3), strokeWidth: 1);
           },
         ),
         titlesData: FlTitlesData(
@@ -662,6 +676,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 40,
+              interval: 5,
               getTitlesWidget: (value, meta) {
                 return Text(
                   value.toInt().toString(),
@@ -669,6 +684,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     color: isDark
                         ? AppColors.darkTextSecondary
                         : AppColors.textSecondary,
+                    fontSize: 11,
                   ),
                 );
               },
@@ -684,10 +700,63 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             sideTitles: SideTitles(showTitles: false),
           ),
         ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.border,
+        borderData: FlBorderData(show: false),
+        minX: 0,
+        maxX: (chartRecords.length - 1).toDouble(),
+        minY: 8,
+        maxY: 20,
+        lineTouchData: LineTouchData(
+          enabled: true,
+          touchTooltipData: LineTouchTooltipData(
+            tooltipBgColor: isDark ? AppColors.darkSurface : AppColors.surface,
+            tooltipBorder: BorderSide(
+              color: isDark ? AppColors.darkBorder : AppColors.border,
+            ),
+            getTooltipItems: (List<LineBarSpot> touchedSpots) {
+              return touchedSpots.map((spot) {
+                final record = chartRecords[spot.x.toInt()];
+
+                if (spot.barIndex == 0) {
+                  final hb = record.haemoglobin;
+                  String status;
+                  if (hb < 12) {
+                    status = 'Low';
+                  } else if (hb <= 17.5) {
+                    status = 'Normal';
+                  } else {
+                    status = 'High';
+                  }
+
+                  return LineTooltipItem(
+                    'Hemoglobin: ${hb.toStringAsFixed(1)} g/dL\n$status',
+                    TextStyle(
+                      color: spot.bar.color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  );
+                } else {
+                  final wbc = record.totalLeucocyteCount;
+                  String status;
+                  if (wbc < 4000) {
+                    status = 'Low';
+                  } else if (wbc <= 11000) {
+                    status = 'Normal';
+                  } else {
+                    status = 'High';
+                  }
+
+                  return LineTooltipItem(
+                    'WBC: ${(wbc / 1000).toStringAsFixed(1)}k\n$status',
+                    TextStyle(
+                      color: spot.bar.color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  );
+                }
+              }).toList();
+            },
           ),
         ),
         lineBarsData: [
@@ -704,27 +773,33 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   radius: 4,
                   color: AppColors.bloodCount,
                   strokeWidth: 2,
-                  strokeColor: isDark
-                      ? AppColors.darkSurface
-                      : AppColors.surface,
+                  strokeColor: Colors.white,
                 );
               },
-            ),
-            belowBarData: BarAreaData(
-              show: true,
-              color: AppColors.bloodCount.withOpacity(0.1),
             ),
           ),
           LineChartBarData(
             spots: wbcSpots,
             isCurved: true,
             color: AppColors.primary.withOpacity(0.6),
-            barWidth: 2,
+            barWidth: 3,
             isStrokeCapRound: true,
-            dotData: FlDotData(show: false),
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, barData, index) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: AppColors.primary.withOpacity(0.6),
+                  strokeWidth: 2,
+                  strokeColor: Colors.white,
+                );
+              },
+            ),
           ),
         ],
       ),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
   }
 
@@ -745,15 +820,17 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       );
     }
 
-    final totalCholSpots = filteredRecords.asMap().entries.map((entry) {
+    // Reverse data for chronological display (oldest to newest from left to right)
+    final chartRecords = filteredRecords.reversed.toList();
+    final totalCholSpots = chartRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.totalCholesterol);
     }).toList();
 
-    final hdlSpots = filteredRecords.asMap().entries.map((entry) {
+    final hdlSpots = chartRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.hdl);
     }).toList();
 
-    final ldlSpots = filteredRecords.asMap().entries.map((entry) {
+    final ldlSpots = chartRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.ldl);
     }).toList();
 
@@ -763,20 +840,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       LineChartData(
         gridData: FlGridData(
           show: true,
-          drawVerticalLine: true,
+          drawVerticalLine: false,
           getDrawingHorizontalLine: (value) {
-            return FlLine(
-              color: (isDark ? AppColors.darkBorder : AppColors.border)
-                  .withOpacity(0.3),
-              strokeWidth: 1,
-            );
-          },
-          getDrawingVerticalLine: (value) {
-            return FlLine(
-              color: (isDark ? AppColors.darkBorder : AppColors.border)
-                  .withOpacity(0.3),
-              strokeWidth: 1,
-            );
+            return FlLine(color: Colors.grey.withOpacity(0.3), strokeWidth: 1);
           },
         ),
         titlesData: FlTitlesData(
@@ -784,6 +850,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 40,
+              interval: 50,
               getTitlesWidget: (value, meta) {
                 return Text(
                   value.toInt().toString(),
@@ -791,6 +858,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     color: isDark
                         ? AppColors.darkTextSecondary
                         : AppColors.textSecondary,
+                    fontSize: 11,
                   ),
                 );
               },
@@ -806,10 +874,84 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             sideTitles: SideTitles(showTitles: false),
           ),
         ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.border,
+        borderData: FlBorderData(show: false),
+        minX: 0,
+        maxX: (chartRecords.length - 1).toDouble(),
+        minY: 0,
+        maxY: 300,
+        lineTouchData: LineTouchData(
+          enabled: true,
+          touchTooltipData: LineTouchTooltipData(
+            tooltipBgColor: isDark ? AppColors.darkSurface : AppColors.surface,
+            tooltipBorder: BorderSide(
+              color: isDark ? AppColors.darkBorder : AppColors.border,
+            ),
+            getTooltipItems: (List<LineBarSpot> touchedSpots) {
+              return touchedSpots.map((spot) {
+                final record = chartRecords[spot.x.toInt()];
+
+                if (spot.barIndex == 0) {
+                  final tc = record.totalCholesterol;
+                  String status;
+                  if (tc < 200) {
+                    status = 'Desirable';
+                  } else if (tc < 240) {
+                    status = 'Borderline high';
+                  } else {
+                    status = 'High';
+                  }
+
+                  return LineTooltipItem(
+                    'Total Cholesterol: ${tc.toStringAsFixed(0)} mg/dL\n$status',
+                    TextStyle(
+                      color: spot.bar.color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  );
+                } else if (spot.barIndex == 1) {
+                  final hdl = record.hdl;
+                  String status;
+                  if (hdl >= 60) {
+                    status = 'Protective';
+                  } else if (hdl >= 40) {
+                    status = 'Acceptable';
+                  } else {
+                    status = 'Low';
+                  }
+
+                  return LineTooltipItem(
+                    'HDL: ${hdl.toStringAsFixed(0)} mg/dL\n$status',
+                    TextStyle(
+                      color: spot.bar.color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  );
+                } else {
+                  final ldl = record.ldl;
+                  String status;
+                  if (ldl < 100) {
+                    status = 'Optimal';
+                  } else if (ldl < 130) {
+                    status = 'Near optimal';
+                  } else if (ldl < 160) {
+                    status = 'Borderline high';
+                  } else {
+                    status = 'High';
+                  }
+
+                  return LineTooltipItem(
+                    'LDL: ${ldl.toStringAsFixed(0)} mg/dL\n$status',
+                    TextStyle(
+                      color: spot.bar.color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  );
+                }
+              }).toList();
+            },
           ),
         ),
         lineBarsData: [
@@ -826,35 +968,51 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   radius: 4,
                   color: AppColors.lipidProfile,
                   strokeWidth: 2,
-                  strokeColor: isDark
-                      ? AppColors.darkSurface
-                      : AppColors.surface,
+                  strokeColor: Colors.white,
                 );
               },
-            ),
-            belowBarData: BarAreaData(
-              show: true,
-              color: AppColors.lipidProfile.withOpacity(0.1),
             ),
           ),
           LineChartBarData(
             spots: hdlSpots,
             isCurved: true,
             color: AppColors.success,
-            barWidth: 2,
+            barWidth: 3,
             isStrokeCapRound: true,
-            dotData: FlDotData(show: false),
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, barData, index) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: AppColors.success,
+                  strokeWidth: 2,
+                  strokeColor: Colors.white,
+                );
+              },
+            ),
           ),
           LineChartBarData(
             spots: ldlSpots,
             isCurved: true,
-            color: AppColors.error,
-            barWidth: 2,
+            color: AppColors.warning,
+            barWidth: 3,
             isStrokeCapRound: true,
-            dotData: FlDotData(show: false),
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, barData, index) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: AppColors.warning,
+                  strokeWidth: 2,
+                  strokeColor: Colors.white,
+                );
+              },
+            ),
           ),
         ],
       ),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
   }
 
@@ -875,11 +1033,13 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       );
     }
 
-    final sgptSpots = filteredRecords.asMap().entries.map((entry) {
+    // Reverse data for chronological display (oldest to newest from left to right)
+    final chartRecords = filteredRecords.reversed.toList();
+    final sgptSpots = chartRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.sgpt);
     }).toList();
 
-    final proteinSpots = filteredRecords.asMap().entries.map((entry) {
+    final proteinSpots = chartRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.proteinTotalSerum);
     }).toList();
 
@@ -889,20 +1049,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       LineChartData(
         gridData: FlGridData(
           show: true,
-          drawVerticalLine: true,
+          drawVerticalLine: false,
           getDrawingHorizontalLine: (value) {
-            return FlLine(
-              color: (isDark ? AppColors.darkBorder : AppColors.border)
-                  .withOpacity(0.3),
-              strokeWidth: 1,
-            );
-          },
-          getDrawingVerticalLine: (value) {
-            return FlLine(
-              color: (isDark ? AppColors.darkBorder : AppColors.border)
-                  .withOpacity(0.3),
-              strokeWidth: 1,
-            );
+            return FlLine(color: Colors.grey.withOpacity(0.3), strokeWidth: 1);
           },
         ),
         titlesData: FlTitlesData(
@@ -910,6 +1059,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 40,
+              interval: 20,
               getTitlesWidget: (value, meta) {
                 return Text(
                   value.toInt().toString(),
@@ -917,6 +1067,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                     color: isDark
                         ? AppColors.darkTextSecondary
                         : AppColors.textSecondary,
+                    fontSize: 11,
                   ),
                 );
               },
@@ -932,10 +1083,61 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             sideTitles: SideTitles(showTitles: false),
           ),
         ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.border,
+        borderData: FlBorderData(show: false),
+        minX: 0,
+        maxX: (chartRecords.length - 1).toDouble(),
+        minY: 0,
+        maxY: 100,
+        lineTouchData: LineTouchData(
+          enabled: true,
+          touchTooltipData: LineTouchTooltipData(
+            tooltipBgColor: isDark ? AppColors.darkSurface : AppColors.surface,
+            tooltipBorder: BorderSide(
+              color: isDark ? AppColors.darkBorder : AppColors.border,
+            ),
+            getTooltipItems: (List<LineBarSpot> touchedSpots) {
+              return touchedSpots.map((spot) {
+                final record = chartRecords[spot.x.toInt()];
+
+                if (spot.barIndex == 0) {
+                  final sgpt = record.sgpt;
+                  String status;
+                  if (sgpt <= 56) {
+                    status = 'Normal';
+                  } else {
+                    status = 'Elevated';
+                  }
+
+                  return LineTooltipItem(
+                    'SGPT: ${sgpt.toStringAsFixed(0)} U/L\n$status',
+                    TextStyle(
+                      color: spot.bar.color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  );
+                } else {
+                  final protein = record.proteinTotalSerum;
+                  String status;
+                  if (protein >= 6.0 && protein <= 8.3) {
+                    status = 'Normal';
+                  } else if (protein < 6.0) {
+                    status = 'Low';
+                  } else {
+                    status = 'High';
+                  }
+
+                  return LineTooltipItem(
+                    'Total Protein: ${protein.toStringAsFixed(1)} g/dL\n$status',
+                    TextStyle(
+                      color: spot.bar.color,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  );
+                }
+              }).toList();
+            },
           ),
         ),
         lineBarsData: [
@@ -952,27 +1154,33 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   radius: 4,
                   color: AppColors.liverProfile,
                   strokeWidth: 2,
-                  strokeColor: isDark
-                      ? AppColors.darkSurface
-                      : AppColors.surface,
+                  strokeColor: Colors.white,
                 );
               },
-            ),
-            belowBarData: BarAreaData(
-              show: true,
-              color: AppColors.liverProfile.withOpacity(0.1),
             ),
           ),
           LineChartBarData(
             spots: proteinSpots,
             isCurved: true,
             color: AppColors.warning,
-            barWidth: 2,
+            barWidth: 3,
             isStrokeCapRound: true,
-            dotData: FlDotData(show: false),
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, barData, index) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: AppColors.warning,
+                  strokeWidth: 2,
+                  strokeColor: Colors.white,
+                );
+              },
+            ),
           ),
         ],
       ),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
   }
 
@@ -993,7 +1201,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       );
     }
 
-    final sgSpots = filteredRecords.asMap().entries.map((entry) {
+    // Reverse data for chronological display (oldest to newest from left to right)
+    final chartRecords = filteredRecords.reversed.toList();
+    final sgSpots = chartRecords.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.specificGravity);
     }).toList();
 
@@ -1003,27 +1213,17 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
       LineChartData(
         gridData: FlGridData(
           show: true,
-          drawVerticalLine: true,
+          drawVerticalLine: false,
           getDrawingHorizontalLine: (value) {
-            return FlLine(
-              color: (isDark ? AppColors.darkBorder : AppColors.border)
-                  .withOpacity(0.3),
-              strokeWidth: 1,
-            );
-          },
-          getDrawingVerticalLine: (value) {
-            return FlLine(
-              color: (isDark ? AppColors.darkBorder : AppColors.border)
-                  .withOpacity(0.3),
-              strokeWidth: 1,
-            );
+            return FlLine(color: Colors.grey.withOpacity(0.3), strokeWidth: 1);
           },
         ),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 40,
+              reservedSize: 50,
+              interval: 0.005,
               getTitlesWidget: (value, meta) {
                 return Text(
                   value.toStringAsFixed(3),
@@ -1047,10 +1247,42 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
             sideTitles: SideTitles(showTitles: false),
           ),
         ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.border,
+        borderData: FlBorderData(show: false),
+        minX: 0,
+        maxX: (chartRecords.length - 1).toDouble(),
+        minY: 1.000,
+        maxY: 1.035,
+        lineTouchData: LineTouchData(
+          enabled: true,
+          touchTooltipData: LineTouchTooltipData(
+            tooltipBgColor: isDark ? AppColors.darkSurface : AppColors.surface,
+            tooltipBorder: BorderSide(
+              color: isDark ? AppColors.darkBorder : AppColors.border,
+            ),
+            getTooltipItems: (List<LineBarSpot> touchedSpots) {
+              return touchedSpots.map((spot) {
+                final record = chartRecords[spot.x.toInt()];
+                final sg = record.specificGravity;
+
+                String status;
+                if (sg >= 1.005 && sg <= 1.030) {
+                  status = 'Normal';
+                } else if (sg < 1.005) {
+                  status = 'Low';
+                } else {
+                  status = 'High';
+                }
+
+                return LineTooltipItem(
+                  'Specific Gravity: ${sg.toStringAsFixed(3)}\\n$status',
+                  TextStyle(
+                    color: spot.bar.color,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                );
+              }).toList();
+            },
           ),
         ),
         lineBarsData: [
@@ -1067,19 +1299,15 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   radius: 4,
                   color: AppColors.urineReport,
                   strokeWidth: 2,
-                  strokeColor: isDark
-                      ? AppColors.darkSurface
-                      : AppColors.surface,
+                  strokeColor: Colors.white,
                 );
               },
-            ),
-            belowBarData: BarAreaData(
-              show: true,
-              color: AppColors.urineReport.withOpacity(0.1),
             ),
           ),
         ],
       ),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
   }
 
@@ -1126,7 +1354,7 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
 
   String _getLatestBP(HealthRecordsProvider provider) {
     if (provider.bpRecords.isEmpty) return '--/--';
-    final latest = provider.bpRecords.last;
+    final latest = provider.bpRecords.first;
     return '${latest.systolic}/${latest.diastolic}';
   }
 

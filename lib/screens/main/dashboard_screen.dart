@@ -41,20 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: CustomAppBar(
-        title: 'Dashboard',
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_outlined),
-            onPressed: () {
-              final user = context.read<AuthProvider>().currentUser;
-              if (user != null) {
-                context.read<HealthRecordsProvider>().loadAllRecords(user.id);
-              }
-            },
-          ),
-        ],
-      ),
+      appBar: CustomAppBar(title: 'Dashboard'),
       body: Consumer2<AuthProvider, HealthRecordsProvider>(
         builder: (context, authProvider, healthProvider, child) {
           final user = authProvider.currentUser;
@@ -181,7 +168,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       HealthMetricCard(
                         title: 'Blood Pressure',
                         value: healthProvider.bpRecords.isNotEmpty
-                            ? healthProvider.bpRecords.last.bpLevel.split(
+                            ? healthProvider.bpRecords.first.bpLevel.split(
                                 '/',
                               )[0]
                             : '--',
@@ -192,7 +179,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ? () => _showHealthAnalysisModal(
                                 context,
                                 'Blood Pressure Analysis',
-                                healthProvider.bpRecords.last,
+                                healthProvider.bpRecords.first,
                                 'bp',
                                 user,
                               )
@@ -201,7 +188,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       HealthMetricCard(
                         title: 'Blood Sugar',
                         value: healthProvider.fbsRecords.isNotEmpty
-                            ? healthProvider.fbsRecords.last.fbsLevel
+                            ? healthProvider.fbsRecords.first.fbsLevel
                                   .toStringAsFixed(0)
                             : '--',
                         unit: healthProvider.fbsRecords.isNotEmpty
@@ -213,7 +200,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ? () => _showHealthAnalysisModal(
                                 context,
                                 'Blood Sugar Analysis',
-                                healthProvider.fbsRecords.last,
+                                healthProvider.fbsRecords.first,
                                 'fbs',
                                 user,
                               )
@@ -222,7 +209,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       HealthMetricCard(
                         title: 'Blood Count',
                         value: healthProvider.fbcRecords.isNotEmpty
-                            ? healthProvider.fbcRecords.last.haemoglobin
+                            ? healthProvider.fbcRecords.first.haemoglobin
                                   .toStringAsFixed(1)
                             : '--',
                         unit: healthProvider.fbcRecords.isNotEmpty
@@ -234,7 +221,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ? () => _showHealthAnalysisModal(
                                 context,
                                 'Blood Count Analysis',
-                                healthProvider.fbcRecords.last,
+                                healthProvider.fbcRecords.first,
                                 'fbc',
                                 user,
                               )
@@ -243,7 +230,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       HealthMetricCard(
                         title: 'Lipid Profile',
                         value: healthProvider.lipidRecords.isNotEmpty
-                            ? healthProvider.lipidRecords.last.totalCholesterol
+                            ? healthProvider.lipidRecords.first.totalCholesterol
                                   .toStringAsFixed(0)
                             : '--',
                         unit: healthProvider.lipidRecords.isNotEmpty
@@ -255,7 +242,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ? () => _showHealthAnalysisModal(
                                 context,
                                 'Lipid Profile Analysis',
-                                healthProvider.lipidRecords.last,
+                                healthProvider.lipidRecords.first,
                                 'lipid',
                                 user,
                               )
@@ -264,7 +251,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       HealthMetricCard(
                         title: 'Liver Profile',
                         value: healthProvider.liverRecords.isNotEmpty
-                            ? healthProvider.liverRecords.last.sgpt
+                            ? healthProvider.liverRecords.first.sgpt
                                   .toStringAsFixed(0)
                             : '--',
                         unit: healthProvider.liverRecords.isNotEmpty
@@ -276,7 +263,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ? () => _showHealthAnalysisModal(
                                 context,
                                 'Liver Profile Analysis',
-                                healthProvider.liverRecords.last,
+                                healthProvider.liverRecords.first,
                                 'liver',
                                 user,
                               )
@@ -285,7 +272,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       HealthMetricCard(
                         title: 'Urine Report',
                         value: healthProvider.urineRecords.isNotEmpty
-                            ? healthProvider.urineRecords.last.specificGravity
+                            ? healthProvider.urineRecords.first.specificGravity
                                   .toStringAsFixed(3)
                             : '--',
                         unit: healthProvider.urineRecords.isNotEmpty
@@ -297,7 +284,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ? () => _showHealthAnalysisModal(
                                 context,
                                 'Urine Report Analysis',
-                                healthProvider.urineRecords.last,
+                                healthProvider.urineRecords.first,
                                 'urine',
                                 user,
                               )
@@ -617,14 +604,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     // Check for critical/abnormal values
     if (provider.bpRecords.isNotEmpty) {
       final analysis = health.HealthAnalysis.analyzeBloodPressure(
-        provider.bpRecords.last,
+        provider.bpRecords.first,
       );
       if (analysis.status == health.HealthStatus.abnormal) {
         alerts.add(
           HealthAlertBanner(
             title: 'Critical Blood Pressure',
             message:
-                '${provider.bpRecords.last.bpLevel} mmHg - ${analysis.recommendation}',
+                '${provider.bpRecords.first.bpLevel} mmHg - ${analysis.recommendation}',
             color: Colors.red,
             icon: Icons.favorite_rounded,
           ),
@@ -634,7 +621,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (provider.fbsRecords.isNotEmpty) {
       final analysis = health.HealthAnalysis.analyzeFBS(
-        provider.fbsRecords.last.fbsLevel,
+        provider.fbsRecords.first.fbsLevel,
       );
       if (analysis.status == health.HealthStatus.abnormal ||
           analysis.status == health.HealthStatus.high) {
@@ -642,7 +629,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           HealthAlertBanner(
             title: 'Blood Sugar Alert',
             message:
-                '${provider.fbsRecords.last.fbsLevel.toStringAsFixed(0)} mg/dL - ${analysis.recommendation}',
+                '${provider.fbsRecords.first.fbsLevel.toStringAsFixed(0)} mg/dL - ${analysis.recommendation}',
             color: analysis.status == health.HealthStatus.abnormal
                 ? Colors.red
                 : Colors.orange,
@@ -654,7 +641,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (provider.fbcRecords.isNotEmpty) {
       final analysis = health.HealthAnalysis.analyzeHaemoglobin(
-        provider.fbcRecords.last.haemoglobin,
+        provider.fbcRecords.first.haemoglobin,
         user.gender,
       );
       if (analysis.status == health.HealthStatus.abnormal ||
@@ -663,7 +650,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           HealthAlertBanner(
             title: 'Blood Count Alert',
             message:
-                'Hemoglobin ${provider.fbcRecords.last.haemoglobin.toStringAsFixed(1)} g/dL - ${analysis.recommendation}',
+                'Hemoglobin ${provider.fbcRecords.first.haemoglobin.toStringAsFixed(1)} g/dL - ${analysis.recommendation}',
             color: analysis.status == health.HealthStatus.abnormal
                 ? Colors.red
                 : Colors.blue,
@@ -675,7 +662,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (provider.lipidRecords.isNotEmpty) {
       final analysis = health.HealthAnalysis.analyzeTotalCholesterol(
-        provider.lipidRecords.last.totalCholesterol,
+        provider.lipidRecords.first.totalCholesterol,
       );
       if (analysis.status == health.HealthStatus.high ||
           analysis.status == health.HealthStatus.abnormal) {
@@ -683,7 +670,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           HealthAlertBanner(
             title: 'Cholesterol Alert',
             message:
-                '${provider.lipidRecords.last.totalCholesterol.toStringAsFixed(0)} mg/dL - ${analysis.recommendation}',
+                '${provider.lipidRecords.first.totalCholesterol.toStringAsFixed(0)} mg/dL - ${analysis.recommendation}',
             color: analysis.status == health.HealthStatus.abnormal
                 ? Colors.red
                 : Colors.orange,
@@ -695,7 +682,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (provider.liverRecords.isNotEmpty) {
       final analysis = health.HealthAnalysis.analyzeSGPT(
-        provider.liverRecords.last.sgpt,
+        provider.liverRecords.first.sgpt,
       );
       if (analysis.status == health.HealthStatus.high ||
           analysis.status == health.HealthStatus.abnormal) {
@@ -703,7 +690,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           HealthAlertBanner(
             title: 'Liver Function Alert',
             message:
-                'SGPT ${provider.liverRecords.last.sgpt.toStringAsFixed(0)} U/L - ${analysis.recommendation}',
+                'SGPT ${provider.liverRecords.first.sgpt.toStringAsFixed(0)} U/L - ${analysis.recommendation}',
             color: analysis.status == health.HealthStatus.abnormal
                 ? Colors.red
                 : Colors.orange,

@@ -4,7 +4,8 @@ import 'user.dart';
 /// Backend fields: id, test_date, bp_level (String format: "120/80"), image_url, user_id
 class BloodPressure {
   final int id;
-  final String testDate; // Backend uses LocalDate, sent as ISO string (YYYY-MM-DD)
+  final String
+  testDate; // Backend uses LocalDate, sent as ISO string (YYYY-MM-DD)
   final String bpLevel; // Format: "systolic/diastolic" e.g., "120/80"
   final String? imageUrl;
   final User? user;
@@ -19,14 +20,18 @@ class BloodPressure {
 
   /// Parse systolic value from bpLevel string
   int get systolic {
+    if (bpLevel.isEmpty || !bpLevel.contains('/')) return 0;
     final parts = bpLevel.split('/');
-    return parts.isNotEmpty ? int.tryParse(parts[0]) ?? 0 : 0;
+    if (parts.isEmpty) return 0;
+    return int.tryParse(parts[0].trim()) ?? 0;
   }
 
   /// Parse diastolic value from bpLevel string
   int get diastolic {
+    if (bpLevel.isEmpty || !bpLevel.contains('/')) return 0;
     final parts = bpLevel.split('/');
-    return parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+    if (parts.length < 2) return 0;
+    return int.tryParse(parts[1].trim()) ?? 0;
   }
 
   factory BloodPressure.fromJson(Map<String, dynamic> json) {

@@ -2,6 +2,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import '../core/services/api_service.dart';
 import '../core/config/app_config.dart';
+import '../core/utils/app_logger.dart';
+import '../core/utils/exception_handler.dart';
 
 /// Authentication service for login, registration, and user management
 class AuthService {
@@ -10,37 +12,29 @@ class AuthService {
   /// Login with email and password
   Future<User> login(String email, String password) async {
     try {
-      print('🔑 Attempting login for: $email');
-      print('📡 Login endpoint: ${AppConfig.login}');
-      print('📡 Base URL: ${AppConfig.baseUrl}');
+      AppLogger.info('Attempting login for: $email', 'AuthService');
+      AppLogger.debug('Login endpoint: ${AppConfig.login}', 'AuthService');
 
       final response = await _apiService.post(AppConfig.login, {
         'email': email,
         'password': password,
       });
 
-      print('📥 Response status: ${response.statusCode}');
-      print('📥 Response body: ${response.body}');
+      AppLogger.debug('Response status: ${response.statusCode}', 'AuthService');
 
       final userData = _apiService.handleResponse(response);
-      print('✅ Login response parsed successfully');
-
       final user = User.fromJson(userData);
-      print('✅ User object created: ${user.name}');
+
+      AppLogger.success('User logged in: ${user.name}', 'AuthService');
 
       // Store user session
       await _apiService.saveUserSession(user.id);
-      print('✅ Session saved for user ID: ${user.id}');
-
-      // Also store user data locally for session restoration
       await _saveUserData(user);
-      print('✅ User data saved locally');
 
       return user;
-    } catch (e) {
-      print('❌ Login error: $e');
-      final errorMsg = e.toString().replaceAll('Exception: ', '');
-      throw Exception(errorMsg);
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('login', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 
@@ -50,9 +44,9 @@ class AuthService {
       final response = await _apiService.post(AppConfig.addUser, userData);
       final userResponse = _apiService.handleResponse(response);
       return User.fromJson(userResponse);
-    } catch (e) {
-      final errorMsg = e.toString().replaceAll('Exception: ', '');
-      throw Exception(errorMsg);
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('register', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 
@@ -60,6 +54,7 @@ class AuthService {
   Future<void> logout() async {
     await _apiService.clearSession();
     await _clearUserData();
+    AppLogger.info('User logged out', 'AuthService');
   }
 
   /// Check if user is logged in and restore session
@@ -74,6 +69,7 @@ class AuthService {
     // Try to get user data from local storage first
     final localUser = await _loadUserData();
     if (localUser != null) {
+      AppLogger.info('Session restored from local storage', 'AuthService');
       return localUser;
     }
 
@@ -83,8 +79,10 @@ class AuthService {
       final userData = _apiService.handleResponse(response);
       final user = User.fromJson(userData);
       await _saveUserData(user);
+      AppLogger.info('Session restored from server', 'AuthService');
       return user;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('restoreSession', e, stackTrace);
       // If fetch fails, clear session
       await logout();
       return null;
@@ -101,13 +99,14 @@ class AuthService {
         final responseData = _apiService.handleResponse(response);
         final updatedUser = User.fromJson(responseData);
         await _saveUserData(updatedUser);
+        AppLogger.success('User profile updated', 'AuthService');
         return updatedUser;
       } else {
         throw Exception('Failed to update profile');
       }
-    } catch (e) {
-      final errorMsg = e.toString().replaceAll('Exception: ', '');
-      throw Exception(errorMsg);
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('updateUser', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 
@@ -117,9 +116,9 @@ class AuthService {
       final response = await _apiService.get(AppConfig.getUser(userId));
       final userData = _apiService.handleResponse(response);
       return User.fromJson(userData);
-    } catch (e) {
-      final errorMsg = e.toString().replaceAll('Exception: ', '');
-      throw Exception(errorMsg);
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('getUserById', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 

@@ -7,6 +7,7 @@ import '../../widgets/feedback/custom_snackbar.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/constants/app_typography.dart';
+import '../../core/utils/app_logger.dart';
 import '../main/main_layout.dart';
 import 'signup/signup_step1_screen.dart';
 
@@ -32,20 +33,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
-      print('🔐 Login button pressed');
-      print('📧 Email: ${_emailController.text.trim()}');
+      AppLogger.info(
+        'Login attempt for: ${_emailController.text.trim()}',
+        'LoginScreen',
+      );
 
       final success = await context.read<AuthProvider>().login(
         _emailController.text.trim(),
         _passwordController.text,
       );
 
-      print('✅ Login result: $success');
+      AppLogger.info('Login result: $success', 'LoginScreen');
 
       if (!success && mounted) {
         final errorMsg =
             context.read<AuthProvider>().errorMessage ?? 'Login failed';
-        print('❌ Login failed: $errorMsg');
+        AppLogger.warning('Login failed: $errorMsg', 'LoginScreen');
 
         CustomSnackBar.show(
           context,
@@ -53,7 +56,10 @@ class _LoginScreenState extends State<LoginScreen> {
           type: SnackBarType.error,
         );
       } else if (success && mounted) {
-        print('✅ Login successful! Navigating to dashboard...');
+        AppLogger.success(
+          'Login successful, navigating to dashboard',
+          'LoginScreen',
+        );
         // Navigate to main layout (dashboard) after successful login
         Navigator.pushAndRemoveUntil(
           context,

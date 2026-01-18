@@ -53,9 +53,7 @@ class ViewBloodPressureScreen extends StatelessWidget {
             );
           }
 
-          final sortedRecords = List<BloodPressure>.from(records)
-            ..sort((a, b) => b.testDate.compareTo(a.testDate));
-
+          // Data is already sorted by provider (newest first)
           return RefreshIndicator(
             onRefresh: () async {
               final user = context.read<AuthProvider>().currentUser;
@@ -68,17 +66,17 @@ class ViewBloodPressureScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Summary Card
-                  _buildSummaryCard(sortedRecords, isDark),
+                  _buildSummaryCard(records, isDark),
                   const SizedBox(height: AppSpacing.xl),
 
                   // Chart Section
-                  _buildChartSection(sortedRecords, isDark),
+                  _buildChartSection(records, isDark),
                   const SizedBox(height: AppSpacing.xl),
 
                   // Records List
                   Text('All Records', style: AppTypography.title2),
                   const SizedBox(height: AppSpacing.md),
-                  ...sortedRecords.map(
+                  ...records.map(
                     (r) => _buildRecordCard(context, r, isDark, provider),
                   ),
                   const SizedBox(height: AppSpacing.xl),
@@ -87,14 +85,6 @@ class ViewBloodPressureScreen extends StatelessWidget {
             ),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const AddBloodPressureScreen()),
-        ),
-        backgroundColor: AppColors.bloodPressure,
-        child: const Icon(Icons.add_rounded, color: Colors.white),
       ),
     );
   }

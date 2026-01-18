@@ -1,6 +1,8 @@
 import '../models/full_blood_count.dart';
 import '../core/services/api_service.dart';
 import '../core/config/app_config.dart';
+import '../core/utils/app_logger.dart';
+import '../core/utils/exception_handler.dart';
 
 /// Service for Full Blood Count records API operations
 class FullBloodCountService {
@@ -9,10 +11,20 @@ class FullBloodCountService {
   /// Get all FBC records for a user
   Future<List<FullBloodCount>> getRecordsByUserId(int userId) async {
     try {
-      final response = await _apiService.get(AppConfig.getFBCRecordsByUserId(userId));
+      final response = await _apiService.get(
+        AppConfig.getFBCRecordsByUserId(userId),
+      );
       final List<dynamic> data = _apiService.handleListResponse(response);
-      return data.map((json) => FullBloodCount.fromJson(json as Map<String, dynamic>)).toList();
-    } catch (e) {
+      return data
+          .map((json) => FullBloodCount.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e, stackTrace) {
+      AppLogger.error(
+        'Failed to fetch FBC records',
+        tag: 'FBCService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return [];
     }
   }
@@ -26,8 +38,9 @@ class FullBloodCountService {
       );
       final data = _apiService.handleResponse(response);
       return FullBloodCount.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to add FBC record: ${e.toString().replaceAll("Exception: ", "")}');
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('add (FBC)', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 
@@ -40,8 +53,9 @@ class FullBloodCountService {
       );
       final data = _apiService.handleResponse(response);
       return FullBloodCount.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to update FBC record: ${e.toString().replaceAll("Exception: ", "")}');
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('update (FBC)', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 
@@ -49,8 +63,9 @@ class FullBloodCountService {
   Future<void> deleteRecord(int recordId) async {
     try {
       await _apiService.delete(AppConfig.deleteFBCRecord(recordId));
-    } catch (e) {
-      throw Exception('Failed to delete FBC record: ${e.toString().replaceAll("Exception: ", "")}');
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('delete (FBC)', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 }

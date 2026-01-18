@@ -91,4 +91,15 @@ class AppSpacing {
   static const double elevationSm = 2;
   static const double elevationMd = 4;
   static const double elevationLg = 8;
+
+  // Splash screen
+  static const double splashLogoSize = 120.0;
+  static const double splashDotSize = 10.0;
+  static const double splashDotSpacing = 8.0;
+
+  // Chart constants
+  static const double chartHeight = 200.0;
+  static const double chartDotRadius = 4.0;
+  static const double chartLineWidth = 3.0;
+  static const double chartSecondaryLineWidth = 2.0;
 }

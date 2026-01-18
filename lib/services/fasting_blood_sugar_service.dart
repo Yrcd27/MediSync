@@ -1,6 +1,8 @@
 import '../models/fasting_blood_sugar.dart';
 import '../core/services/api_service.dart';
 import '../core/config/app_config.dart';
+import '../core/utils/app_logger.dart';
+import '../core/utils/exception_handler.dart';
 
 /// Service for Fasting Blood Sugar records API operations
 class FastingBloodSugarService {
@@ -9,16 +11,31 @@ class FastingBloodSugarService {
   /// Get all FBS records for a user
   Future<List<FastingBloodSugar>> getRecordsByUserId(int userId) async {
     try {
-      final response = await _apiService.get(AppConfig.getFBSRecordsByUserId(userId));
+      final response = await _apiService.get(
+        AppConfig.getFBSRecordsByUserId(userId),
+      );
       final List<dynamic> data = _apiService.handleListResponse(response);
-      return data.map((json) => FastingBloodSugar.fromJson(json as Map<String, dynamic>)).toList();
-    } catch (e) {
+      return data
+          .map(
+            (json) => FastingBloodSugar.fromJson(json as Map<String, dynamic>),
+          )
+          .toList();
+    } catch (e, stackTrace) {
+      AppLogger.error(
+        'Failed to fetch FBS records',
+        tag: 'FBSService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return [];
     }
   }
 
   /// Add a new FBS record
-  Future<FastingBloodSugar> addRecord(FastingBloodSugar record, int userId) async {
+  Future<FastingBloodSugar> addRecord(
+    FastingBloodSugar record,
+    int userId,
+  ) async {
     try {
       final response = await _apiService.post(
         AppConfig.addFBSRecord,
@@ -26,8 +43,9 @@ class FastingBloodSugarService {
       );
       final data = _apiService.handleResponse(response);
       return FastingBloodSugar.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to add FBS record: ${e.toString().replaceAll("Exception: ", "")}');
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('addRecord (FBS)', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 
@@ -40,8 +58,9 @@ class FastingBloodSugarService {
       );
       final data = _apiService.handleResponse(response);
       return FastingBloodSugar.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to update FBS record: ${e.toString().replaceAll("Exception: ", "")}');
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('updateRecord (FBS)', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 
@@ -49,8 +68,9 @@ class FastingBloodSugarService {
   Future<void> deleteRecord(int recordId) async {
     try {
       await _apiService.delete(AppConfig.deleteFBSRecord(recordId));
-    } catch (e) {
-      throw Exception('Failed to delete FBS record: ${e.toString().replaceAll("Exception: ", "")}');
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('deleteRecord (FBS)', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 }

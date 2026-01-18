@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
 import '../../core/config/app_config.dart';
+import '../../core/utils/app_logger.dart';
 import '../../services/auth_service.dart';
 
-class DebugNetworkScreen extends StatelessWidget {
+class DebugNetworkScreen extends StatefulWidget {
   const DebugNetworkScreen({super.key});
+
+  @override
+  State<DebugNetworkScreen> createState() => _DebugNetworkScreenState();
+}
+
+class _DebugNetworkScreenState extends State<DebugNetworkScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +65,43 @@ class DebugNetworkScreen extends StatelessWidget {
               '• Make sure your backend allows connections from your IP',
             ),
             const SizedBox(height: 24),
+            const Text(
+              'Test Credentials:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+                hintText: 'Enter test email',
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _passwordController,
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+                hintText: 'Enter test password',
+              ),
+              obscureText: true,
+            ),
+            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () async {
-                await _testUserUpdate(context);
+                if (_emailController.text.isEmpty ||
+                    _passwordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter email and password'),
+                    ),
+                  );
+                  return;
+                }
+                await _testUserUpdate();
               },
               child: const Text('Test User Update Fix'),
             ),
@@ -61,35 +111,43 @@ class DebugNetworkScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _testUserUpdate(BuildContext context) async {
+  Future<void> _testUserUpdate() async {
+    if (!mounted) return;
+
     try {
       final authService = AuthService();
-      const testPassword = 'nimal@123'; // Current password for testing
+      final testEmail = _emailController.text;
+      final testPassword = _passwordController.text;
 
-      print('Starting user update test...');
+      AppLogger.info('Starting user update test...', 'Debug');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Testing user login and update...')),
       );
 
       // Step 1: Login to get a user
-      final user = await authService.login('nimal123@gmail.com', testPassword);
-      print('Login successful. User: ${user.name}');
+      final user = await authService.login(testEmail, testPassword);
+      AppLogger.success('Login successful. User: ${user.name}', 'Debug');
 
       // Step 2: Try to update the user with current password
       final updatedUser = user.copyWith(
-        name: 'Nimal Test Update ${DateTime.now().millisecond}',
+        name: 'Test Update ${DateTime.now().millisecond}',
       );
 
       final result = await authService.updateUser(updatedUser, testPassword);
-      print('Update successful! Result: ${result.name}');
+      AppLogger.success('Update successful! Result: ${result.name}', 'Debug');
 
-      if (!context.mounted) return;
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('✅ Update test PASSED! User: ${result.name}')),
       );
-    } catch (e) {
-      print('Update test FAILED: $e');
-      if (!context.mounted) return;
+    } catch (e, stackTrace) {
+      AppLogger.error(
+        'Update test FAILED',
+        tag: 'Debug',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('❌ Update test FAILED: $e')));

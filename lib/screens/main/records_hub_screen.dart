@@ -83,7 +83,7 @@ class RecordsHubScreen extends StatelessWidget {
                         color: AppColors.bloodPressure,
                         count: healthProvider.bpRecords.length,
                         latestValue: healthProvider.bpRecords.isNotEmpty
-                            ? healthProvider.bpRecords.last.bpLevel
+                            ? healthProvider.bpRecords.first.bpLevel
                             : null,
                         unit: 'mmHg',
                         onTap: () => Navigator.push(
@@ -101,7 +101,7 @@ class RecordsHubScreen extends StatelessWidget {
                         color: AppColors.bloodSugar,
                         count: healthProvider.fbsRecords.length,
                         latestValue: healthProvider.fbsRecords.isNotEmpty
-                            ? healthProvider.fbsRecords.last.fbsLevel
+                            ? healthProvider.fbsRecords.first.fbsLevel
                                   .toStringAsFixed(0)
                             : null,
                         unit: 'mg/dL',
@@ -120,7 +120,7 @@ class RecordsHubScreen extends StatelessWidget {
                         color: AppColors.bloodCount,
                         count: healthProvider.fbcRecords.length,
                         latestValue: healthProvider.fbcRecords.isNotEmpty
-                            ? 'Hb ${healthProvider.fbcRecords.last.haemoglobin.toStringAsFixed(1)}'
+                            ? 'Hb ${healthProvider.fbcRecords.first.haemoglobin.toStringAsFixed(1)}'
                             : null,
                         unit: 'g/dL',
                         onTap: () => Navigator.push(
@@ -138,7 +138,7 @@ class RecordsHubScreen extends StatelessWidget {
                         color: AppColors.lipidProfile,
                         count: healthProvider.lipidRecords.length,
                         latestValue: healthProvider.lipidRecords.isNotEmpty
-                            ? 'TC ${healthProvider.lipidRecords.last.totalCholesterol.toStringAsFixed(0)}'
+                            ? 'TC ${healthProvider.lipidRecords.first.totalCholesterol.toStringAsFixed(0)}'
                             : null,
                         unit: 'mg/dL',
                         onTap: () => Navigator.push(
@@ -156,7 +156,7 @@ class RecordsHubScreen extends StatelessWidget {
                         color: AppColors.liverProfile,
                         count: healthProvider.liverRecords.length,
                         latestValue: healthProvider.liverRecords.isNotEmpty
-                            ? 'SGPT ${healthProvider.liverRecords.last.sgpt.toStringAsFixed(0)}'
+                            ? 'SGPT ${healthProvider.liverRecords.first.sgpt.toStringAsFixed(0)}'
                             : null,
                         unit: 'U/L',
                         onTap: () => Navigator.push(
@@ -174,7 +174,7 @@ class RecordsHubScreen extends StatelessWidget {
                         color: AppColors.urineReport,
                         count: healthProvider.urineRecords.length,
                         latestValue: healthProvider.urineRecords.isNotEmpty
-                            ? 'SG ${healthProvider.urineRecords.last.specificGravity.toStringAsFixed(3)}'
+                            ? 'SG ${healthProvider.urineRecords.first.specificGravity.toStringAsFixed(3)}'
                             : null,
                         unit: '',
                         onTap: () => Navigator.push(

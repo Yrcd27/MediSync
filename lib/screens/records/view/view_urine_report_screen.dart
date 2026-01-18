@@ -51,9 +51,7 @@ class ViewUrineReportScreen extends StatelessWidget {
             );
           }
 
-          final sortedRecords = List<UrineReport>.from(records)
-            ..sort((a, b) => b.testDate.compareTo(a.testDate));
-
+          // Data is already sorted by provider (newest first)
           return RefreshIndicator(
             onRefresh: () async {
               final user = context.read<AuthProvider>().currentUser;
@@ -65,13 +63,13 @@ class ViewUrineReportScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSummaryCard(sortedRecords, isDark),
+                  _buildSummaryCard(records, isDark),
                   const SizedBox(height: AppSpacing.xl),
-                  _buildChartSection(sortedRecords, isDark),
+                  _buildChartSection(records, isDark),
                   const SizedBox(height: AppSpacing.xl),
                   Text('All Records', style: AppTypography.title2),
                   const SizedBox(height: AppSpacing.md),
-                  ...sortedRecords.map(
+                  ...records.map(
                     (r) => _buildRecordCard(context, r, isDark, provider),
                   ),
                   const SizedBox(height: AppSpacing.xl),
@@ -80,14 +78,6 @@ class ViewUrineReportScreen extends StatelessWidget {
             ),
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const AddUrineReportScreen()),
-        ),
-        backgroundColor: AppColors.urineReport,
-        child: const Icon(Icons.add_rounded, color: Colors.white),
       ),
     );
   }

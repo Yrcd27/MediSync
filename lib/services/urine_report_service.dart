@@ -1,6 +1,8 @@
 import '../models/urine_report.dart';
 import '../core/services/api_service.dart';
 import '../core/config/app_config.dart';
+import '../core/utils/app_logger.dart';
+import '../core/utils/exception_handler.dart';
 
 /// Service for Urine Report records API operations
 class UrineReportService {
@@ -9,10 +11,20 @@ class UrineReportService {
   /// Get all Urine Report records for a user
   Future<List<UrineReport>> getRecordsByUserId(int userId) async {
     try {
-      final response = await _apiService.get(AppConfig.getUrineRecordsByUserId(userId));
+      final response = await _apiService.get(
+        AppConfig.getUrineRecordsByUserId(userId),
+      );
       final List<dynamic> data = _apiService.handleListResponse(response);
-      return data.map((json) => UrineReport.fromJson(json as Map<String, dynamic>)).toList();
-    } catch (e) {
+      return data
+          .map((json) => UrineReport.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e, stackTrace) {
+      AppLogger.error(
+        'Failed to fetch Urine Report records',
+        tag: 'UrineService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return [];
     }
   }
@@ -26,8 +38,9 @@ class UrineReportService {
       );
       final data = _apiService.handleResponse(response);
       return UrineReport.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to add Urine Report record: ${e.toString().replaceAll("Exception: ", "")}');
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('add (Urine Report)', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 
@@ -40,8 +53,9 @@ class UrineReportService {
       );
       final data = _apiService.handleResponse(response);
       return UrineReport.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to update Urine Report record: ${e.toString().replaceAll("Exception: ", "")}');
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('update (Urine Report)', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 
@@ -49,8 +63,9 @@ class UrineReportService {
   Future<void> deleteRecord(int recordId) async {
     try {
       await _apiService.delete(AppConfig.deleteUrineRecord(recordId));
-    } catch (e) {
-      throw Exception('Failed to delete Urine Report record: ${e.toString().replaceAll("Exception: ", "")}');
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('delete (Urine Report)', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 }

@@ -1,6 +1,8 @@
 import '../models/blood_pressure.dart';
 import '../core/services/api_service.dart';
 import '../core/config/app_config.dart';
+import '../core/utils/app_logger.dart';
+import '../core/utils/exception_handler.dart';
 
 /// Service for Blood Pressure records API operations
 class BloodPressureService {
@@ -9,11 +11,20 @@ class BloodPressureService {
   /// Get all blood pressure records for a user
   Future<List<BloodPressure>> getRecordsByUserId(int userId) async {
     try {
-      final response = await _apiService.get(AppConfig.getBPRecordsByUserId(userId));
+      final response = await _apiService.get(
+        AppConfig.getBPRecordsByUserId(userId),
+      );
       final List<dynamic> data = _apiService.handleListResponse(response);
-      return data.map((json) => BloodPressure.fromJson(json as Map<String, dynamic>)).toList();
-    } catch (e) {
-      // Return empty list if no records found
+      return data
+          .map((json) => BloodPressure.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e, stackTrace) {
+      AppLogger.error(
+        'Failed to fetch blood pressure records',
+        tag: 'BPService',
+        error: e,
+        stackTrace: stackTrace,
+      );
       return [];
     }
   }
@@ -27,8 +38,9 @@ class BloodPressureService {
       );
       final data = _apiService.handleResponse(response);
       return BloodPressure.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to add blood pressure record: ${e.toString().replaceAll("Exception: ", "")}');
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('addRecord (BloodPressure)', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 
@@ -41,8 +53,9 @@ class BloodPressureService {
       );
       final data = _apiService.handleResponse(response);
       return BloodPressure.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to update blood pressure record: ${e.toString().replaceAll("Exception: ", "")}');
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('updateRecord (BloodPressure)', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 
@@ -50,19 +63,9 @@ class BloodPressureService {
   Future<void> deleteRecord(int recordId) async {
     try {
       await _apiService.delete(AppConfig.deleteBPRecord(recordId));
-    } catch (e) {
-      throw Exception('Failed to delete blood pressure record: ${e.toString().replaceAll("Exception: ", "")}');
-    }
-  }
-
-  /// Get a single blood pressure record by ID
-  Future<BloodPressure> getRecordById(int recordId) async {
-    try {
-      final response = await _apiService.get(AppConfig.getBPRecord(recordId));
-      final data = _apiService.handleResponse(response);
-      return BloodPressure.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to fetch blood pressure record: ${e.toString().replaceAll("Exception: ", "")}');
+    } catch (e, stackTrace) {
+      ExceptionHandler.log('deleteRecord (BloodPressure)', e, stackTrace);
+      throw Exception(ExceptionHandler.getMessage(e));
     }
   }
 }
