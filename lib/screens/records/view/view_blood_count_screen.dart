@@ -200,10 +200,12 @@ class ViewBloodCountScreen extends StatelessWidget {
                     final isReference = isLowReference || isHighReference;
                     return FlLine(
                       color: isReference
-                          ? (isLowReference ? AppColors.error : AppColors.warning)
-                              .withOpacity(0.6)
+                          ? (isLowReference
+                                    ? AppColors.error
+                                    : AppColors.warning)
+                                .withOpacity(0.6)
                           : (isDark ? AppColors.darkBorder : AppColors.border)
-                              .withOpacity(0.3),
+                                .withOpacity(0.3),
                       strokeWidth: isReference ? 2 : 1,
                       dashArray: isReference ? [5, 5] : null,
                     );
@@ -219,7 +221,9 @@ class ViewBloodCountScreen extends StatelessWidget {
                         return Text(
                           '${value.toStringAsFixed(1)}',
                           style: AppTypography.caption.copyWith(
-                            color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                            color: isDark
+                                ? AppColors.darkTextSecondary
+                                : AppColors.textSecondary,
                             fontSize: 10,
                           ),
                         );
@@ -235,9 +239,13 @@ class ViewBloodCountScreen extends StatelessWidget {
                         final index = value.toInt();
                         if (index >= 0 && index < chartRecords.length) {
                           return Text(
-                            DateFormat('MM/dd').format(DateTime.parse(chartRecords[index].testDate)),
+                            DateFormat('MM/dd').format(
+                              DateTime.parse(chartRecords[index].testDate),
+                            ),
                             style: AppTypography.caption.copyWith(
-                              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                              color: isDark
+                                  ? AppColors.darkTextSecondary
+                                  : AppColors.textSecondary,
                               fontSize: 9,
                             ),
                           );
@@ -257,22 +265,28 @@ class ViewBloodCountScreen extends StatelessWidget {
                 lineTouchData: LineTouchData(
                   enabled: true,
                   touchTooltipData: LineTouchTooltipData(
-                    tooltipBgColor: isDark ? AppColors.darkSurface : AppColors.surface,
+                    tooltipBgColor: isDark
+                        ? AppColors.darkSurface
+                        : AppColors.surface,
                     tooltipRoundedRadius: 8,
                     tooltipPadding: const EdgeInsets.all(8),
                     tooltipMargin: 8,
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots.map((spot) {
                         final record = chartRecords[spot.x.toInt()];
-                        final date = DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate));
-                        final hemoglobin = record.haemoglobin.toStringAsFixed(1);
+                        final date = DateFormat(
+                          'MMM dd, yyyy',
+                        ).format(DateTime.parse(record.testDate));
+                        final hemoglobin = record.haemoglobin.toStringAsFixed(
+                          1,
+                        );
                         String status = 'Normal';
                         if (record.haemoglobin < 12) {
                           status = 'Low (Anemia)';
                         } else if (record.haemoglobin > 17.5) {
                           status = 'High';
                         }
-                        
+
                         return LineTooltipItem(
                           'Hemoglobin: $hemoglobin g/dL\nStatus: $status\n$date',
                           TextStyle(

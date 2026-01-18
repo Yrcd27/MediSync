@@ -543,10 +543,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: AppSpacing.md),
                         _buildInfoRow('App Version', '1.0.0', isDark),
-                        _buildInfoRow('Developer', 'MediSync Team', isDark),
+                        _buildInfoRow('Developer', 'MediSync App Team', isDark),
                         _buildInfoRow(
                           'Support',
-                          'support@medisync.com',
+                          'medisync.app.team@gmail.com',
                           isDark,
                         ),
                       ],

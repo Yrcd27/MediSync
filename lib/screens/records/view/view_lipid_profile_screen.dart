@@ -229,7 +229,7 @@ class ViewLipidProfileScreen extends StatelessWidget {
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
-                  show: true, 
+                  show: true,
                   drawVerticalLine: false,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
@@ -260,7 +260,9 @@ class ViewLipidProfileScreen extends StatelessWidget {
                         final index = value.toInt();
                         if (index >= 0 && index < chartRecords.length) {
                           return Text(
-                            DateFormat('MM/dd').format(chartRecords[index].testDate),
+                            DateFormat(
+                              'MM/dd',
+                            ).format(DateTime.parse(chartRecords[index].testDate)),
                             style: AppTypography.caption.copyWith(fontSize: 10),
                           );
                         }
@@ -283,37 +285,52 @@ class ViewLipidProfileScreen extends StatelessWidget {
                 lineTouchData: LineTouchData(
                   enabled: true,
                   touchTooltipData: LineTouchTooltipData(
-                    tooltipBgColor: isDark ? AppColors.darkSurface : AppColors.surface,
+                    tooltipBgColor: isDark
+                        ? AppColors.darkSurface
+                        : AppColors.surface,
                     tooltipBorder: BorderSide(
                       color: isDark ? AppColors.darkBorder : AppColors.border,
                     ),
                     getTooltipItems: (List<LineBarSpot> touchedSpots) {
                       return touchedSpots.map((spot) {
                         final record = chartRecords[spot.x.toInt()];
-                        final date = DateFormat('MMM dd, yyyy').format(record.testDate);
-                        
+                        final date = DateFormat(
+                          'MMM dd, yyyy',
+                        ).format(DateTime.parse(record.testDate));
+
                         String label = '';
                         String status = '';
                         Color lineColor = AppColors.primary;
-                        
+
                         if (spot.barIndex == 0) {
-                          label = 'Total Cholesterol: ${record.totalCholesterol.toStringAsFixed(0)} mg/dL';
-                          status = record.totalCholesterol < 200 ? 'Normal' :
-                                  record.totalCholesterol < 240 ? 'Borderline High' : 'High';
+                          label =
+                              'Total Cholesterol: ${record.totalCholesterol.toStringAsFixed(0)} mg/dL';
+                          status = record.totalCholesterol < 200
+                              ? 'Normal'
+                              : record.totalCholesterol < 240
+                              ? 'Borderline High'
+                              : 'High';
                           lineColor = AppColors.lipidProfile;
                         } else if (spot.barIndex == 1) {
                           label = 'LDL: ${record.ldl.toStringAsFixed(0)} mg/dL';
-                          status = record.ldl < 100 ? 'Optimal' :
-                                  record.ldl < 130 ? 'Near Optimal' :
-                                  record.ldl < 160 ? 'Borderline High' : 'High';
+                          status = record.ldl < 100
+                              ? 'Optimal'
+                              : record.ldl < 130
+                              ? 'Near Optimal'
+                              : record.ldl < 160
+                              ? 'Borderline High'
+                              : 'High';
                           lineColor = AppColors.error;
                         } else {
                           label = 'HDL: ${record.hdl.toStringAsFixed(0)} mg/dL';
-                          status = record.hdl >= 60 ? 'Protective' :
-                                  record.hdl >= 40 ? 'Normal' : 'Low Risk';
+                          status = record.hdl >= 60
+                              ? 'Protective'
+                              : record.hdl >= 40
+                              ? 'Normal'
+                              : 'Low Risk';
                           lineColor = AppColors.success;
                         }
-                        
+
                         return LineTooltipItem(
                           '$label\n$status\n$date',
                           TextStyle(

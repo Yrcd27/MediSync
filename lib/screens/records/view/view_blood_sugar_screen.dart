@@ -232,9 +232,9 @@ class ViewBloodSugarScreen extends StatelessWidget {
                     return FlLine(
                       color: isReference
                           ? (value == 100 ? AppColors.warning : AppColors.error)
-                              .withOpacity(0.6)
+                                .withOpacity(0.6)
                           : (isDark ? AppColors.darkBorder : AppColors.border)
-                              .withOpacity(0.3),
+                                .withOpacity(0.3),
                       strokeWidth: isReference ? 2 : 1,
                       dashArray: isReference ? [5, 5] : null,
                     );
@@ -250,7 +250,9 @@ class ViewBloodSugarScreen extends StatelessWidget {
                         return Text(
                           '${value.toInt()}',
                           style: AppTypography.caption.copyWith(
-                            color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                            color: isDark
+                                ? AppColors.darkTextSecondary
+                                : AppColors.textSecondary,
                             fontSize: 10,
                           ),
                         );
@@ -266,9 +268,13 @@ class ViewBloodSugarScreen extends StatelessWidget {
                         final index = value.toInt();
                         if (index >= 0 && index < chartRecords.length) {
                           return Text(
-                            DateFormat('MM/dd').format(DateTime.parse(chartRecords[index].testDate)),
+                            DateFormat('MM/dd').format(
+                              DateTime.parse(chartRecords[index].testDate),
+                            ),
                             style: AppTypography.caption.copyWith(
-                              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                              color: isDark
+                                  ? AppColors.darkTextSecondary
+                                  : AppColors.textSecondary,
                               fontSize: 9,
                             ),
                           );
@@ -288,14 +294,18 @@ class ViewBloodSugarScreen extends StatelessWidget {
                 lineTouchData: LineTouchData(
                   enabled: true,
                   touchTooltipData: LineTouchTooltipData(
-                    tooltipBgColor: isDark ? AppColors.darkSurface : AppColors.surface,
+                    tooltipBgColor: isDark
+                        ? AppColors.darkSurface
+                        : AppColors.surface,
                     tooltipRoundedRadius: 8,
                     tooltipPadding: const EdgeInsets.all(8),
                     tooltipMargin: 8,
                     getTooltipItems: (touchedSpots) {
                       return touchedSpots.map((spot) {
                         final record = chartRecords[spot.x.toInt()];
-                        final date = DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate));
+                        final date = DateFormat(
+                          'MMM dd, yyyy',
+                        ).format(DateTime.parse(record.testDate));
                         final fbsLevel = record.fbsLevel.toStringAsFixed(0);
                         String status = 'Normal';
                         if (record.fbsLevel >= 126) {
@@ -303,7 +313,7 @@ class ViewBloodSugarScreen extends StatelessWidget {
                         } else if (record.fbsLevel >= 100) {
                           status = 'Pre-diabetic';
                         }
-                        
+
                         return LineTooltipItem(
                           'FBS: $fbsLevel mg/dL\nStatus: $status\n$date',
                           TextStyle(

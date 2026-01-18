@@ -256,11 +256,14 @@ class ViewBloodPressureScreen extends StatelessWidget {
                     final isReference = [120, 130, 140].contains(value.toInt());
                     return FlLine(
                       color: isReference
-                          ? (value == 120 ? AppColors.success : 
-                             value == 130 ? AppColors.warning : 
-                             AppColors.error).withOpacity(0.6)
+                          ? (value == 120
+                                    ? AppColors.success
+                                    : value == 130
+                                    ? AppColors.warning
+                                    : AppColors.error)
+                                .withOpacity(0.6)
                           : (isDark ? AppColors.darkBorder : AppColors.border)
-                              .withOpacity(0.3),
+                                .withOpacity(0.3),
                       strokeWidth: isReference ? 2 : 1,
                       dashArray: isReference ? [5, 5] : null,
                     );
@@ -269,14 +272,16 @@ class ViewBloodPressureScreen extends StatelessWidget {
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
-                      showTitles: true, 
+                      showTitles: true,
                       reservedSize: 45,
                       interval: 20,
                       getTitlesWidget: (value, meta) {
                         return Text(
                           '${value.toInt()}',
                           style: AppTypography.caption.copyWith(
-                            color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                            color: isDark
+                                ? AppColors.darkTextSecondary
+                                : AppColors.textSecondary,
                             fontSize: 10,
                           ),
                         );
@@ -292,9 +297,13 @@ class ViewBloodPressureScreen extends StatelessWidget {
                         final index = value.toInt();
                         if (index >= 0 && index < chartRecords.length) {
                           return Text(
-                            DateFormat('MM/dd').format(DateTime.parse(chartRecords[index].testDate)),
+                            DateFormat('MM/dd').format(
+                              DateTime.parse(chartRecords[index].testDate),
+                            ),
                             style: AppTypography.caption.copyWith(
-                              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                              color: isDark
+                                  ? AppColors.darkTextSecondary
+                                  : AppColors.textSecondary,
                               fontSize: 9,
                             ),
                           );
@@ -314,7 +323,9 @@ class ViewBloodPressureScreen extends StatelessWidget {
                 lineTouchData: LineTouchData(
                   enabled: true,
                   touchTooltipData: LineTouchTooltipData(
-                    tooltipBgColor: isDark ? AppColors.darkSurface : AppColors.surface,
+                    tooltipBgColor: isDark
+                        ? AppColors.darkSurface
+                        : AppColors.surface,
                     tooltipRoundedRadius: 8,
                     tooltipPadding: const EdgeInsets.all(8),
                     tooltipMargin: 8,
@@ -322,10 +333,14 @@ class ViewBloodPressureScreen extends StatelessWidget {
                       return touchedSpots.map((spot) {
                         final record = chartRecords[spot.x.toInt()];
                         final isSystemic = spot.barIndex == 0;
-                        final value = isSystemic ? record.systolic : record.diastolic;
+                        final value = isSystemic
+                            ? record.systolic
+                            : record.diastolic;
                         final label = isSystemic ? 'Systolic' : 'Diastolic';
-                        final date = DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate));
-                        
+                        final date = DateFormat(
+                          'MMM dd, yyyy',
+                        ).format(DateTime.parse(record.testDate));
+
                         return LineTooltipItem(
                           '$label: ${value.toStringAsFixed(0)} mmHg\n$date',
                           TextStyle(

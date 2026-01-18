@@ -1,19 +1,8 @@
-import 'dart:io';
-
 class AppConfig {
-  // Base URL configuration - automatically detects platform
+  // Base URL configuration - using hosted backend
   static String get baseUrl {
-    // For Android emulator, use 10.0.2.2 to access host machine's localhost
-    // For iOS simulator, use localhost
-    // For physical devices, use actual server IP
-    if (Platform.isAndroid) {
-      return 'http://10.0.2.2:8080';
-    } else if (Platform.isIOS) {
-      return 'http://localhost:8080';
-    } else {
-      // For web or other platforms
-      return 'http://localhost:8080';
-    }
+    // Use hosted backend for all platforms
+    return 'https://medisync-backend-production.up.railway.app';
   }
 
   // For testing with physical device, set your computer's IP here

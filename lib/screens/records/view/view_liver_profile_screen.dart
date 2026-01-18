@@ -253,7 +253,7 @@ class ViewLiverProfileScreen extends StatelessWidget {
                         final index = value.toInt();
                         if (index >= 0 && index < chartRecords.length) {
                           return Text(
-                            DateFormat('MM/dd').format(chartRecords[index].testDate),
+                            DateFormat('MM/dd').format(DateTime.parse(chartRecords[index].testDate)),
                             style: AppTypography.caption.copyWith(fontSize: 10),
                           );
                         }
@@ -283,21 +283,15 @@ class ViewLiverProfileScreen extends StatelessWidget {
                     getTooltipItems: (List<LineBarSpot> touchedSpots) {
                       return touchedSpots.map((spot) {
                         final record = chartRecords[spot.x.toInt()];
-                        final date = DateFormat('MMM dd, yyyy').format(record.testDate);
+                        final date = DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate));
                         
                         String label = '';
                         String status = '';
                         Color lineColor = AppColors.primary;
                         
-                        if (spot.barIndex == 0) {
-                          label = 'SGPT (ALT): ${record.sgpt.toStringAsFixed(0)} U/L';
-                          status = record.sgpt <= 56 ? 'Normal' : 'Elevated';
-                          lineColor = AppColors.liverProfile;
-                        } else {
-                          label = 'SGOT (AST): ${record.sgot.toStringAsFixed(0)} U/L';
-                          status = record.sgot <= 40 ? 'Normal' : 'Elevated';
-                          lineColor = AppColors.warning;
-                        }
+                        label = 'SGPT (ALT): ${record.sgpt.toStringAsFixed(0)} U/L';
+                        status = record.sgpt <= 56 ? 'Normal' : 'Elevated';
+                        lineColor = AppColors.liverProfile;
                         
                         return LineTooltipItem(
                           '$label\n$status\n$date',
@@ -388,27 +382,7 @@ class ViewLiverProfileScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                  LineChartBarData(
-                    spots: chartRecords
-                        .asMap()
-                        .entries
-                        .map((e) => FlSpot(e.key.toDouble(), e.value.sgot))
-                        .toList(),
-                    isCurved: true,
-                    color: AppColors.warning,
-                    barWidth: 2.5,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, percent, barData, index) {
-                        return FlDotCirclePainter(
-                          radius: 3.5,
-                          color: AppColors.warning,
-                          strokeWidth: 1.5,
-                          strokeColor: Colors.white,
-                        );
-                      },
-                    ),
-                  ),
+
                 ],
               ),
               duration: const Duration(milliseconds: 350),
@@ -420,34 +394,7 @@ class ViewLiverProfileScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildLegendItem('SGPT (ALT)', AppColors.liverProfile),
-              const SizedBox(width: AppSpacing.lg),
-              _buildLegendItem('SGOT (AST)', AppColors.warning),
             ],
-          ),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: AppColors.liverProfile.withOpacity(0.1),
-                    ),
-                  ),
-                ],
-                extraLinesData: ExtraLinesData(
-                  horizontalLines: [
-                    HorizontalLine(
-                      y: 40,
-                      color: AppColors.warning,
-                      strokeWidth: 1,
-                      dashArray: [5, 5],
-                    ),
-                    HorizontalLine(
-                      y: 56,
-                      color: AppColors.error,
-                      strokeWidth: 1,
-                      dashArray: [5, 5],
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ),
         ],
       ),

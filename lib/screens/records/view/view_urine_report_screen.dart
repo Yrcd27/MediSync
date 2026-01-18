@@ -193,7 +193,7 @@ class ViewUrineReportScreen extends StatelessWidget {
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
-                  show: true, 
+                  show: true,
                   drawVerticalLine: false,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
@@ -224,7 +224,9 @@ class ViewUrineReportScreen extends StatelessWidget {
                         final index = value.toInt();
                         if (index >= 0 && index < chartRecords.length) {
                           return Text(
-                            DateFormat('MM/dd').format(chartRecords[index].testDate),
+                            DateFormat(
+                              'MM/dd',
+                            ).format(DateTime.parse(chartRecords[index].testDate)),
                             style: AppTypography.caption.copyWith(fontSize: 10),
                           );
                         }
@@ -257,35 +259,34 @@ class ViewUrineReportScreen extends StatelessWidget {
                 lineTouchData: LineTouchData(
                   enabled: true,
                   touchTooltipData: LineTouchTooltipData(
-                    tooltipBgColor: isDark ? AppColors.darkSurface : AppColors.surface,
+                    tooltipBgColor: isDark
+                        ? AppColors.darkSurface
+                        : AppColors.surface,
                     tooltipBorder: BorderSide(
                       color: isDark ? AppColors.darkBorder : AppColors.border,
                     ),
                     getTooltipItems: (List<LineBarSpot> touchedSpots) {
                       return touchedSpots.map((spot) {
                         final record = chartRecords[spot.x.toInt()];
-                        final date = DateFormat('MMM dd, yyyy').format(record.testDate);
-                        
+                        final date = DateFormat(
+                          'MMM dd, yyyy',
+                        ).format(DateTime.parse(record.testDate));
+
                         String label = '';
                         String status = '';
                         Color lineColor = AppColors.primary;
-                        
-                        if (spot.barIndex == 0) {
-                          label = 'Specific Gravity: ${record.specificGravity.toStringAsFixed(3)}';
-                          status = (record.specificGravity >= 1.005 && record.specificGravity <= 1.030) 
-                              ? 'Normal Range' 
-                              : record.specificGravity < 1.005 
-                                  ? 'Dilute' 
-                                  : 'Concentrated';
-                          lineColor = AppColors.urineReport;
-                        } else {
-                          // This would be pH if we add it as a second line
-                          label = 'pH: ${record.ph.toStringAsFixed(1)}';
-                          status = (record.ph >= 4.6 && record.ph <= 8.0) ? 'Normal pH' : 
-                                  record.ph < 4.6 ? 'Acidic' : 'Alkaline';
-                          lineColor = AppColors.secondary;
-                        }
-                        
+
+                        label =
+                            'Specific Gravity: ${record.specificGravity.toStringAsFixed(3)}';
+                        status =
+                            (record.specificGravity >= 1.005 &&
+                                record.specificGravity <= 1.030)
+                            ? 'Normal Range'
+                            : record.specificGravity < 1.005
+                            ? 'Dilute'
+                            : 'Concentrated';
+                        lineColor = AppColors.urineReport;
+
                         return LineTooltipItem(
                           '$label\n$status\n$date',
                           TextStyle(
