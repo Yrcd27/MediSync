@@ -7,6 +7,7 @@ import '../../core/constants/app_typography.dart';
 import '../../providers/health_records_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/feedback/empty_state.dart';
+import '../../utils/health_analysis.dart' as health;
 
 class AllRecordsScreen extends StatelessWidget {
   const AllRecordsScreen({super.key});
@@ -56,11 +57,13 @@ class AllRecordsScreen extends StatelessWidget {
     HealthRecordsProvider provider,
     bool isDark,
   ) {
+    final user = context.read<AuthProvider>().currentUser;
     // Combine all records with their types and sort by date
     final allRecords = <Map<String, dynamic>>[];
 
     for (final record in provider.bpRecords) {
       final testDate = DateTime.tryParse(record.testDate) ?? DateTime.now();
+      final analysis = health.HealthAnalysis.analyzeBloodPressure(record);
       allRecords.add({
         'type': 'Blood Pressure',
         'icon': Icons.favorite_rounded,
@@ -68,11 +71,14 @@ class AllRecordsScreen extends StatelessWidget {
         'value': record.bpLevel,
         'unit': 'mmHg',
         'date': testDate,
+        'status': _getStatusIcon(analysis.status),
+        'statusText': analysis.statusText,
       });
     }
 
     for (final record in provider.fbsRecords) {
       final testDate = DateTime.tryParse(record.testDate) ?? DateTime.now();
+      final analysis = health.HealthAnalysis.analyzeFBS(record.fbsLevel);
       allRecords.add({
         'type': 'Blood Sugar',
         'icon': Icons.water_drop_rounded,
@@ -80,11 +86,15 @@ class AllRecordsScreen extends StatelessWidget {
         'value': record.fbsLevel.toStringAsFixed(0),
         'unit': 'mg/dL',
         'date': testDate,
+        'status': _getStatusIcon(analysis.status),
+        'statusText': analysis.statusText,
       });
     }
 
     for (final record in provider.fbcRecords) {
       final testDate = DateTime.tryParse(record.testDate) ?? DateTime.now();
+      final analysis = health.HealthAnalysis.analyzeHaemoglobin(
+          record.haemoglobin, user?.gender ?? 'Male');
       allRecords.add({
         'type': 'Blood Count',
         'icon': Icons.science_rounded,
@@ -92,11 +102,15 @@ class AllRecordsScreen extends StatelessWidget {
         'value': 'Hb ${record.haemoglobin.toStringAsFixed(1)}',
         'unit': 'g/dL',
         'date': testDate,
+        'status': _getStatusIcon(analysis.status),
+        'statusText': analysis.statusText,
       });
     }
 
     for (final record in provider.lipidRecords) {
       final testDate = DateTime.tryParse(record.testDate) ?? DateTime.now();
+      final analysis =
+          health.HealthAnalysis.analyzeTotalCholesterol(record.totalCholesterol);
       allRecords.add({
         'type': 'Lipid Profile',
         'icon': Icons.monitor_heart_rounded,
@@ -104,11 +118,14 @@ class AllRecordsScreen extends StatelessWidget {
         'value': 'TC ${record.totalCholesterol.toStringAsFixed(0)}',
         'unit': 'mg/dL',
         'date': testDate,
+        'status': _getStatusIcon(analysis.status),
+        'statusText': analysis.statusText,
       });
     }
 
     for (final record in provider.liverRecords) {
       final testDate = DateTime.tryParse(record.testDate) ?? DateTime.now();
+      final analysis = health.HealthAnalysis.analyzeSGPT(record.sgpt);
       allRecords.add({
         'type': 'Liver Profile',
         'icon': Icons.local_hospital_rounded,
@@ -116,11 +133,15 @@ class AllRecordsScreen extends StatelessWidget {
         'value': 'SGPT ${record.sgpt.toStringAsFixed(0)}',
         'unit': 'U/L',
         'date': testDate,
+        'status': _getStatusIcon(analysis.status),
+        'statusText': analysis.statusText,
       });
     }
 
     for (final record in provider.urineRecords) {
       final testDate = DateTime.tryParse(record.testDate) ?? DateTime.now();
+      final analysis =
+          health.HealthAnalysis.analyzeSpecificGravity(record.specificGravity);
       allRecords.add({
         'type': 'Urine Report',
         'icon': Icons.opacity_rounded,
@@ -128,6 +149,8 @@ class AllRecordsScreen extends StatelessWidget {
         'value': 'SG ${record.specificGravity.toStringAsFixed(3)}',
         'unit': '',
         'date': testDate,
+        'status': _getStatusIcon(analysis.status),
+        'statusText': analysis.statusText,
       });
     }
 
@@ -205,6 +228,16 @@ class AllRecordsScreen extends StatelessWidget {
                             : AppColors.textSecondary,
                       ),
                     ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      '${record['status']} ${record['statusText']}',
+                      style: AppTypography.caption.copyWith(
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -234,5 +267,18 @@ class AllRecordsScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _getStatusIcon(health.HealthStatus status) {
+    switch (status) {
+      case health.HealthStatus.normal:
+        return '✅';
+      case health.HealthStatus.low:
+        return '🔵';
+      case health.HealthStatus.high:
+        return '⚠️';
+      case health.HealthStatus.abnormal:
+        return '🚨';
+    }
   }
 }
