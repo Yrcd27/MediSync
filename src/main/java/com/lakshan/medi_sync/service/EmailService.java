@@ -37,9 +37,6 @@ public class EmailService {
 
     @Async
     public void sendTestReminderEmail(String recipientEmail, String subject, String body) {
-        logger.log(Level.INFO, "Preparing to send email to {0} with subject \"{1}\"",
-                new Object[]{recipientEmail, subject});
-
         try {
             String url = "https://api.resend.com/emails";
 
@@ -57,15 +54,13 @@ public class EmailService {
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                logger.log(Level.INFO, "Email sent successfully to {0}", recipientEmail);
+                logger.log(Level.INFO, "Email sent to {0}", recipientEmail);
             } else {
-                logger.log(Level.SEVERE, "Failed to send email. Status: {0}, Response: {1}",
-                        new Object[]{response.getStatusCode(), response.getBody()});
+                logger.log(Level.SEVERE, "Email failed: {0}", response.getStatusCode());
             }
 
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Exception while sending email to {0}", recipientEmail);
-            logger.log(Level.SEVERE, "Error details", e);
+            logger.log(Level.SEVERE, "Exception while sending email: {0}", e.getMessage());
         }
     }
 
