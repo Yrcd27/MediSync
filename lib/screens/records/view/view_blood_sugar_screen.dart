@@ -221,13 +221,61 @@ class ViewBloodSugarScreen extends StatelessWidget {
             height: 200,
             child: LineChart(
               LineChartData(
-                gridData: FlGridData(show: true, drawVerticalLine: false),
+                minY: 50,
+                maxY: 250,
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  horizontalInterval: 25,
+                  getDrawingHorizontalLine: (value) {
+                    final isReference = [100, 126].contains(value.toInt());
+                    return FlLine(
+                      color: isReference
+                          ? (value == 100 ? AppColors.warning : AppColors.error)
+                              .withOpacity(0.6)
+                          : (isDark ? AppColors.darkBorder : AppColors.border)
+                              .withOpacity(0.3),
+                      strokeWidth: isReference ? 2 : 1,
+                      dashArray: isReference ? [5, 5] : null,
+                    );
+                  },
+                ),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 50,
+                      interval: 25,
+                      getTitlesWidget: (value, meta) {
+                        return Text(
+                          '${value.toInt()}',
+                          style: AppTypography.caption.copyWith(
+                            color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                            fontSize: 10,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                   bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 30,
+                      interval: (chartRecords.length / 4).ceil().toDouble(),
+                      getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+                        if (index >= 0 && index < chartRecords.length) {
+                          return Text(
+                            DateFormat('MM/dd').format(DateTime.parse(chartRecords[index].testDate)),
+                            style: AppTypography.caption.copyWith(
+                              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                              fontSize: 9,
+                            ),
+                          );
+                        }
+                        return const SizedBox();
+                      },
+                    ),
                   ),
                   topTitles: AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
@@ -237,6 +285,37 @@ class ViewBloodSugarScreen extends StatelessWidget {
                   ),
                 ),
                 borderData: FlBorderData(show: false),
+                lineTouchData: LineTouchData(
+                  enabled: true,
+                  touchTooltipData: LineTouchTooltipData(
+                    tooltipBgColor: isDark ? AppColors.darkSurface : AppColors.surface,
+                    tooltipRoundedRadius: 8,
+                    tooltipPadding: const EdgeInsets.all(8),
+                    tooltipMargin: 8,
+                    getTooltipItems: (touchedSpots) {
+                      return touchedSpots.map((spot) {
+                        final record = chartRecords[spot.x.toInt()];
+                        final date = DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate));
+                        final fbsLevel = record.fbsLevel.toStringAsFixed(0);
+                        String status = 'Normal';
+                        if (record.fbsLevel >= 126) {
+                          status = 'Diabetic';
+                        } else if (record.fbsLevel >= 100) {
+                          status = 'Pre-diabetic';
+                        }
+                        
+                        return LineTooltipItem(
+                          'FBS: $fbsLevel mg/dL\nStatus: $status\n$date',
+                          TextStyle(
+                            color: spot.bar.color,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        );
+                      }).toList();
+                    },
+                  ),
+                ),
                 lineBarsData: [
                   LineChartBarData(
                     spots: chartRecords
@@ -261,16 +340,38 @@ class ViewBloodSugarScreen extends StatelessWidget {
                       color: AppColors.warning,
                       strokeWidth: 1,
                       dashArray: [5, 5],
+                      label: HorizontalLineLabel(
+                        show: true,
+                        labelResolver: (line) => 'Normal Limit',
+                        style: TextStyle(
+                          color: AppColors.warning,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        alignment: Alignment.topRight,
+                      ),
                     ),
                     HorizontalLine(
                       y: 126,
                       color: AppColors.error,
                       strokeWidth: 1,
                       dashArray: [5, 5],
+                      label: HorizontalLineLabel(
+                        show: true,
+                        labelResolver: (line) => 'Diabetic Threshold',
+                        style: TextStyle(
+                          color: AppColors.error,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        alignment: Alignment.topRight,
+                      ),
                     ),
                   ],
                 ),
               ),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
             ),
           ),
         ],
