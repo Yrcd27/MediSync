@@ -311,6 +311,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   const SizedBox(height: AppSpacing.xl),
 
+                  // Health Insights Section
+                  const SectionHeader(title: 'Health Insights'),
+                  const SizedBox(height: AppSpacing.md),
+                  _buildHealthInsights(healthProvider, user),
+                  const SizedBox(height: AppSpacing.xl),
+
                   // Recent Reports Section
                   const SectionHeader(title: 'Recent Reports'),
                   const SizedBox(height: AppSpacing.md),
@@ -658,5 +664,173 @@ class _DashboardScreenState extends State<DashboardScreen> {
       case health.HealthStatus.abnormal:
         return Colors.red;
     }
+  }
+
+  Widget _buildHealthInsights(
+      HealthRecordsProvider provider, dynamic user) {
+    final insights = <Map<String, dynamic>>[];
+
+    // Analyze each metric
+    if (provider.bpRecords.isNotEmpty) {
+      final analysis =
+          health.HealthAnalysis.analyzeBloodPressure(provider.bpRecords.last);
+      if (analysis.status != health.HealthStatus.normal) {
+        insights.add({
+          'title': 'Blood Pressure',
+          'status': analysis.statusText,
+          'recommendation': analysis.recommendation,
+          'color': _getStatusColor(analysis.status),
+        });
+      }
+    }
+
+    if (provider.fbsRecords.isNotEmpty) {
+      final analysis = health.HealthAnalysis.analyzeFBS(
+          provider.fbsRecords.last.fbsLevel);
+      if (analysis.status != health.HealthStatus.normal) {
+        insights.add({
+          'title': 'Blood Sugar',
+          'status': analysis.statusText,
+          'recommendation': analysis.recommendation,
+          'color': _getStatusColor(analysis.status),
+        });
+      }
+    }
+
+    if (provider.fbcRecords.isNotEmpty) {
+      final analysis = health.HealthAnalysis.analyzeHaemoglobin(
+          provider.fbcRecords.last.haemoglobin, user.gender);
+      if (analysis.status != health.HealthStatus.normal) {
+        insights.add({
+          'title': 'Haemoglobin',
+          'status': analysis.statusText,
+          'recommendation': analysis.recommendation,
+          'color': _getStatusColor(analysis.status),
+        });
+      }
+    }
+
+    if (provider.lipidRecords.isNotEmpty) {
+      final analysis = health.HealthAnalysis.analyzeTotalCholesterol(
+          provider.lipidRecords.last.totalCholesterol);
+      if (analysis.status != health.HealthStatus.normal) {
+        insights.add({
+          'title': 'Cholesterol',
+          'status': analysis.statusText,
+          'recommendation': analysis.recommendation,
+          'color': _getStatusColor(analysis.status),
+        });
+      }
+    }
+
+    if (provider.liverRecords.isNotEmpty) {
+      final analysis =
+          health.HealthAnalysis.analyzeSGPT(provider.liverRecords.last.sgpt);
+      if (analysis.status != health.HealthStatus.normal) {
+        insights.add({
+          'title': 'Liver Function',
+          'status': analysis.statusText,
+          'recommendation': analysis.recommendation,
+          'color': _getStatusColor(analysis.status),
+        });
+      }
+    }
+
+    if (provider.urineRecords.isNotEmpty) {
+      final analysis = health.HealthAnalysis.analyzeSpecificGravity(
+          provider.urineRecords.last.specificGravity);
+      if (analysis.status != health.HealthStatus.normal) {
+        insights.add({
+          'title': 'Urine Test',
+          'status': analysis.statusText,
+          'recommendation': analysis.recommendation,
+          'color': _getStatusColor(analysis.status),
+        });
+      }
+    }
+
+    if (insights.isEmpty) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.green, size: 32),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Text(
+                  'All metrics are within normal range',
+                  style: AppTypography.body1.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.warning_rounded,
+                    color: Colors.orange, size: AppSpacing.iconMd),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  '${insights.length} ${insights.length == 1 ? 'area' : 'areas'} need attention',
+                  style: AppTypography.body1.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            ...insights.map((insight) => Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 4,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: insight['color'],
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${insight['title']}: ${insight['status']}',
+                              style: AppTypography.body2.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              insight['recommendation'],
+                              style: AppTypography.caption.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+          ],
+        ),
+      ),
+    );
   }
 }
