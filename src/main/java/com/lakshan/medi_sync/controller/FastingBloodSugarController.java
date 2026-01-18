@@ -23,6 +23,11 @@ public class FastingBloodSugarController {
     public ResponseEntity<FastingBloodSugar> addFastingBloodSugarRecord(
             @RequestBody FastingBloodSugar fastingBloodSugar
     ) {
+        System.out.println("========= RECEIVED FROM FRONTEND =========");
+        System.out.println("User Email: " + fastingBloodSugar.getUser().getEmail());
+        System.out.println("User ID: " + fastingBloodSugar.getUser().getId());
+        System.out.println("==========================================");
+
         fbsService.addNewFastingBloodSugarRecord(fastingBloodSugar);
         return ResponseEntity.status(201).body(fastingBloodSugar);
     }
