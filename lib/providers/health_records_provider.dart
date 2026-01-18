@@ -13,6 +13,7 @@ import '../services/lipid_profile_service.dart';
 import '../services/liver_profile_service.dart';
 import '../services/urine_report_service.dart';
 import '../services/report_service.dart';
+import '../core/constants/app_colors.dart';
 
 /// Provider for managing all health records
 class HealthRecordsProvider with ChangeNotifier {
@@ -46,6 +47,105 @@ class HealthRecordsProvider with ChangeNotifier {
   List<Report> get reports => _reports;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+
+  /// Generate daily reports by grouping all records by their test date
+  List<Map<String, dynamic>> get dailyReports {
+    final Map<String, Map<String, dynamic>> reportsByDate = {};
+
+    // Group blood pressure records by date
+    for (final record in _bpRecords) {
+      final date = record.testDate;
+      reportsByDate.putIfAbsent(date, () => {'date': date, 'tests': []});
+      reportsByDate[date]!['tests'].add({
+        'type': 'Blood Pressure',
+        'icon': Icons.favorite_rounded,
+        'color': AppColors.bloodPressure,
+        'value': record.bpLevel,
+        'unit': 'mmHg',
+        'data': record,
+      });
+    }
+
+    // Group blood sugar records by date
+    for (final record in _fbsRecords) {
+      final date = record.testDate;
+      reportsByDate.putIfAbsent(date, () => {'date': date, 'tests': []});
+      reportsByDate[date]!['tests'].add({
+        'type': 'Blood Sugar',
+        'icon': Icons.water_drop_rounded,
+        'color': AppColors.bloodSugar,
+        'value': '${record.fbsLevel.toStringAsFixed(0)} mg/dL',
+        'unit': '',
+        'data': record,
+      });
+    }
+
+    // Group blood count records by date
+    for (final record in _fbcRecords) {
+      final date = record.testDate;
+      reportsByDate.putIfAbsent(date, () => {'date': date, 'tests': []});
+      reportsByDate[date]!['tests'].add({
+        'type': 'Blood Count',
+        'icon': Icons.science_rounded,
+        'color': AppColors.bloodCount,
+        'value': 'Hb ${record.haemoglobin.toStringAsFixed(1)} g/dL',
+        'unit': '',
+        'data': record,
+      });
+    }
+
+    // Group lipid profile records by date
+    for (final record in _lipidRecords) {
+      final date = record.testDate;
+      reportsByDate.putIfAbsent(date, () => {'date': date, 'tests': []});
+      reportsByDate[date]!['tests'].add({
+        'type': 'Lipid Profile',
+        'icon': Icons.monitor_heart_rounded,
+        'color': AppColors.lipidProfile,
+        'value': 'TC ${record.totalCholesterol.toStringAsFixed(0)} mg/dL',
+        'unit': '',
+        'data': record,
+      });
+    }
+
+    // Group liver profile records by date
+    for (final record in _liverRecords) {
+      final date = record.testDate;
+      reportsByDate.putIfAbsent(date, () => {'date': date, 'tests': []});
+      reportsByDate[date]!['tests'].add({
+        'type': 'Liver Profile',
+        'icon': Icons.local_hospital_rounded,
+        'color': AppColors.liverProfile,
+        'value': 'SGPT ${record.sgpt.toStringAsFixed(0)} U/L',
+        'unit': '',
+        'data': record,
+      });
+    }
+
+    // Group urine report records by date
+    for (final record in _urineRecords) {
+      final date = record.testDate;
+      reportsByDate.putIfAbsent(date, () => {'date': date, 'tests': []});
+      reportsByDate[date]!['tests'].add({
+        'type': 'Urine Report',
+        'icon': Icons.opacity_rounded,
+        'color': AppColors.urineReport,
+        'value': 'SG ${record.specificGravity.toStringAsFixed(3)}',
+        'unit': '',
+        'data': record,
+      });
+    }
+
+    // Convert to list and sort by date (most recent first)
+    final reportsList = reportsByDate.values.toList();
+    reportsList.sort((a, b) {
+      final dateA = DateTime.tryParse(a['date'] as String) ?? DateTime.now();
+      final dateB = DateTime.tryParse(b['date'] as String) ?? DateTime.now();
+      return dateB.compareTo(dateA);
+    });
+
+    return reportsList;
+  }
 
   /// Load all records for a user
   Future<void> loadAllRecords(int userId) async {

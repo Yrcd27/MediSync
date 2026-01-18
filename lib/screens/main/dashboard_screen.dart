@@ -189,7 +189,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ? healthProvider.fbsRecords.last.fbsLevel
                                   .toStringAsFixed(0)
                             : '--',
-                        unit: healthProvider.fbsRecords.isNotEmpty ? 'mg/dL' : '',
+                        unit: healthProvider.fbsRecords.isNotEmpty
+                            ? 'mg/dL'
+                            : '',
                         icon: Icons.water_drop_rounded,
                         color: AppColors.bloodSugar,
                         subtitle: healthProvider.fbsRecords.isNotEmpty
@@ -202,7 +204,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ? healthProvider.fbcRecords.last.haemoglobin
                                   .toStringAsFixed(1)
                             : '--',
-                        unit: healthProvider.fbcRecords.isNotEmpty ? 'g/dL' : '',
+                        unit: healthProvider.fbcRecords.isNotEmpty
+                            ? 'g/dL'
+                            : '',
                         icon: Icons.science_rounded,
                         color: AppColors.bloodCount,
                         subtitle: healthProvider.fbcRecords.isNotEmpty
@@ -215,7 +219,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ? healthProvider.lipidRecords.last.totalCholesterol
                                   .toStringAsFixed(0)
                             : '--',
-                        unit: healthProvider.lipidRecords.isNotEmpty ? 'mg/dL' : '',
+                        unit: healthProvider.lipidRecords.isNotEmpty
+                            ? 'mg/dL'
+                            : '',
                         icon: Icons.monitor_heart_rounded,
                         color: AppColors.lipidProfile,
                         subtitle: healthProvider.lipidRecords.isNotEmpty
@@ -228,7 +234,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ? healthProvider.liverRecords.last.sgpt
                                   .toStringAsFixed(0)
                             : '--',
-                        unit: healthProvider.liverRecords.isNotEmpty ? 'U/L' : '',
+                        unit: healthProvider.liverRecords.isNotEmpty
+                            ? 'U/L'
+                            : '',
                         icon: Icons.local_hospital_rounded,
                         color: AppColors.liverProfile,
                         subtitle: healthProvider.liverRecords.isNotEmpty
@@ -241,7 +249,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ? healthProvider.urineRecords.last.specificGravity
                                   .toStringAsFixed(3)
                             : '--',
-                        unit: healthProvider.urineRecords.isNotEmpty ? 'SG' : '',
+                        unit: healthProvider.urineRecords.isNotEmpty
+                            ? 'SG'
+                            : '',
                         icon: Icons.opacity_rounded,
                         color: AppColors.urineReport,
                         subtitle: healthProvider.urineRecords.isNotEmpty
@@ -256,7 +266,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const SectionHeader(title: 'Recent Reports'),
                   const SizedBox(height: AppSpacing.md),
 
-                  if (healthProvider.reports.isEmpty)
+                  if (healthProvider.dailyReports.isEmpty)
                     Card(
                       child: Padding(
                         padding: const EdgeInsets.all(AppSpacing.xl),
@@ -285,14 +295,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     )
                   else
-                    ...healthProvider.reports.take(3).map((report) {
+                    ...healthProvider.dailyReports.take(3).map((report) {
+                      final testCount = (report['tests'] as List).length;
+                      final date = report['date'] as String;
+                      final parsedDate = DateTime.tryParse(date) ?? DateTime.now();
+                      final formattedDate = DateFormat('MMM d, yyyy').format(parsedDate);
+                      
                       return Card(
                         margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundColor: AppColors.primary.withOpacity(0.1),
                             child: Text(
-                              '${report.testCount}',
+                              '$testCount',
                               style: AppTypography.body1.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
@@ -300,13 +315,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                           ),
                           title: Text(
-                            'Report - ${report.reportDate}',
+                            'Report - $formattedDate',
                             style: AppTypography.body1.copyWith(
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           subtitle: Text(
-                            '${report.testCount} test(s) recorded',
+                            '$testCount test(s) recorded',
                             style: AppTypography.body2.copyWith(
                               color: AppColors.textSecondary,
                             ),
@@ -331,74 +346,164 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  void _showReportDetails(BuildContext context, dynamic report) {
+  void _showReportDetails(BuildContext context, Map<String, dynamic> report) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final date = report['date'] as String;
+    final tests = report['tests'] as List;
+    final parsedDate = DateTime.tryParse(date) ?? DateTime.now();
+    final formattedDate = DateFormat('MMMM d, yyyy').format(parsedDate);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        minChildSize: 0.3,
-        maxChildSize: 0.9,
+        initialChildSize: 0.7,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
         expand: false,
         builder: (context, scrollController) => Container(
-          padding: const EdgeInsets.all(16),
-          child: ListView(
-            controller: scrollController,
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : AppColors.surface,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(AppSpacing.radiusXl),
+            ),
+          ),
+          child: Column(
             children: [
-              const Text(
-                'Report Details',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              // Handle bar
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(top: AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.darkBorder : AppColors.border,
+                  borderRadius: AppSpacing.borderRadiusFull,
+                ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Date: ${report.reportDate}',
-                style: const TextStyle(color: Colors.grey),
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Report Details',
+                            style: AppTypography.title1.copyWith(
+                              color: isDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.textPrimary,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: isDark
+                                ? AppColors.darkTextSecondary
+                                : AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      formattedDate,
+                      style: AppTypography.body1.copyWith(
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      '${tests.length} test(s) recorded',
+                      style: AppTypography.body2.copyWith(
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              if (report.bloodPressure != null)
-                _buildDetailTile(
-                  'Blood Pressure',
-                  report.bloodPressure.bpLevel,
+              Divider(
+                color: isDark ? AppColors.darkBorder : AppColors.border,
+                height: 1,
+              ),
+              // Test results
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  itemCount: tests.length,
+                  itemBuilder: (context, index) {
+                    final test = tests[index] as Map<String, dynamic>;
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+                      padding: const EdgeInsets.all(AppSpacing.md),
+                      decoration: BoxDecoration(
+                        color: (test['color'] as Color).withOpacity(0.1),
+                        borderRadius: AppSpacing.borderRadiusMd,
+                        border: Border.all(
+                          color: (test['color'] as Color).withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: (test['color'] as Color).withOpacity(0.2),
+                              borderRadius: AppSpacing.borderRadiusSm,
+                            ),
+                            child: Icon(
+                              test['icon'] as IconData,
+                              color: test['color'] as Color,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  test['type'] as String,
+                                  style: AppTypography.label1.copyWith(
+                                    color: isDark
+                                        ? AppColors.darkTextPrimary
+                                        : AppColors.textPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.xs),
+                                Text(
+                                  test['value'] as String,
+                                  style: AppTypography.body2.copyWith(
+                                    color: isDark
+                                        ? AppColors.darkTextSecondary
+                                        : AppColors.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              if (report.fastingBloodSugar != null)
-                _buildDetailTile(
-                  'FBS',
-                  '${report.fastingBloodSugar.fbsLevel.toStringAsFixed(1)} mg/dL',
-                ),
-              if (report.fullBloodCount != null)
-                _buildDetailTile(
-                  'Haemoglobin',
-                  '${report.fullBloodCount.haemoglobin.toStringAsFixed(1)} g/dL',
-                ),
-              if (report.lipidProfile != null)
-                _buildDetailTile(
-                  'Total Cholesterol',
-                  '${report.lipidProfile.totalCholesterol.toStringAsFixed(0)} mg/dL',
-                ),
-              if (report.liverProfile != null)
-                _buildDetailTile(
-                  'SGPT',
-                  '${report.liverProfile.sgpt.toStringAsFixed(1)} U/L',
-                ),
-              if (report.urineReport != null)
-                _buildDetailTile(
-                  'Urine SG',
-                  '${report.urineReport.specificGravity.toStringAsFixed(3)}',
-                ),
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildDetailTile(String title, String value) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text(title),
-      trailing: Text(
-        value,
-        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }
