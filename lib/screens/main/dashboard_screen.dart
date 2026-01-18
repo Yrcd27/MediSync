@@ -8,6 +8,7 @@ import '../../widgets/common/custom_app_bar.dart';
 import '../../widgets/common/section_header.dart';
 import '../../widgets/feedback/loading_indicator.dart';
 import '../../widgets/modals/record_type_selector.dart';
+import '../../widgets/alerts/health_alert_banner.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/constants/app_typography.dart';
@@ -183,7 +184,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         borderColor: healthProvider.bpRecords.isNotEmpty
                             ? _getStatusColor(
                                 health.HealthAnalysis.analyzeBloodPressure(
-                                    healthProvider.bpRecords.last).status)
+                                  healthProvider.bpRecords.last,
+                                ).status,
+                              )
                             : null,
                         subtitle: healthProvider.bpRecords.isNotEmpty
                             ? _getBPStatus(healthProvider.bpRecords.last)
@@ -203,7 +206,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         borderColor: healthProvider.fbsRecords.isNotEmpty
                             ? _getStatusColor(
                                 health.HealthAnalysis.analyzeFBS(
-                                    healthProvider.fbsRecords.last.fbsLevel).status)
+                                  healthProvider.fbsRecords.last.fbsLevel,
+                                ).status,
+                              )
                             : null,
                         subtitle: healthProvider.fbsRecords.isNotEmpty
                             ? _getFBSStatus(
@@ -225,8 +230,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         borderColor: healthProvider.fbcRecords.isNotEmpty
                             ? _getStatusColor(
                                 health.HealthAnalysis.analyzeHaemoglobin(
-                                    healthProvider.fbcRecords.last.haemoglobin,
-                                    user.gender).status)
+                                  healthProvider.fbcRecords.last.haemoglobin,
+                                  user.gender,
+                                ).status,
+                              )
                             : null,
                         subtitle: healthProvider.fbcRecords.isNotEmpty
                             ? _getHaemoglobinStatus(
@@ -249,7 +256,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         borderColor: healthProvider.lipidRecords.isNotEmpty
                             ? _getStatusColor(
                                 health.HealthAnalysis.analyzeTotalCholesterol(
-                                    healthProvider.lipidRecords.last.totalCholesterol).status)
+                                  healthProvider
+                                      .lipidRecords
+                                      .last
+                                      .totalCholesterol,
+                                ).status,
+                              )
                             : null,
                         subtitle: healthProvider.lipidRecords.isNotEmpty
                             ? _getCholesterolStatus(
@@ -274,7 +286,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         borderColor: healthProvider.liverRecords.isNotEmpty
                             ? _getStatusColor(
                                 health.HealthAnalysis.analyzeSGPT(
-                                    healthProvider.liverRecords.last.sgpt).status)
+                                  healthProvider.liverRecords.last.sgpt,
+                                ).status,
+                              )
                             : null,
                         subtitle: healthProvider.liverRecords.isNotEmpty
                             ? _getSGPTStatus(
@@ -296,7 +310,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         borderColor: healthProvider.urineRecords.isNotEmpty
                             ? _getStatusColor(
                                 health.HealthAnalysis.analyzeSpecificGravity(
-                                    healthProvider.urineRecords.last.specificGravity).status)
+                                  healthProvider
+                                      .urineRecords
+                                      .last
+                                      .specificGravity,
+                                ).status,
+                              )
                             : null,
                         subtitle: healthProvider.urineRecords.isNotEmpty
                             ? _getUrineStatus(
@@ -310,6 +329,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.xl),
+
+                  // Health Alerts Section
+                  ..._buildHealthAlerts(healthProvider, user),
 
                   // Health Insights Section
                   const SectionHeader(title: 'Health Insights'),
@@ -666,14 +688,122 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  Widget _buildHealthInsights(
+  List<Widget> _buildHealthAlerts(
       HealthRecordsProvider provider, dynamic user) {
+    final alerts = <Widget>[];
+
+    // Check for critical/abnormal values
+    if (provider.bpRecords.isNotEmpty) {
+      final analysis =
+          health.HealthAnalysis.analyzeBloodPressure(provider.bpRecords.last);
+      if (analysis.status == health.HealthStatus.abnormal) {
+        alerts.add(
+          HealthAlertBanner(
+            title: 'Critical Blood Pressure',
+            message:
+                '${provider.bpRecords.last.bpLevel} mmHg - ${analysis.recommendation}',
+            color: Colors.red,
+            icon: Icons.favorite_rounded,
+          ),
+        );
+      }
+    }
+
+    if (provider.fbsRecords.isNotEmpty) {
+      final analysis = health.HealthAnalysis.analyzeFBS(
+          provider.fbsRecords.last.fbsLevel);
+      if (analysis.status == health.HealthStatus.abnormal ||
+          analysis.status == health.HealthStatus.high) {
+        alerts.add(
+          HealthAlertBanner(
+            title: 'Blood Sugar Alert',
+            message:
+                '${provider.fbsRecords.last.fbsLevel.toStringAsFixed(0)} mg/dL - ${analysis.recommendation}',
+            color: analysis.status == health.HealthStatus.abnormal
+                ? Colors.red
+                : Colors.orange,
+            icon: Icons.water_drop_rounded,
+          ),
+        );
+      }
+    }
+
+    if (provider.fbcRecords.isNotEmpty) {
+      final analysis = health.HealthAnalysis.analyzeHaemoglobin(
+          provider.fbcRecords.last.haemoglobin, user.gender);
+      if (analysis.status == health.HealthStatus.abnormal ||
+          analysis.status == health.HealthStatus.low) {
+        alerts.add(
+          HealthAlertBanner(
+            title: 'Blood Count Alert',
+            message:
+                'Hemoglobin ${provider.fbcRecords.last.haemoglobin.toStringAsFixed(1)} g/dL - ${analysis.recommendation}',
+            color: analysis.status == health.HealthStatus.abnormal
+                ? Colors.red
+                : Colors.blue,
+            icon: Icons.science_rounded,
+          ),
+        );
+      }
+    }
+
+    if (provider.lipidRecords.isNotEmpty) {
+      final analysis = health.HealthAnalysis.analyzeTotalCholesterol(
+          provider.lipidRecords.last.totalCholesterol);
+      if (analysis.status == health.HealthStatus.high ||
+          analysis.status == health.HealthStatus.abnormal) {
+        alerts.add(
+          HealthAlertBanner(
+            title: 'Cholesterol Alert',
+            message:
+                '${provider.lipidRecords.last.totalCholesterol.toStringAsFixed(0)} mg/dL - ${analysis.recommendation}',
+            color: analysis.status == health.HealthStatus.abnormal
+                ? Colors.red
+                : Colors.orange,
+            icon: Icons.favorite_rounded,
+          ),
+        );
+      }
+    }
+
+    if (provider.liverRecords.isNotEmpty) {
+      final analysis =
+          health.HealthAnalysis.analyzeSGPT(provider.liverRecords.last.sgpt);
+      if (analysis.status == health.HealthStatus.high ||
+          analysis.status == health.HealthStatus.abnormal) {
+        alerts.add(
+          HealthAlertBanner(
+            title: 'Liver Function Alert',
+            message:
+                'SGPT ${provider.liverRecords.last.sgpt.toStringAsFixed(0)} U/L - ${analysis.recommendation}',
+            color: analysis.status == health.HealthStatus.abnormal
+                ? Colors.red
+                : Colors.orange,
+            icon: Icons.local_hospital_rounded,
+          ),
+        );
+      }
+    }
+
+    if (alerts.isNotEmpty) {
+      return [
+        const SectionHeader(title: 'Health Alerts'),
+        const SizedBox(height: AppSpacing.md),
+        ...alerts,
+        const SizedBox(height: AppSpacing.xl),
+      ];
+    }
+    return [];
+  }
+
+  Widget _buildHealthInsights(HealthRecordsProvider provider, dynamic user) {
     final insights = <Map<String, dynamic>>[];
 
     // Analyze each metric
     if (provider.bpRecords.isNotEmpty) {
-      final analysis =
-          health.HealthAnalysis.analyzeBloodPressure(provider.bpRecords.last);
+      final analysis = health.HealthAnalysis.analyzeBloodPressure(
+        provider.bpRecords.last,
+      );
       if (analysis.status != health.HealthStatus.normal) {
         insights.add({
           'title': 'Blood Pressure',
@@ -686,7 +816,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (provider.fbsRecords.isNotEmpty) {
       final analysis = health.HealthAnalysis.analyzeFBS(
-          provider.fbsRecords.last.fbsLevel);
+        provider.fbsRecords.last.fbsLevel,
+      );
       if (analysis.status != health.HealthStatus.normal) {
         insights.add({
           'title': 'Blood Sugar',
@@ -699,7 +830,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (provider.fbcRecords.isNotEmpty) {
       final analysis = health.HealthAnalysis.analyzeHaemoglobin(
-          provider.fbcRecords.last.haemoglobin, user.gender);
+        provider.fbcRecords.last.haemoglobin,
+        user.gender,
+      );
       if (analysis.status != health.HealthStatus.normal) {
         insights.add({
           'title': 'Haemoglobin',
@@ -712,7 +845,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (provider.lipidRecords.isNotEmpty) {
       final analysis = health.HealthAnalysis.analyzeTotalCholesterol(
-          provider.lipidRecords.last.totalCholesterol);
+        provider.lipidRecords.last.totalCholesterol,
+      );
       if (analysis.status != health.HealthStatus.normal) {
         insights.add({
           'title': 'Cholesterol',
@@ -724,8 +858,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
 
     if (provider.liverRecords.isNotEmpty) {
-      final analysis =
-          health.HealthAnalysis.analyzeSGPT(provider.liverRecords.last.sgpt);
+      final analysis = health.HealthAnalysis.analyzeSGPT(
+        provider.liverRecords.last.sgpt,
+      );
       if (analysis.status != health.HealthStatus.normal) {
         insights.add({
           'title': 'Liver Function',
@@ -738,7 +873,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (provider.urineRecords.isNotEmpty) {
       final analysis = health.HealthAnalysis.analyzeSpecificGravity(
-          provider.urineRecords.last.specificGravity);
+        provider.urineRecords.last.specificGravity,
+      );
       if (analysis.status != health.HealthStatus.normal) {
         insights.add({
           'title': 'Urine Test',
@@ -780,8 +916,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             Row(
               children: [
-                Icon(Icons.warning_rounded,
-                    color: Colors.orange, size: AppSpacing.iconMd),
+                Icon(
+                  Icons.warning_rounded,
+                  color: Colors.orange,
+                  size: AppSpacing.iconMd,
+                ),
                 const SizedBox(width: AppSpacing.sm),
                 Text(
                   '${insights.length} ${insights.length == 1 ? 'area' : 'areas'} need attention',
@@ -792,42 +931,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
             const SizedBox(height: AppSpacing.md),
-            ...insights.map((insight) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 4,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: insight['color'],
-                          borderRadius: BorderRadius.circular(2),
-                        ),
+            ...insights.map(
+              (insight) => Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 4,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: insight['color'],
+                        borderRadius: BorderRadius.circular(2),
                       ),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${insight['title']}: ${insight['status']}',
-                              style: AppTypography.body2.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${insight['title']}: ${insight['status']}',
+                            style: AppTypography.body2.copyWith(
+                              fontWeight: FontWeight.w600,
                             ),
-                            Text(
-                              insight['recommendation'],
-                              style: AppTypography.caption.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
+                          ),
+                          Text(
+                            insight['recommendation'],
+                            style: AppTypography.caption.copyWith(
+                              color: AppColors.textSecondary,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                )),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
