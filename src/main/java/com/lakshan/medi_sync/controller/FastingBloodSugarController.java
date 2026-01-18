@@ -23,6 +23,13 @@ public class FastingBloodSugarController {
     public ResponseEntity<FastingBloodSugar> addFastingBloodSugarRecord(
             @RequestBody FastingBloodSugar fastingBloodSugar
     ) {
+        System.out.println("========= REQUEST FROM MOBILE APP =========");
+        System.out.println("Received FBS: " + fastingBloodSugar);
+        System.out.println("User: " + fastingBloodSugar.getUser());
+        System.out.println("User Email: " + fastingBloodSugar.getUser().getEmail());
+        System.out.println("Test Date: " + fastingBloodSugar.getTestDate());
+        System.out.println("==========================================");
+
         fbsService.addNewFastingBloodSugarRecord(fastingBloodSugar);
         return ResponseEntity.status(201).body(fastingBloodSugar);
     }

@@ -37,6 +37,11 @@ public class EmailService {
 
     @Async
     public void sendTestReminderEmail(String recipientEmail, String subject, String body) {
+        System.out.println("========= SENDING EMAIL =========");
+        System.out.println("To: " + recipientEmail);
+        System.out.println("Subject: " + subject);
+        System.out.println("=================================");
+
         try {
             String url = "https://api.resend.com/emails";
 
