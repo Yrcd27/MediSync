@@ -3,7 +3,6 @@ package com.lakshan.medi_sync.service;
 import com.lakshan.medi_sync.entity.FastingBloodSugar;
 import com.lakshan.medi_sync.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,9 +20,6 @@ public class EmailService {
     private final Logger logger = Logger.getLogger(EmailService.class.getName());
     private final ApplicationContext applicationContext;
 
-    @Value("${spring.mail.username}")
-    private String senderEmail;
-
     @Autowired
     public EmailService(JavaMailSender javaMailSender, ApplicationContext applicationContext) {
         this.javaMailSender = javaMailSender;
@@ -38,7 +34,7 @@ public class EmailService {
 
         try {
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-            simpleMailMessage.setFrom(senderEmail);
+            simpleMailMessage.setFrom("onboarding@resend.dev");
             simpleMailMessage.setTo(recipientEmail);
             simpleMailMessage.setSubject(subject);
             simpleMailMessage.setText(body);
