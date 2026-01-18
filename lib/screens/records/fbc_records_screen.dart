@@ -11,7 +11,6 @@ import '../../widgets/feedback/custom_snackbar.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/health_records_provider.dart';
 import '../../models/full_blood_count.dart';
-import '../../utils/health_analysis.dart' as health;
 
 class FbcRecordsScreen extends StatefulWidget {
   const FbcRecordsScreen({super.key});
@@ -199,8 +198,9 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
-                        if (val == null || val < 5 || val > 20)
+                        if (val == null || val < 5 || val > 20) {
                           return 'Invalid range (5-20)';
+                        }
                         return null;
                       },
                     ),
@@ -216,8 +216,9 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
-                        if (val == null || val < 3000 || val > 15000)
+                        if (val == null || val < 3000 || val > 15000) {
                           return 'Invalid range (3000-15000)';
+                        }
                         return null;
                       },
                     ),
@@ -233,8 +234,9 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
-                        if (val == null || val < 100000 || val > 500000)
+                        if (val == null || val < 100000 || val > 500000) {
                           return 'Invalid range (100000-500000)';
+                        }
                         return null;
                       },
                     ),
@@ -293,13 +295,6 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
   }
 
   Widget _buildRecordCard(FullBloodCount record, bool isDark) {
-    final user = context.read<AuthProvider>().currentUser;
-    final analysis = health.HealthAnalysis.analyzeHaemoglobin(
-      record.haemoglobin,
-      user?.gender ?? 'Male',
-    );
-    final statusIcon = _getStatusIcon(analysis.status);
-
     return Container(
       margin: EdgeInsets.only(bottom: AppSpacing.md),
       decoration: BoxDecoration(
@@ -356,7 +351,7 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
           ],
         ),
         subtitle: Text(
-          '$statusIcon ${analysis.statusText} • ${DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate))}',
+          DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
           style: AppTypography.bodySmall.copyWith(
             color: isDark
                 ? AppColors.darkTextSecondary
@@ -403,18 +398,5 @@ class _FbcRecordsScreenState extends State<FbcRecordsScreen> {
     if (hemoglobin >= 12.0) return 'Normal';
     if (hemoglobin >= 10.0) return 'Low';
     return 'Very Low';
-  }
-
-  String _getStatusIcon(health.HealthStatus status) {
-    switch (status) {
-      case health.HealthStatus.normal:
-        return '✅';
-      case health.HealthStatus.low:
-        return '🔵';
-      case health.HealthStatus.high:
-        return '⚠️';
-      case health.HealthStatus.abnormal:
-        return '🚨';
-    }
   }
 }

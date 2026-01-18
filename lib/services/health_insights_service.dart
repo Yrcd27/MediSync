@@ -9,7 +9,7 @@ class HealthInsightsService {
   static const String _trendsKey = 'health_trends';
 
   /// Store a new health insight
-  /// 
+  ///
   /// [userId] - The user's ID
   /// [metricType] - Type of metric (e.g., 'blood_pressure', 'blood_sugar')
   /// [status] - Current status of the metric ('normal', 'high', 'low', 'abnormal')
@@ -40,14 +40,11 @@ class HealthInsightsService {
       insights.removeRange(0, insights.length - 50);
     }
 
-    await prefs.setString(
-      '${_insightsKey}_$userId',
-      json.encode(insights),
-    );
+    await prefs.setString('${_insightsKey}_$userId', json.encode(insights));
   }
 
   /// Get all insights for a user
-  /// 
+  ///
   /// [userId] - The user's ID
   /// [limit] - Maximum number of insights to return (default: 10)
   Future<List<Map<String, dynamic>>> getInsights(
@@ -55,7 +52,7 @@ class HealthInsightsService {
     int limit = 10,
   }) async {
     final insights = await _getInsights(userId);
-    
+
     // Sort by timestamp (most recent first)
     insights.sort((a, b) {
       final timeA = DateTime.parse(a['timestamp'] as String);
@@ -67,7 +64,7 @@ class HealthInsightsService {
   }
 
   /// Get insights for a specific metric type
-  /// 
+  ///
   /// [userId] - The user's ID
   /// [metricType] - Type of metric to filter by
   /// [limit] - Maximum number of insights to return (default: 5)
@@ -77,7 +74,7 @@ class HealthInsightsService {
     int limit = 5,
   }) async {
     final insights = await _getInsights(userId);
-    
+
     final filtered = insights
         .where((insight) => insight['metricType'] == metricType)
         .toList();
@@ -93,7 +90,7 @@ class HealthInsightsService {
   }
 
   /// Dismiss an alert
-  /// 
+  ///
   /// [userId] - The user's ID
   /// [alertId] - Unique identifier for the alert
   Future<void> dismissAlert(String userId, String alertId) async {
@@ -112,7 +109,7 @@ class HealthInsightsService {
   }
 
   /// Check if an alert has been dismissed
-  /// 
+  ///
   /// [userId] - The user's ID
   /// [alertId] - Unique identifier for the alert
   /// [withinHours] - Check if dismissed within the last N hours (default: 24)
@@ -137,7 +134,7 @@ class HealthInsightsService {
   }
 
   /// Track health trend for a metric
-  /// 
+  ///
   /// [userId] - The user's ID
   /// [metricType] - Type of metric
   /// [value] - Current metric value
@@ -171,14 +168,11 @@ class HealthInsightsService {
       );
     }
 
-    await prefs.setString(
-      '${_trendsKey}_$userId',
-      json.encode(trends),
-    );
+    await prefs.setString('${_trendsKey}_$userId', json.encode(trends));
   }
 
   /// Get trend analysis for a metric
-  /// 
+  ///
   /// [userId] - The user's ID
   /// [metricType] - Type of metric
   /// Returns a map with 'improving', 'stable', or 'worsening' trend
@@ -205,12 +199,7 @@ class HealthInsightsService {
       metricTrend.length > 3 ? metricTrend.length - 3 : 0,
     );
 
-    final statusPriority = {
-      'normal': 0,
-      'low': 1,
-      'high': 2,
-      'abnormal': 3,
-    };
+    final statusPriority = {'normal': 0, 'low': 1, 'high': 2, 'abnormal': 3};
 
     int improvingCount = 0;
     int worseningCount = 0;
@@ -218,7 +207,7 @@ class HealthInsightsService {
     for (int i = 1; i < recent.length; i++) {
       final prevStatus = recent[i - 1]['status'] as String;
       final currStatus = recent[i]['status'] as String;
-      
+
       final prevPriority = statusPriority[prevStatus] ?? 1;
       final currPriority = statusPriority[currStatus] ?? 1;
 
@@ -274,7 +263,7 @@ class HealthInsightsService {
   Future<List<Map<String, dynamic>>> _getInsights(String userId) async {
     final prefs = await SharedPreferences.getInstance();
     final insightsJson = prefs.getString('${_insightsKey}_$userId');
-    
+
     if (insightsJson == null) {
       return [];
     }
@@ -286,7 +275,7 @@ class HealthInsightsService {
   Future<List<Map<String, dynamic>>> _getDismissedAlerts(String userId) async {
     final prefs = await SharedPreferences.getInstance();
     final alertsJson = prefs.getString('${_dismissedAlertsKey}_$userId');
-    
+
     if (alertsJson == null) {
       return [];
     }
@@ -300,7 +289,7 @@ class HealthInsightsService {
   ) async {
     final prefs = await SharedPreferences.getInstance();
     final trendsJson = prefs.getString('${_trendsKey}_$userId');
-    
+
     if (trendsJson == null) {
       return {};
     }

@@ -173,8 +173,9 @@ class _AddBloodSugarScreenState extends State<AddBloodSugarScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'Required';
                   final val = double.tryParse(value);
-                  if (val == null || val < 30 || val > 500)
+                  if (val == null || val < 30 || val > 500) {
                     return 'Enter 30-500';
+                  }
                   return null;
                 },
                 decoration: InputDecoration(

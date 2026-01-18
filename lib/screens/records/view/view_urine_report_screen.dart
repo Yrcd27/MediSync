@@ -318,8 +318,9 @@ class ViewUrineReportScreen extends StatelessWidget {
                     ],
                   ),
                 );
-                if (confirm == true)
+                if (confirm == true) {
                   await provider.deleteUrineRecord(record.id);
+                }
               }
             },
             itemBuilder: (ctx) => [

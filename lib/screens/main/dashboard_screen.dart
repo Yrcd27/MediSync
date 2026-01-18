@@ -188,16 +188,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         unit: healthProvider.bpRecords.isNotEmpty ? 'mmHg' : '',
                         icon: Icons.favorite_rounded,
                         color: AppColors.bloodPressure,
-                        borderColor: healthProvider.bpRecords.isNotEmpty
-                            ? _getStatusColor(
-                                health.HealthAnalysis.analyzeBloodPressure(
-                                  healthProvider.bpRecords.last,
-                                ).status,
-                              )
-                            : null,
-                        subtitle: healthProvider.bpRecords.isNotEmpty
-                            ? _getBPStatus(healthProvider.bpRecords.last)
-                            : 'No data',
                       ),
                       HealthMetricCard(
                         title: 'Blood Sugar',
@@ -210,18 +200,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             : '',
                         icon: Icons.water_drop_rounded,
                         color: AppColors.bloodSugar,
-                        borderColor: healthProvider.fbsRecords.isNotEmpty
-                            ? _getStatusColor(
-                                health.HealthAnalysis.analyzeFBS(
-                                  healthProvider.fbsRecords.last.fbsLevel,
-                                ).status,
-                              )
-                            : null,
-                        subtitle: healthProvider.fbsRecords.isNotEmpty
-                            ? _getFBSStatus(
-                                healthProvider.fbsRecords.last.fbsLevel,
-                              )
-                            : 'No data',
                       ),
                       HealthMetricCard(
                         title: 'Blood Count',
@@ -234,20 +212,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             : '',
                         icon: Icons.science_rounded,
                         color: AppColors.bloodCount,
-                        borderColor: healthProvider.fbcRecords.isNotEmpty
-                            ? _getStatusColor(
-                                health.HealthAnalysis.analyzeHaemoglobin(
-                                  healthProvider.fbcRecords.last.haemoglobin,
-                                  user.gender,
-                                ).status,
-                              )
-                            : null,
-                        subtitle: healthProvider.fbcRecords.isNotEmpty
-                            ? _getHaemoglobinStatus(
-                                healthProvider.fbcRecords.last.haemoglobin,
-                                user.gender,
-                              )
-                            : 'No data',
                       ),
                       HealthMetricCard(
                         title: 'Lipid Profile',
@@ -260,24 +224,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             : '',
                         icon: Icons.favorite_rounded,
                         color: AppColors.lipidProfile,
-                        borderColor: healthProvider.lipidRecords.isNotEmpty
-                            ? _getStatusColor(
-                                health.HealthAnalysis.analyzeTotalCholesterol(
-                                  healthProvider
-                                      .lipidRecords
-                                      .last
-                                      .totalCholesterol,
-                                ).status,
-                              )
-                            : null,
-                        subtitle: healthProvider.lipidRecords.isNotEmpty
-                            ? _getCholesterolStatus(
-                                healthProvider
-                                    .lipidRecords
-                                    .last
-                                    .totalCholesterol,
-                              )
-                            : 'No data',
                       ),
                       HealthMetricCard(
                         title: 'Liver Profile',
@@ -290,18 +236,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             : '',
                         icon: Icons.local_hospital_rounded,
                         color: AppColors.liverProfile,
-                        borderColor: healthProvider.liverRecords.isNotEmpty
-                            ? _getStatusColor(
-                                health.HealthAnalysis.analyzeSGPT(
-                                  healthProvider.liverRecords.last.sgpt,
-                                ).status,
-                              )
-                            : null,
-                        subtitle: healthProvider.liverRecords.isNotEmpty
-                            ? _getSGPTStatus(
-                                healthProvider.liverRecords.last.sgpt,
-                              )
-                            : 'No data',
                       ),
                       HealthMetricCard(
                         title: 'Urine Report',
@@ -314,24 +248,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             : '',
                         icon: Icons.opacity_rounded,
                         color: AppColors.urineReport,
-                        borderColor: healthProvider.urineRecords.isNotEmpty
-                            ? _getStatusColor(
-                                health.HealthAnalysis.analyzeSpecificGravity(
-                                  healthProvider
-                                      .urineRecords
-                                      .last
-                                      .specificGravity,
-                                ).status,
-                              )
-                            : null,
-                        subtitle: healthProvider.urineRecords.isNotEmpty
-                            ? _getUrineStatus(
-                                healthProvider
-                                    .urineRecords
-                                    .last
-                                    .specificGravity,
-                              )
-                            : 'No data',
                       ),
                     ],
                   ),
@@ -653,8 +569,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         // Add analysis card if available
                         if (analysis != null)
                           Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: AppSpacing.md),
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.md,
+                            ),
                             child: AnalysisDetailCard(
                               analysis: analysis,
                               metricName: metricName,
@@ -709,56 +626,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
     );
-  }
-
-  // Health status helper methods
-  String _getBPStatus(dynamic record) {
-    final analysis = health.HealthAnalysis.analyzeBloodPressure(record);
-    final icon = _getStatusIcon(analysis.status);
-    return '$icon ${analysis.statusText}';
-  }
-
-  String _getFBSStatus(double fbsLevel) {
-    final analysis = health.HealthAnalysis.analyzeFBS(fbsLevel);
-    final icon = _getStatusIcon(analysis.status);
-    return '$icon ${analysis.statusText}';
-  }
-
-  String _getHaemoglobinStatus(double value, String gender) {
-    final analysis = health.HealthAnalysis.analyzeHaemoglobin(value, gender);
-    final icon = _getStatusIcon(analysis.status);
-    return '$icon ${analysis.statusText}';
-  }
-
-  String _getCholesterolStatus(double value) {
-    final analysis = health.HealthAnalysis.analyzeTotalCholesterol(value);
-    final icon = _getStatusIcon(analysis.status);
-    return '$icon ${analysis.statusText}';
-  }
-
-  String _getSGPTStatus(double value) {
-    final analysis = health.HealthAnalysis.analyzeSGPT(value);
-    final icon = _getStatusIcon(analysis.status);
-    return '$icon ${analysis.statusText}';
-  }
-
-  String _getUrineStatus(double sg) {
-    final analysis = health.HealthAnalysis.analyzeSpecificGravity(sg);
-    final icon = _getStatusIcon(analysis.status);
-    return '$icon ${analysis.statusText}';
-  }
-
-  String _getStatusIcon(health.HealthStatus status) {
-    switch (status) {
-      case health.HealthStatus.normal:
-        return '✅';
-      case health.HealthStatus.low:
-        return '🔵';
-      case health.HealthStatus.high:
-        return '⚠️';
-      case health.HealthStatus.abnormal:
-        return '🚨';
-    }
   }
 
   Color _getStatusColor(health.HealthStatus status) {

@@ -161,8 +161,9 @@ class _AddBloodCountScreenState extends State<AddBloodCountScreen> {
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Required';
                   final val = double.tryParse(v);
-                  if (val == null || val < 1000 || val > 50000)
+                  if (val == null || val < 1000 || val > 50000) {
                     return 'Enter 1000-50000';
+                  }
                   return null;
                 },
               ),
@@ -179,8 +180,9 @@ class _AddBloodCountScreenState extends State<AddBloodCountScreen> {
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Required';
                   final val = double.tryParse(v);
-                  if (val == null || val < 50000 || val > 700000)
+                  if (val == null || val < 50000 || val > 700000) {
                     return 'Enter valid range';
+                  }
                   return null;
                 },
               ),

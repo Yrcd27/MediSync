@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/health_records_provider.dart';
 import '../../models/fasting_blood_sugar.dart';
-import '../../utils/health_analysis.dart' as health;
 
 class FbsRecordsScreen extends StatefulWidget {
   const FbsRecordsScreen({super.key});
@@ -183,11 +182,13 @@ class _FbsRecordsScreenState extends State<FbsRecordsScreen> {
                             ),
                             style: const TextStyle(fontSize: 14),
                             validator: (value) {
-                              if (value == null || value.isEmpty)
+                              if (value == null || value.isEmpty) {
                                 return 'Required';
+                              }
                               final val = double.tryParse(value);
-                              if (val == null || val < 30 || val > 400)
+                              if (val == null || val < 30 || val > 400) {
                                 return 'Invalid range';
+                              }
                               return null;
                             },
                           ),
@@ -302,9 +303,6 @@ class _FbsRecordsScreenState extends State<FbsRecordsScreen> {
   }
 
   Widget _buildCompactRecordCard(FastingBloodSugar record) {
-    final analysis = health.HealthAnalysis.analyzeFBS(record.fbsLevel);
-    final statusIcon = _getStatusIcon(analysis.status);
-
     return Card(
       margin: const EdgeInsets.only(bottom: 4),
       child: ListTile(
@@ -318,7 +316,7 @@ class _FbsRecordsScreenState extends State<FbsRecordsScreen> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         subtitle: Text(
-          '$statusIcon ${analysis.statusText} • ${DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate))}',
+          DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
           style: const TextStyle(fontSize: 12),
         ),
         trailing: Container(
@@ -350,18 +348,5 @@ class _FbsRecordsScreenState extends State<FbsRecordsScreen> {
     if (fbs < 100) return 'Normal';
     if (fbs < 126) return 'Pre-diabetic';
     return 'Diabetic';
-  }
-
-  String _getStatusIcon(health.HealthStatus status) {
-    switch (status) {
-      case health.HealthStatus.normal:
-        return '✅';
-      case health.HealthStatus.low:
-        return '🔵';
-      case health.HealthStatus.high:
-        return '⚠️';
-      case health.HealthStatus.abnormal:
-        return '🚨';
-    }
   }
 }

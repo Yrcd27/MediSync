@@ -166,8 +166,9 @@ class _AddUrineReportScreenState extends State<AddUrineReportScreen> {
                 validator: (v) {
                   if (v == null || v.isEmpty) return 'Required';
                   final val = double.tryParse(v);
-                  if (val == null || val < 1.000 || val > 1.040)
+                  if (val == null || val < 1.000 || val > 1.040) {
                     return 'Enter 1.000-1.040';
+                  }
                   return null;
                 },
                 decoration: InputDecoration(

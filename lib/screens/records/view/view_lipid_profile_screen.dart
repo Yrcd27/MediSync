@@ -98,9 +98,9 @@ class ViewLipidProfileScreen extends StatelessWidget {
     final latest = records.first;
 
     Color tcColor = AppColors.success;
-    if (latest.totalCholesterol >= 240)
+    if (latest.totalCholesterol >= 240) {
       tcColor = AppColors.error;
-    else if (latest.totalCholesterol >= 200)
+    } else if (latest.totalCholesterol >= 200)
       tcColor = AppColors.warning;
 
     return Container(
@@ -168,19 +168,19 @@ class ViewLipidProfileScreen extends StatelessWidget {
             children: [
               _buildStatItem(
                 'HDL',
-                '${latest.hdl.toStringAsFixed(0)}',
+                latest.hdl.toStringAsFixed(0),
                 AppColors.success,
                 isDark,
               ),
               _buildStatItem(
                 'LDL',
-                '${latest.ldl.toStringAsFixed(0)}',
+                latest.ldl.toStringAsFixed(0),
                 AppColors.error,
                 isDark,
               ),
               _buildStatItem(
                 'TG',
-                '${latest.triglycerides.toStringAsFixed(0)}',
+                latest.triglycerides.toStringAsFixed(0),
                 AppColors.warning,
                 isDark,
               ),
@@ -379,8 +379,9 @@ class ViewLipidProfileScreen extends StatelessWidget {
                     ],
                   ),
                 );
-                if (confirm == true)
+                if (confirm == true) {
                   await provider.deleteLipidRecord(record.id);
+                }
               }
             },
             itemBuilder: (ctx) => [

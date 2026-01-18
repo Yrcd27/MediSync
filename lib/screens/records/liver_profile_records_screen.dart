@@ -11,7 +11,6 @@ import '../../widgets/feedback/custom_snackbar.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/health_records_provider.dart';
 import '../../models/liver_profile.dart';
-import '../../utils/health_analysis.dart' as health;
 
 class LiverProfileRecordsScreen extends StatefulWidget {
   const LiverProfileRecordsScreen({super.key});
@@ -204,8 +203,9 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
-                        if (val == null || val < 4 || val > 10)
+                        if (val == null || val < 4 || val > 10) {
                           return 'Invalid range (4-10)';
+                        }
                         return null;
                       },
                     ),
@@ -221,8 +221,9 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
-                        if (val == null || val < 2 || val > 6)
+                        if (val == null || val < 2 || val > 6) {
                           return 'Invalid range (2-6)';
+                        }
                         return null;
                       },
                     ),
@@ -238,8 +239,9 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
-                        if (val == null || val < 0 || val > 5)
+                        if (val == null || val < 0 || val > 5) {
                           return 'Invalid range (0-5)';
+                        }
                         return null;
                       },
                     ),
@@ -255,8 +257,9 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
                       validator: (value) {
                         if (value == null || value.isEmpty) return 'Required';
                         final val = double.tryParse(value);
-                        if (val == null || val < 5 || val > 200)
+                        if (val == null || val < 5 || val > 200) {
                           return 'Invalid range (5-200)';
+                        }
                         return null;
                       },
                     ),
@@ -315,9 +318,6 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
   }
 
   Widget _buildRecordCard(LiverProfile record, bool isDark) {
-    final analysis = health.HealthAnalysis.analyzeSGPT(record.sgpt);
-    final statusIcon = _getStatusIcon(analysis.status);
-
     return Container(
       margin: EdgeInsets.only(bottom: AppSpacing.md),
       decoration: BoxDecoration(
@@ -374,7 +374,7 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
           ],
         ),
         subtitle: Text(
-          '$statusIcon ${analysis.statusText} • ${DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate))}',
+          DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
           style: AppTypography.bodySmall.copyWith(
             color: isDark
                 ? AppColors.darkTextSecondary
@@ -441,18 +441,5 @@ class _LiverProfileRecordsScreenState extends State<LiverProfileRecordsScreen> {
     if (sgpt <= 40) return 'Normal';
     if (sgpt <= 80) return 'Elevated';
     return 'High';
-  }
-
-  String _getStatusIcon(health.HealthStatus status) {
-    switch (status) {
-      case health.HealthStatus.normal:
-        return '✅';
-      case health.HealthStatus.low:
-        return '🔵';
-      case health.HealthStatus.high:
-        return '⚠️';
-      case health.HealthStatus.abnormal:
-        return '🚨';
-    }
   }
 }

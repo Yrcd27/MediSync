@@ -232,16 +232,6 @@ class AllRecordsScreen extends StatelessWidget {
                             : AppColors.textSecondary,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(
-                      '${record['status']} ${record['statusText']}',
-                      style: AppTypography.caption.copyWith(
-                        color: isDark
-                            ? AppColors.darkTextSecondary
-                            : AppColors.textSecondary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
                   ],
                 ),
               ),

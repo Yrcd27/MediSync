@@ -97,9 +97,9 @@ class ViewLiverProfileScreen extends StatelessWidget {
   Widget _buildSummaryCard(List<LiverProfile> records, bool isDark) {
     final latest = records.first;
     Color sgptColor = AppColors.success;
-    if (latest.sgpt > 56)
+    if (latest.sgpt > 56) {
       sgptColor = AppColors.error;
-    else if (latest.sgpt > 40)
+    } else if (latest.sgpt > 40)
       sgptColor = AppColors.warning;
 
     return Container(
@@ -167,17 +167,17 @@ class ViewLiverProfileScreen extends StatelessWidget {
             children: [
               _buildStatItem(
                 'Protein',
-                '${latest.proteinTotalSerum.toStringAsFixed(1)}',
+                latest.proteinTotalSerum.toStringAsFixed(1),
                 isDark,
               ),
               _buildStatItem(
                 'Albumin',
-                '${latest.albuminSerum.toStringAsFixed(1)}',
+                latest.albuminSerum.toStringAsFixed(1),
                 isDark,
               ),
               _buildStatItem(
                 'Bilirubin',
-                '${latest.bilirubinTotalSerum.toStringAsFixed(1)}',
+                latest.bilirubinTotalSerum.toStringAsFixed(1),
                 isDark,
               ),
             ],
@@ -340,8 +340,9 @@ class ViewLiverProfileScreen extends StatelessWidget {
                     ],
                   ),
                 );
-                if (confirm == true)
+                if (confirm == true) {
                   await provider.deleteLiverRecord(record.id);
+                }
               }
             },
             itemBuilder: (ctx) => [
