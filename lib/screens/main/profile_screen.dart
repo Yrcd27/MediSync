@@ -181,10 +181,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (shouldLogout == true && mounted) {
       // Clear all health records before logout
       context.read<HealthRecordsProvider>().clearRecords();
-      
+
       // Perform logout
       await context.read<AuthProvider>().logout();
-      
+
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,

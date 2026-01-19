@@ -57,17 +57,16 @@ class _LoginScreenState extends State<LoginScreen> {
           type: SnackBarType.error,
         );
       } else if (success && mounted) {
-        AppLogger.success(
-          'Login successful, loading user data',
-          'LoginScreen',
-        );
-        
+        AppLogger.success('Login successful, loading user data', 'LoginScreen');
+
         // Load fresh health records for the new user
         final currentUser = context.read<AuthProvider>().currentUser;
         if (currentUser != null && mounted) {
-          await context.read<HealthRecordsProvider>().loadAllRecords(currentUser.id);
+          await context.read<HealthRecordsProvider>().loadAllRecords(
+            currentUser.id,
+          );
         }
-        
+
         if (mounted) {
           AppLogger.success(
             'Data loaded, navigating to dashboard',
