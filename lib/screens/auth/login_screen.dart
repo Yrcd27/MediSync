@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/health_records_provider.dart';
 import '../../widgets/inputs/custom_text_field.dart';
 import '../../widgets/buttons/primary_button.dart';
 import '../../widgets/feedback/custom_snackbar.dart';
@@ -57,15 +58,28 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else if (success && mounted) {
         AppLogger.success(
-          'Login successful, navigating to dashboard',
+          'Login successful, loading user data',
           'LoginScreen',
         );
-        // Navigate to main layout (dashboard) after successful login
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const MainLayout()),
-          (route) => false,
-        );
+        
+        // Load fresh health records for the new user
+        final currentUser = context.read<AuthProvider>().currentUser;
+        if (currentUser != null && mounted) {
+          await context.read<HealthRecordsProvider>().loadAllRecords(currentUser.id);
+        }
+        
+        if (mounted) {
+          AppLogger.success(
+            'Data loaded, navigating to dashboard',
+            'LoginScreen',
+          );
+          // Navigate to main layout (dashboard) after successful login
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const MainLayout()),
+            (route) => false,
+          );
+        }
       }
     }
   }

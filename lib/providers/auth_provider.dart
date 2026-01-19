@@ -113,6 +113,7 @@ class AuthProvider with ChangeNotifier {
     await _authService.logout();
     _currentUser = null;
     _currentPassword = null;
+    _errorMessage = null;
     notifyListeners();
   }
 

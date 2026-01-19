@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/health_records_provider.dart';
 import '../../widgets/inputs/custom_text_field.dart';
 import '../../widgets/buttons/primary_button.dart';
 import '../../widgets/buttons/secondary_button.dart';
@@ -178,7 +179,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
 
     if (shouldLogout == true && mounted) {
+      // Clear all health records before logout
+      context.read<HealthRecordsProvider>().clearRecords();
+      
+      // Perform logout
       await context.read<AuthProvider>().logout();
+      
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,
