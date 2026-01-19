@@ -397,27 +397,13 @@ class ViewBloodPressureScreen extends StatelessWidget {
     bool isDark,
     HealthRecordsProvider provider,
   ) {
-    Color borderColor = AppColors.bloodPressure;
-    if (record.systolic >= 140 || record.diastolic >= 90) {
-      borderColor = AppColors.error;
-    } else if (record.systolic >= 120 || record.diastolic >= 80) {
-      borderColor = AppColors.warning;
-    } else {
-      borderColor = AppColors.success;
-    }
-
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkSurface : AppColors.surface,
         borderRadius: AppSpacing.borderRadiusMd,
-        border: Border(
-          left: BorderSide(
-            color: borderColor,
-            width: 4,
-          ),
-        ),
+        border: Border(left: BorderSide(color: AppColors.bloodPressure, width: 4)),
       ),
       child: Row(
         children: [
@@ -425,17 +411,16 @@ class ViewBloodPressureScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  record.bpLevel,
-                  style: AppTypography.title3,
-                ),
+                Text(record.bpLevel, style: AppTypography.title3),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   'Systolic: ${record.systolic} mmHg | Diastolic: ${record.diastolic} mmHg',
                   style: AppTypography.body2,
                 ),
                 Text(
-                  DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
+                  DateFormat(
+                    'MMM dd, yyyy',
+                  ).format(DateTime.parse(record.testDate)),
                   style: AppTypography.caption,
                 ),
               ],

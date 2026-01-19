@@ -331,12 +331,7 @@ class ViewBloodSugarScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkSurface : AppColors.surface,
         borderRadius: AppSpacing.borderRadiusMd,
-        border: Border(
-          left: BorderSide(
-            color: borderColor,
-            width: 4,
-          ),
-        ),
+        border: Border(left: BorderSide(color: borderColor, width: 4)),
       ),
       child: Row(
         children: [
@@ -349,12 +344,11 @@ class ViewBloodSugarScreen extends StatelessWidget {
                   style: AppTypography.title3,
                 ),
                 const SizedBox(height: AppSpacing.xs),
+                Text('Fasting Blood Sugar Level', style: AppTypography.body2),
                 Text(
-                  'Fasting Blood Sugar Level',
-                  style: AppTypography.body2,
-                ),
-                Text(
-                  DateFormat('MMM dd, yyyy').format(DateTime.parse(record.testDate)),
+                  DateFormat(
+                    'MMM dd, yyyy',
+                  ).format(DateTime.parse(record.testDate)),
                   style: AppTypography.caption,
                 ),
               ],
