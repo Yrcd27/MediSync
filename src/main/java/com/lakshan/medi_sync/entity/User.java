@@ -110,4 +110,19 @@ public class User {
     public void setBloodGroup(String bloodGroup) {
         this.bloodGroup = bloodGroup;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", gender='" + gender + '\'' +
+                ", height=" + height +
+                ", weight=" + weight +
+                ", bloodGroup='" + bloodGroup + '\'' +
+                '}';
+    }
 }
