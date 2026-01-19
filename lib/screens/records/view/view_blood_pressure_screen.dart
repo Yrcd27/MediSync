@@ -97,16 +97,6 @@ class ViewBloodPressureScreen extends StatelessWidget {
         records.map((r) => r.diastolic).reduce((a, b) => a + b) /
         records.length;
 
-    String status = 'Normal';
-    Color statusColor = AppColors.success;
-    if (latest.systolic >= 140 || latest.diastolic >= 90) {
-      status = 'High';
-      statusColor = AppColors.error;
-    } else if (latest.systolic >= 120 || latest.diastolic >= 80) {
-      status = 'Elevated';
-      statusColor = AppColors.warning;
-    }
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -153,23 +143,6 @@ class ViewBloodPressureScreen extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.sm,
-                ),
-                decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.15),
-                  borderRadius: AppSpacing.borderRadiusFull,
-                ),
-                child: Text(
-                  status,
-                  style: AppTypography.label2.copyWith(
-                    color: statusColor,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
               ),
             ],

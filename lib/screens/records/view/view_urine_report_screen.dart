@@ -9,6 +9,7 @@ import '../../../providers/health_records_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../models/urine_report.dart';
 import '../../../widgets/feedback/empty_state.dart';
+import '../../../utils/health_analysis.dart' as health;
 import '../add/add_urine_report_screen.dart';
 
 class ViewUrineReportScreen extends StatelessWidget {
@@ -268,13 +269,11 @@ class ViewUrineReportScreen extends StatelessWidget {
 
                         label =
                             'Specific Gravity: ${record.specificGravity.toStringAsFixed(3)}';
-                        status =
-                            (record.specificGravity >= 1.005 &&
-                                record.specificGravity <= 1.030)
-                            ? 'Normal Range'
-                            : record.specificGravity < 1.005
-                            ? 'Dilute'
-                            : 'Concentrated';
+                        final sgData =
+                            health.HealthAnalysis.analyzeSpecificGravity(
+                              record.specificGravity,
+                            );
+                        status = sgData.statusText;
                         lineColor = AppColors.urineReport;
 
                         return LineTooltipItem(

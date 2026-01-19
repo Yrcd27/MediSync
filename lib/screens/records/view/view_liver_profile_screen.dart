@@ -9,6 +9,7 @@ import '../../../providers/health_records_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../models/liver_profile.dart';
 import '../../../widgets/feedback/empty_state.dart';
+import '../../../utils/health_analysis.dart' as health;
 import '../add/add_liver_profile_screen.dart';
 
 class ViewLiverProfileScreen extends StatelessWidget {
@@ -86,12 +87,6 @@ class ViewLiverProfileScreen extends StatelessWidget {
 
   Widget _buildSummaryCard(List<LiverProfile> records, bool isDark) {
     final latest = records.first;
-    Color sgptColor = AppColors.success;
-    if (latest.sgpt > 56) {
-      sgptColor = AppColors.error;
-    } else if (latest.sgpt > 40) {
-      sgptColor = AppColors.warning;
-    }
 
     return Container(
       width: double.infinity,
@@ -128,27 +123,6 @@ class ViewLiverProfileScreen extends StatelessWidget {
                       style: AppTypography.headline2,
                     ),
                   ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.sm,
-                ),
-                decoration: BoxDecoration(
-                  color: sgptColor.withOpacity(0.15),
-                  borderRadius: AppSpacing.borderRadiusFull,
-                ),
-                child: Text(
-                  latest.sgpt <= 40
-                      ? 'Normal'
-                      : latest.sgpt <= 56
-                      ? 'Elevated'
-                      : 'High',
-                  style: AppTypography.label2.copyWith(
-                    color: sgptColor,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
               ),
             ],
@@ -287,7 +261,10 @@ class ViewLiverProfileScreen extends StatelessWidget {
 
                         label =
                             'SGPT (ALT): ${record.sgpt.toStringAsFixed(0)} U/L';
-                        status = record.sgpt <= 56 ? 'Normal' : 'Elevated';
+                        final statusData = health.HealthAnalysis.getSGPTStatus(
+                          record.sgpt,
+                        );
+                        status = statusData['status'] as String;
                         lineColor = AppColors.liverProfile;
 
                         return LineTooltipItem(

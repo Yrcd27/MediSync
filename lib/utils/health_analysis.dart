@@ -371,4 +371,132 @@ class HealthAnalysis {
       );
     }
   }
+
+  // ============= Helper Methods for UI Display =============
+  /// Get simple status text and color for Blood Pressure
+  static Map<String, dynamic> getBloodPressureStatus(
+    int systolic,
+    int diastolic,
+  ) {
+    if (systolic < 90 || diastolic < 60) {
+      return {'status': 'Low', 'color': Colors.blue};
+    } else if (systolic >= 140 || diastolic >= 90) {
+      return {'status': 'High', 'color': Colors.red};
+    } else if (systolic >= 120 || diastolic >= 80) {
+      return {'status': 'Elevated', 'color': Colors.orange};
+    } else {
+      return {'status': 'Normal', 'color': Colors.green};
+    }
+  }
+
+  /// Get simple status text and color for Fasting Blood Sugar
+  static Map<String, dynamic> getBloodSugarStatus(double fbsLevel) {
+    if (fbsLevel < 70) {
+      return {'status': 'Low', 'color': Colors.blue};
+    } else if (fbsLevel > 125) {
+      return {'status': 'Diabetic', 'color': Colors.red};
+    } else if (fbsLevel > 100) {
+      return {'status': 'Pre-diabetic', 'color': Colors.orange};
+    } else {
+      return {'status': 'Normal', 'color': Colors.green};
+    }
+  }
+
+  /// Get simple status text and color for Hemoglobin
+  static Map<String, dynamic> getHemoglobinStatus(double value, String gender) {
+    final isLow = gender.toLowerCase() == 'male' ? value < 13.5 : value < 12.0;
+    final isHigh = gender.toLowerCase() == 'male' ? value > 17.5 : value > 15.5;
+
+    if (isLow) {
+      return {'status': 'Low', 'color': Colors.blue};
+    } else if (isHigh) {
+      return {'status': 'High', 'color': Colors.orange};
+    } else {
+      return {'status': 'Normal', 'color': Colors.green};
+    }
+  }
+
+  /// Get simple status text and color for Total Cholesterol
+  static Map<String, dynamic> getTotalCholesterolStatus(double value) {
+    if (value < 200) {
+      return {'status': 'Normal', 'color': Colors.green};
+    } else if (value <= 239) {
+      return {'status': 'Borderline High', 'color': Colors.orange};
+    } else {
+      return {'status': 'High', 'color': Colors.red};
+    }
+  }
+
+  /// Get simple status text and color for LDL Cholesterol
+  static Map<String, dynamic> getLDLStatus(double value) {
+    if (value < 100) {
+      return {'status': 'Optimal', 'color': Colors.green};
+    } else if (value <= 129) {
+      return {'status': 'Near Optimal', 'color': Colors.green};
+    } else if (value <= 159) {
+      return {'status': 'Borderline High', 'color': Colors.orange};
+    } else if (value <= 189) {
+      return {'status': 'High', 'color': Colors.orange};
+    } else {
+      return {'status': 'Very High', 'color': Colors.red};
+    }
+  }
+
+  /// Get simple status text and color for HDL Cholesterol
+  static Map<String, dynamic> getHDLStatus(double value, String gender) {
+    final minGood = gender.toLowerCase() == 'male' ? 40.0 : 50.0;
+    if (value < minGood) {
+      return {'status': 'Low', 'color': Colors.orange};
+    } else if (value >= 60) {
+      return {'status': 'Excellent', 'color': Colors.green};
+    } else {
+      return {'status': 'Good', 'color': Colors.green};
+    }
+  }
+
+  /// Get simple status text and color for Triglycerides
+  static Map<String, dynamic> getTriglyceridesStatus(double value) {
+    if (value < 150) {
+      return {'status': 'Normal', 'color': Colors.green};
+    } else if (value <= 199) {
+      return {'status': 'Borderline High', 'color': Colors.orange};
+    } else if (value <= 499) {
+      return {'status': 'High', 'color': Colors.orange};
+    } else {
+      return {'status': 'Very High', 'color': Colors.red};
+    }
+  }
+
+  /// Get simple status text and color for SGPT
+  static Map<String, dynamic> getSGPTStatus(double value) {
+    if (value <= 56) {
+      return {'status': 'Normal', 'color': Colors.green};
+    } else if (value <= 100) {
+      return {'status': 'Elevated', 'color': Colors.orange};
+    } else {
+      return {'status': 'High', 'color': Colors.red};
+    }
+  }
+
+  /// Get simple status text and color for Urine Protein
+  static Map<String, dynamic> getUrineProteinStatus(String protein) {
+    final lower = protein.toLowerCase();
+    if (lower == 'negative' || lower == 'nil' || lower == '-') {
+      return {'status': 'Negative', 'color': Colors.green};
+    } else if (lower == 'trace') {
+      return {'status': 'Trace', 'color': Colors.orange};
+    } else {
+      return {'status': 'Positive', 'color': Colors.red};
+    }
+  }
+
+  /// Get simple status text and color for Urine Sugar
+  static Map<String, dynamic> getUrineSugarStatus(String sugar) {
+    final lower = sugar.toLowerCase();
+    if (lower == 'negative' || lower == 'nil' || lower == '-') {
+      return {'status': 'Negative', 'color': Colors.green};
+    } else {
+      return {'status': 'Positive', 'color': Colors.red};
+    }
+  }
 }

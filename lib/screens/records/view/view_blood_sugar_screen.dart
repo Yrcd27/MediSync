@@ -9,6 +9,7 @@ import '../../../providers/health_records_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../models/fasting_blood_sugar.dart';
 import '../../../widgets/feedback/empty_state.dart';
+import '../../../utils/health_analysis.dart' as health;
 import '../add/add_blood_sugar_screen.dart';
 
 class ViewBloodSugarScreen extends StatelessWidget {
@@ -87,16 +88,6 @@ class ViewBloodSugarScreen extends StatelessWidget {
     final avg =
         records.map((r) => r.fbsLevel).reduce((a, b) => a + b) / records.length;
 
-    String status = 'Normal';
-    Color statusColor = AppColors.success;
-    if (latest.fbsLevel >= 126) {
-      status = 'Diabetic';
-      statusColor = AppColors.error;
-    } else if (latest.fbsLevel >= 100) {
-      status = 'Pre-diabetic';
-      statusColor = AppColors.warning;
-    }
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -132,23 +123,6 @@ class ViewBloodSugarScreen extends StatelessWidget {
                       style: AppTypography.headline2,
                     ),
                   ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.sm,
-                ),
-                decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.15),
-                  borderRadius: AppSpacing.borderRadiusFull,
-                ),
-                child: Text(
-                  status,
-                  style: AppTypography.label2.copyWith(
-                    color: statusColor,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
               ),
             ],
@@ -297,12 +271,11 @@ class ViewBloodSugarScreen extends StatelessWidget {
                           'MMM dd, yyyy',
                         ).format(DateTime.parse(record.testDate));
                         final fbsLevel = record.fbsLevel.toStringAsFixed(0);
-                        String status = 'Normal';
-                        if (record.fbsLevel >= 126) {
-                          status = 'Diabetic';
-                        } else if (record.fbsLevel >= 100) {
-                          status = 'Pre-diabetic';
-                        }
+                        final statusData =
+                            health.HealthAnalysis.getBloodSugarStatus(
+                              record.fbsLevel,
+                            );
+                        final status = statusData['status'] as String;
 
                         return LineTooltipItem(
                           'FBS: $fbsLevel mg/dL\nStatus: $status\n$date',
@@ -349,15 +322,12 @@ class ViewBloodSugarScreen extends StatelessWidget {
     bool isDark,
     HealthRecordsProvider provider,
   ) {
-    Color statusColor = AppColors.success;
-    String status = 'Normal';
-    if (record.fbsLevel >= 126) {
-      statusColor = AppColors.error;
-      status = 'Diabetic';
-    } else if (record.fbsLevel >= 100) {
-      statusColor = AppColors.warning;
-      status = 'Pre-diabetic';
-    }
+    // Use centralized status calculation
+    final statusData = health.HealthAnalysis.getBloodSugarStatus(
+      record.fbsLevel,
+    );
+    final status = statusData['status'] as String;
+    final statusColor = statusData['color'] as Color;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),

@@ -9,6 +9,7 @@ import '../../../providers/health_records_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../models/lipid_profile.dart';
 import '../../../widgets/feedback/empty_state.dart';
+import '../../../utils/health_analysis.dart' as health;
 import '../add/add_lipid_profile_screen.dart';
 
 class ViewLipidProfileScreen extends StatelessWidget {
@@ -54,10 +55,14 @@ class ViewLipidProfileScreen extends StatelessWidget {
           }
 
           // Data is already sorted by provider (newest first)
+          final user = context.read<AuthProvider>().currentUser;
+          if (user == null) {
+            return const Center(child: Text('User not found'));
+          }
+
           return RefreshIndicator(
             onRefresh: () async {
-              final user = context.read<AuthProvider>().currentUser;
-              if (user != null) await provider.loadLipidRecords(user.id);
+              await provider.loadLipidRecords(user.id);
             },
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -67,7 +72,7 @@ class ViewLipidProfileScreen extends StatelessWidget {
                 children: [
                   _buildSummaryCard(records, isDark),
                   const SizedBox(height: AppSpacing.xl),
-                  _buildChartSection(records, isDark),
+                  _buildChartSection(records, user.gender, isDark),
                   const SizedBox(height: AppSpacing.xl),
                   Text('All Records', style: AppTypography.title2),
                   const SizedBox(height: AppSpacing.md),
@@ -86,13 +91,6 @@ class ViewLipidProfileScreen extends StatelessWidget {
 
   Widget _buildSummaryCard(List<LipidProfile> records, bool isDark) {
     final latest = records.first;
-
-    Color tcColor = AppColors.success;
-    if (latest.totalCholesterol >= 240) {
-      tcColor = AppColors.error;
-    } else if (latest.totalCholesterol >= 200) {
-      tcColor = AppColors.warning;
-    }
 
     return Container(
       width: double.infinity,
@@ -129,27 +127,6 @@ class ViewLipidProfileScreen extends StatelessWidget {
                       style: AppTypography.headline2,
                     ),
                   ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.sm,
-                ),
-                decoration: BoxDecoration(
-                  color: tcColor.withOpacity(0.15),
-                  borderRadius: AppSpacing.borderRadiusFull,
-                ),
-                child: Text(
-                  latest.totalCholesterol < 200
-                      ? 'Optimal'
-                      : latest.totalCholesterol < 240
-                      ? 'Borderline'
-                      : 'High',
-                  style: AppTypography.label2.copyWith(
-                    color: tcColor,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
               ),
             ],
@@ -199,7 +176,11 @@ class ViewLipidProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChartSection(List<LipidProfile> records, bool isDark) {
+  Widget _buildChartSection(
+    List<LipidProfile> records,
+    String userGender,
+    bool isDark,
+  ) {
     final chartRecords = records.take(10).toList().reversed.toList();
 
     return Container(
@@ -295,29 +276,26 @@ class ViewLipidProfileScreen extends StatelessWidget {
                         if (spot.barIndex == 0) {
                           label =
                               'Total Cholesterol: ${record.totalCholesterol.toStringAsFixed(0)} mg/dL';
-                          status = record.totalCholesterol < 200
-                              ? 'Normal'
-                              : record.totalCholesterol < 240
-                              ? 'Borderline High'
-                              : 'High';
+                          final statusData =
+                              health.HealthAnalysis.getTotalCholesterolStatus(
+                                record.totalCholesterol,
+                              );
+                          status = statusData['status'] as String;
                           lineColor = AppColors.lipidProfile;
                         } else if (spot.barIndex == 1) {
                           label = 'LDL: ${record.ldl.toStringAsFixed(0)} mg/dL';
-                          status = record.ldl < 100
-                              ? 'Optimal'
-                              : record.ldl < 130
-                              ? 'Near Optimal'
-                              : record.ldl < 160
-                              ? 'Borderline High'
-                              : 'High';
+                          final statusData = health.HealthAnalysis.getLDLStatus(
+                            record.ldl,
+                          );
+                          status = statusData['status'] as String;
                           lineColor = AppColors.error;
                         } else {
                           label = 'HDL: ${record.hdl.toStringAsFixed(0)} mg/dL';
-                          status = record.hdl >= 60
-                              ? 'Protective'
-                              : record.hdl >= 40
-                              ? 'Normal'
-                              : 'Low Risk';
+                          final statusData = health.HealthAnalysis.getHDLStatus(
+                            record.hdl,
+                            userGender,
+                          );
+                          status = statusData['status'] as String;
                           lineColor = AppColors.success;
                         }
 
