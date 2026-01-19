@@ -65,4 +65,15 @@ public class FastingBloodSugar {
     public void setUser(User user) {
         this.user = user;
     }
+
+    @Override
+    public String toString() {
+        return "FastingBloodSugar{" +
+                "id=" + id +
+                ", testDate=" + testDate +
+                ", fbsLevel=" + fbsLevel +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", user=" + user +
+                '}';
+    }
 }
