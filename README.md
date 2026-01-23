@@ -818,8 +818,15 @@ We welcome contributions! Please follow these steps:
 
 ## 👨‍💻 Authors
 
-**Lakshan Imantha - Backend Developer**
-**Yasiru Pandigama - Frontend Developer**
+**Lakshan Imantha** - *Backend Developer*
+- 🔧 Spring Boot API Development
+- 🗄️ Database Architecture & Design
+- 🔐 Authentication & Security
+
+**Yasiru Pandigama** - *Frontend Developer*
+- 📱 Flutter Mobile & Web Development
+- 🎨 UI/UX Design & Implementation
+- 📊 Data Visualization & Charts
 
 ## 📞 Support
 
@@ -828,17 +835,6 @@ We welcome contributions! Please follow these steps:
 - 📧 Email: medisync.app.team@gmail.com
 - 💬 GitHub Issues: [Create an issue](https://github.com/yourusername/MediSync/issues)
 - 📚 Documentation: See README files in backend/ and frontend/
-
-### FAQ
-
-**Q: Does this comply with HIPAA?**
-A: This is a demo project. For production use with real medical data, ensure HIPAA compliance with proper security measures, encryption, and audit logging.
-
-**Q: Can I modify the code?**
-A: Yes, feel free to fork and modify according to your needs.
-
-**Q: Is the app available on app stores?**
-A: This is an open-source project. You can build and deploy it yourself.
 
 ## 🔮 Future Enhancements
 
