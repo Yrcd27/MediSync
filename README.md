@@ -10,7 +10,6 @@
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.8-6DB33F?style=flat&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-336791?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org)
 [![Java](https://img.shields.io/badge/Java-17-ED8B00?style=flat&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 [Features](#-features) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [Documentation](#-documentation) • [Screenshots](#-screenshots) • [Contributing](#-contributing)
 
@@ -33,7 +32,6 @@
 - [Deployment](#-deployment)
 - [Screenshots](#-screenshots)
 - [Contributing](#-contributing)
-- [License](#-license)
 - [Support](#-support)
 
 ## 🌟 Overview
@@ -71,7 +69,6 @@ Track comprehensive health metrics:
 - **Trend Analysis**: Track health metrics over time with visual indicators
 - **Health Status**: Color-coded indicators (Normal, At Risk, Abnormal)
 - **Historical Comparison**: Compare current vs. historical data
-- **AI-Powered Insights**: Get personalized health recommendations
 
 ### 👤 User Management
 
@@ -110,12 +107,12 @@ Local Storage:      SharedPreferences 2.2.2
 ```
 
 **Platforms Supported:**
-- ✅ Android (API 21+)
-- ✅ iOS (12.0+)
-- ✅ Web (Chrome, Firefox, Safari, Edge)
-- ✅ Windows Desktop
-- ✅ macOS Desktop
-- ✅ Linux Desktop
+- Android (API 21+)
+- iOS (12.0+)
+- Web (Chrome, Firefox, Safari, Edge)
+- Windows Desktop
+- macOS Desktop
+- Linux Desktop
 
 ### Backend (API Server)
 
@@ -809,26 +806,6 @@ We welcome contributions! Please follow these steps:
 - Keep widgets small and reusable
 - Document complex logic
 
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-```
-MIT License
-
-Copyright (c) 2026 Lakshan
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
-
 ## 🙏 Acknowledgments
 
 - **Flutter Team** - Amazing cross-platform framework
@@ -853,9 +830,6 @@ copies or substantial portions of the Software.
 - 📚 Documentation: See README files in backend/ and frontend/
 
 ### FAQ
-
-**Q: Can I use this for commercial purposes?**
-A: Yes, this project is MIT licensed.
 
 **Q: Does this comply with HIPAA?**
 A: This is a demo project. For production use with real medical data, ensure HIPAA compliance with proper security measures, encryption, and audit logging.
@@ -883,12 +857,12 @@ A: This is an open-source project. You can build and deploy it yourself.
 
 ## 📊 Project Status
 
-- ✅ Core Features: Complete
-- ✅ Authentication: Implemented
-- ✅ Health Records: All 6 types implemented
-- ✅ Analytics: Charts and insights working
-- ✅ Cross-Platform: Android, iOS, Web, Desktop
-- ⏳ Additional Features: In Progress
+- Core Features: Complete
+- Authentication: Implemented
+- Health Records: All 6 types implemented
+- Analytics: Charts and insights working
+- Cross-Platform: Android, iOS, Web, Desktop
+- Additional Features: In Progress
 
 ## ⭐ Show Your Support
 
