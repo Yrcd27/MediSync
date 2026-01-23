@@ -839,17 +839,15 @@ We welcome contributions! Please follow these steps:
 ## 🔮 Future Enhancements
 
 - [ ] AI-powered health predictions
-- [ ] Integration with wearable devices
 - [ ] Doctor appointment scheduling
 - [ ] Medication reminders
 - [ ] Family health tracking
+- [ ] Medical image uploading
 - [ ] Export to PDF reports
 - [ ] Multi-language support
-- [ ] Voice commands
 - [ ] Biometric authentication
+- [ ] JWT based authentication
 - [ ] Cloud sync across devices
-- [ ] Telemedicine integration
-- [ ] Insurance claim management
 
 ## 📊 Project Status
 
