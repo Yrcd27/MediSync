@@ -618,11 +618,7 @@ Comprehensive tracking of:
 - Link multiple test results to a single report
 - Track health trends over time
 
-### 4. Image Storage
-- Support for storing medical report images
-- Image URL references for all test types
-
-### 5. Email Notifications
+### 4. Email Notifications
 - Asynchronous email sending using Resend API
 - Health test reminders
 - Customizable email templates
@@ -687,7 +683,7 @@ Consider implementing:
 
 ## 👨‍💻 Author
 
-**Lakshan**
+**Lakshan Imantha**
 
 ## 📞 Support
 
