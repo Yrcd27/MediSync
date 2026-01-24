@@ -4,7 +4,7 @@
 
 ![MediSync Logo](https://img.shields.io/badge/MediSync-Health%20Tracker-blue?style=for-the-badge&logo=heart&logoColor=white)
 
-**A comprehensive, modern, and intelligent personal health record management system**
+**A comprehensive, modern, and intelligent personal health record management mobile application**
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.9.0+-02569B?style=flat&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.8-6DB33F?style=flat&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
