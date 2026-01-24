@@ -1,6 +1,6 @@
-# MediSync - Smart Personal Health Record Tracker
-
 <div align="center">
+
+# MediSync - Smart Personal Health Record Tracker
 
 ![MediSync Logo](https://img.shields.io/badge/MediSync-Health%20Tracker-blue?style=for-the-badge&logo=heart&logoColor=white)
 
