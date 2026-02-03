@@ -30,7 +30,6 @@
 - [Frontend Setup](#-frontend-setup)
 - [API Documentation](#-api-documentation)
 - [Deployment](#-deployment)
-- [Screenshots](#-screenshots)
 - [Contributing](#-contributing)
 - [Support](#-support)
 
@@ -666,40 +665,6 @@ flutter build windows --release
 flutter build macos --release
 flutter build linux --release
 ```
-
-## 📸 Screenshots
-
-<details>
-<summary>Click to view screenshots</summary>
-
-### Authentication
-- Login Screen
-- Registration Screen
-
-### Dashboard
-- Health Overview
-- Recent Records
-- Quick Actions
-
-### Health Records
-- Blood Pressure Tracking
-- Blood Sugar Monitoring
-- Blood Count Analysis
-- Lipid Profile
-- Liver Function
-- Urine Analysis
-
-### Analytics
-- Interactive Charts
-- Trend Analysis
-- Health Insights
-
-### Profile
-- User Information
-- Settings
-- Theme Toggle
-
-</details>
 
 ## 🧪 Testing
 
