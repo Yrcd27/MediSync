@@ -823,7 +823,7 @@ We welcome contributions! Please follow these steps:
 - 🗄️ Database Architecture & Design
 - 🔐 Authentication & Security
 
-**Yasiru Pandigama** - *Frontend Developer*
+**Yasiru Pandigama** - *Mobile Application Developer*
 - 📱 Flutter Mobile & Web Development
 - 🎨 UI/UX Design & Implementation
 - 📊 Data Visualization & Charts
