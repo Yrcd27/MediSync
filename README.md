@@ -1,8 +1,7 @@
 <div align="center">
 
-# MediSync
+# MediSync - Smart Personal Health Record Tracker
 
-**Personal Health Record Management System**
 
 A full-stack mobile application for tracking, analyzing, and managing personal medical records. Built with Flutter and Spring Boot as a 5th semester Mobile Application Development project.
 
